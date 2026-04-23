@@ -1,0 +1,12 @@
+node_modules/
+dist/
+System figma/
+.DS_Store
+
+# Pipeline — no va al repo público
+tokens/
+package.json
+package-lock.json
+sd.config.mjs
+VERSION
+.claude/
