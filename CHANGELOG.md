@@ -5,6 +5,28 @@ Ver proceso de contribución y versionado en [docs/governance/design-system-rule
 
 ---
 
+## [0.2.0] — 2026-04-24
+
+### Changed — Tokens (Breaking)
+- `color/bg/fill/*` — reestructura completa. Nomenclatura anterior eliminada: `fill-default`, `fill-subtle-default`, `fill-hover`, `fill-active`, `fill-brand-default`, `fill-attention-default`, `fill-inverse-default`. Nueva estructura en tres grupos semánticos: neutral (`primary/secondary/tertiary`), brand (`brand-subtle/medium/strong`) e inverse (`inverse-subtle/medium/strong`).
+- `color/action/destructive/*` → renombrado a `color/action/brand/*`. Valores actualizados: default red/500 · hover red/600 · active red/700.
+
+### Added — Tokens
+- `color/bg/fill/primary-default` · `secondary-default` · `tertiary-default`
+- `color/bg/fill/brand-subtle-default` · `brand-medium-default` · `brand-strong-default`
+- `color/bg/fill/inverse-subtle-default` · `inverse-medium-default` · `inverse-strong-default`
+- `color/action/brand/default` · `hover` · `active`
+
+### Changed — Componentes (Breaking)
+- **Button** — eliminada variante `tone=Destructive`. Acciones irreversibles → usar `Primary` en modal de confirmación.
+- **Button** — añadida variante `Brand` (solo LG, uso restringido: Hero / Landings / Campañas). No reemplaza a Primary en flujos funcionales.
+
+### Removed
+- `color-bg-fill-hover`, `color-bg-fill-active` — redundantes con surface tokens y estados de action
+- `color-action-destructive-*` — reemplazados por `color-action-brand-*`
+
+---
+
 ## [0.1.0] — 2026-04-23 · Piloto
 
 Primera entrega certificada del piloto. Pre-estable — puede recibir cambios breaking antes de v1.0.0.
