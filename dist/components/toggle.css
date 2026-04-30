@@ -8,8 +8,8 @@
 
 [role="switch"] {
   position: relative;
-  width: 48px;
-  height: 44px;
+  width: 3rem;
+  height: 2.75rem;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -21,30 +21,30 @@
 }
 
 .toggle__track {
-  width: 48px;
-  height: 24px;
+  width: 3rem;
+  height: 1.5rem;
   border-radius: var(--radius-pill);
-  background: var(--color-icon-system-secondary-default);
+  background: var(--color-icon-system-secondary);
   position: relative;
   transition: background 150ms ease;
   display: flex;
   align-items: center;
-  padding-inline: 4px;
+  padding-inline: 0.25rem;
 }
 
 .toggle__thumb {
-  width: 16px;
-  height: 16px;
+  width: 1rem;
+  height: 1rem;
   border-radius: var(--radius-pill);
-  background: var(--color-icon-system-inverse-default);
+  background: var(--color-icon-system-inverse);
   position: absolute;
-  left: 4px;
+  left: 0.25rem;
   transition: left 150ms ease, transform 150ms ease;
 }
 
 /* Checked state */
 [role="switch"][aria-checked="true"] .toggle__track {
-  background: var(--color-icon-semantic-success-default);
+  background: var(--color-icon-status-success);
 }
 
 [role="switch"][aria-checked="true"] .toggle__thumb {
@@ -54,7 +54,7 @@
 /* Focus */
 [role="switch"]:focus-visible .toggle__track {
   outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
-  outline-offset: var(--stroke-focus-ring-width);
+  outline-offset: 0.125rem;
 }
 
 /* Disabled */
@@ -63,9 +63,9 @@
 }
 
 [role="switch"][disabled] .toggle__track {
-  background: var(--color-icon-system-disabled-default);
+  background: var(--color-icon-system-disabled);
 }
 
 [role="switch"][disabled] .toggle__thumb {
-  background: var(--color-icon-system-tertiary-default);
+  background: var(--color-icon-system-disabled);
 }

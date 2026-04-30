@@ -5,25 +5,25 @@
   align-items: flex-start;
   gap: var(--space-md);
   cursor: pointer;
-  min-height: 44px;
-  padding-block: 10px;
+  min-height: 2.75rem;
+  padding-block: 0.625rem;
 }
 
 .checkbox__wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 24px;
+  width: 2.5rem;
+  height: 1.5rem;
   flex-shrink: 0;
 }
 
 .checkbox__control {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   border-radius: var(--radius-xs);
   border: var(--stroke-xs) solid var(--color-border-default);
-  background: var(--color-bg-surface-primary-default);
+  background: var(--color-bg-surface-default);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -33,17 +33,17 @@
 
 .checkbox__control svg {
   display: none;
-  fill: var(--color-icon-system-inverse-default);
-  width: 16px;
-  height: 16px;
+  fill: var(--color-icon-system-inverse);
+  width: 1rem;
+  height: 1rem;
 }
 
 .checkbox__label {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  color: var(--color-text-primary-default);
-  padding-top: 2px;
+  font-size: var(--type-body-md-regular-size);
+  font-weight: var(--type-body-md-regular-weight);
+  line-height: var(--type-body-md-regular-line-height);
+  color: var(--color-text-primary);
+  padding-top: 0.125rem;
 }
 
 /* Hover */
@@ -72,7 +72,7 @@ input[type="checkbox"]:checked + .checkbox__control svg {
 /* Focus */
 .checkbox:focus-within .checkbox__control {
   outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
-  outline-offset: var(--stroke-focus-ring-width);
+  outline-offset: 0.125rem;
 }
 
 /* Disabled */
@@ -82,10 +82,10 @@ input[type="checkbox"]:checked + .checkbox__control svg {
 }
 
 .checkbox--disabled .checkbox__control {
-  background: var(--color-bg-fill-subtle-default);
+  background: var(--color-bg-fill-neutral-medium);
   border-color: var(--color-border-disabled);
 }
 
 .checkbox--disabled .checkbox__label {
-  color: var(--color-text-disabled-default);
+  color: var(--color-text-disabled);
 }

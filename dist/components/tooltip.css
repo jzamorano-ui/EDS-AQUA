@@ -7,12 +7,12 @@
   align-items: center;
   padding-inline: var(--space-xs);
   padding-block: var(--space-2xs);
-  background: var(--color-bg-fill-inverse-strong-default);
+  background: var(--color-bg-fill-inverse-strong);
   border-radius: var(--radius-xs);
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  color: var(--color-text-inverse-default);
+  font-size: var(--type-body-md-regular-size);
+  font-weight: var(--type-body-md-regular-weight);
+  line-height: var(--type-body-md-regular-line-height);
+  color: var(--color-text-inverse);
   white-space: nowrap;
   pointer-events: none;
 }
@@ -24,9 +24,9 @@
 /* Arrow — 12×6px SVG triangle, same fill as body */
 .tooltip__arrow {
   position: absolute;
-  width: 12px;
+  width: 0.75rem;
   height: 6px;
-  fill: var(--color-bg-fill-inverse-strong-default);
+  fill: var(--color-bg-fill-inverse-strong);
 }
 
 /* Positioning by type — arrow location defines tooltip placement */

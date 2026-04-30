@@ -3,13 +3,13 @@
 .tabs {
   display: flex;
   flex-direction: column;
-  background: var(--color-bg-surface-primary-default);
+  background: var(--color-bg-surface-default);
 }
 
 [role="tablist"] {
   display: flex;
   align-items: stretch;
-  border-bottom: 1px solid var(--color-border-default);
+  border-bottom: 0.0625rem solid var(--color-border-default);
   position: relative;
 }
 
@@ -22,19 +22,19 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
-  color: var(--color-text-secondary-default);
+  font-size: var(--type-body-md-regular-size);
+  font-weight: var(--type-body-md-regular-weight);
+  line-height: var(--type-body-md-regular-line-height);
+  color: var(--color-text-secondary);
   position: relative;
   white-space: nowrap;
   transition: color 100ms ease;
 }
 
 [role="tab"] svg {
-  fill: var(--color-icon-system-secondary-default);
-  width: 16px;
-  height: 16px;
+  fill: var(--color-icon-system-secondary);
+  width: 1rem;
+  height: 1rem;
   flex-shrink: 0;
 }
 
@@ -45,14 +45,14 @@
   bottom: -1px;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 0.125rem;
   background: transparent;
   transition: background 100ms ease;
 }
 
 /* Active state */
 [role="tab"][aria-selected="true"] {
-  color: var(--color-text-primary-default);
+  color: var(--color-text-primary);
   font-weight: 500;
 }
 
@@ -72,13 +72,13 @@
 
 /* Disabled */
 [role="tab"][aria-disabled="true"] {
-  color: var(--color-text-disabled-default);
+  color: var(--color-text-disabled);
   cursor: not-allowed;
   pointer-events: none;
 }
 
 [role="tab"][aria-disabled="true"] svg {
-  fill: var(--color-icon-system-disabled-default);
+  fill: var(--color-icon-system-disabled);
 }
 
 /* Panel */
