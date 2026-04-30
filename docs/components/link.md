@@ -42,8 +42,8 @@ interface LinkProps {
 | Default · Focus | color | `--color-text-link-default` |
 | Hover | color | `--color-text-link-hover` |
 | Active | color | `--color-text-link-active` |
-| Disabled | color | `--color-text-disabled-default` |
-| Focus | outline | `--color-focus-ring-default` · `--focus-ring-width` |
+| Disabled | color | `--color-text-disabled` |
+| Focus | outline | `--color-focus-ring-default` · `--stroke-focus-ring-width` |
 
 El `underline` es un RECT de 1px — implementar con `border-bottom: 1px solid var(--color-text-link-default)`. No usar `text-decoration: underline`.
 
@@ -51,7 +51,7 @@ El `underline` es un RECT de 1px — implementar con `border-bottom: 1px solid v
 
 | Propiedad | CSS custom property | Valor |
 |---|---|---|
-| `focus-ring-width` | `--focus-ring-width` | 2px |
+| `focus-ring-width` | `--stroke-focus-ring-width` | 2px |
 | `border-radius` (focus ring) | `--radius-xs` | 4px |
 | Touch target (standalone) | — | mínimo 44×44px |
 

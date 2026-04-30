@@ -8,10 +8,10 @@ Indicador de carga breve y localizada. No reemplaza al Loading Indicator en tran
 
 | Propiedad | Valores |
 |---|---|
-| `size` | sm (20px) · md (24px) · lg (32px) |
-| `variant` | default · inverse · destructive |
+| `size` | Small (20px) · Medium (24px) · Large (32px) |
+| `step` | 1–8 (fotogramas de animación — solo Figma) |
 
-`variant` no es una propiedad Figma — es un concepto de contexto resuelto por el color del contenedor.
+El spinner no tiene propiedad `variant` — el color del arco es siempre `--color-border-focus`. El `step` existe únicamente en el component set de Figma para representar los fotogramas de la animación; no es una prop de código.
 
 ---
 
@@ -19,9 +19,8 @@ Indicador de carga breve y localizada. No reemplaza al Loading Indicator en tran
 
 ```typescript
 interface SpinnerProps {
-  size?: 'sm' | 'md' | 'lg'                          // default: 'md'
-  variant?: 'default' | 'inverse' | 'destructive'    // default: 'default'
-  label?: string                                      // aria-label, default: 'Cargando…'
+  size?: 'sm' | 'md' | 'lg'   // default: 'md'
+  label?: string               // aria-label del contenedor, default: 'Cargando…'
 }
 ```
 
@@ -31,34 +30,20 @@ interface SpinnerProps {
 
 ### Color
 
-| Variant | Color del arco | Hex | Superficie |
-|---|---|---|---|
-| `default` | `icon/system/context-color` → slate-900 | `#0F202B` | Fondos claros |
-| `inverse` | `icon/system/context-color` → white | `#FFFFFF` | Fondos oscuros · botones Primary/Destructive |
-| `destructive` | `icon/system/context-color` → red-700 | `#A31425` | Fondos claros · botones Destructive |
-
-El arco SVG usa `currentColor`. Implementar en CSS:
-
-```css
-.spinner--default     { color: var(--color-icon-system-primary-default); }
-.spinner--inverse     { color: #ffffff; }
-.spinner--destructive { color: var(--color-text-status-danger-default); }
-
-@keyframes spin { to { transform: rotate(360deg); } }
-.spinner { animation: spin 800ms linear infinite; }
-
-@media (prefers-reduced-motion: reduce) {
-  .spinner { animation: none; }
-}
-```
+| Elemento | Propiedad CSS | CSS custom property |
+|---|---|---|
+| `arco` | border-color | `--color-border-focus` |
 
 ### Layout
 
-| Propiedad | Size | Valor |
-|---|---|---|
-| Dimensión | sm | 20×20px |
-| Dimensión | md | 24×24px |
-| Dimensión | lg | 32×32px |
+| Propiedad | Size | CSS custom property | Valor |
+|---|---|---|---|
+| Dimensión | sm | — | 20×20px |
+| Dimensión | md | — | 24×24px |
+| Dimensión | lg | — | 32×32px |
+| `border-width` | sm · md | — | 2px |
+| `border-width` | lg | — | 3px |
+| `border-radius` | — | `--radius-pill` | 999px |
 
 ---
 
@@ -67,12 +52,13 @@ El arco SVG usa `currentColor`. Implementar en CSS:
 ```html
 <!-- Standalone -->
 <div aria-busy="true" aria-label="Cargando…">
-  <svg class="spinner spinner--md" aria-hidden="true">…</svg>
+  <span class="spinner spinner--md" aria-hidden="true"></span>
 </div>
 
-<!-- Dentro de button (estado loading) -->
+<!-- Dentro de button en estado loading -->
 <button type="button" disabled aria-busy="true" aria-label="Guardando…">
-  <svg class="spinner spinner--md" aria-hidden="true"></svg>
+  <span class="spinner spinner--md" aria-hidden="true"></span>
+  Guardando…
 </button>
 ```
 
@@ -83,7 +69,7 @@ El arco SVG usa `currentColor`. Implementar en CSS:
 | Elemento | Tag | Atributos requeridos |
 |---|---|---|
 | Contenedor de carga | cualquier elemento | `aria-busy="true"` · `aria-label="[estado]"` |
-| SVG del spinner | `<svg>` | `aria-hidden="true"` |
+| Spinner | `<span>` | `aria-hidden="true"` |
 
 ---
 
@@ -96,15 +82,15 @@ Este componente no es interactivo — no recibe foco.
 ## Reglas
 
 - En `button` usar siempre `size=md` — independiente del tamaño del botón.
-- `default` y `destructive` solo sobre superficies claras. `inverse` solo sobre fondos oscuros o botones Primary/Destructive.
+- Solo para cargas breves y locales — no sustituye al Loading Indicator en transiciones de flujo principales.
+- Colocar cerca del contenido que está cargando.
 - No usar múltiples spinners simultáneos en la misma vista.
-- No acompañar de texto de estado dentro del componente — el texto contextual va en el layout externo.
 - `button/icon` no soporta loading.
 
 ---
 
 ## Accesibilidad
 
-- **WCAG 1.4.11** — contraste del arco ≥ 3:1 contra su superficie en los tres variants.
-- **WCAG 2.3.3** — respetar `prefers-reduced-motion`: detener o reemplazar la animación.
-- El contenedor debe tener `aria-busy="true"` y un label de estado accesible.
+- **WCAG 2.3.3** — respetar `prefers-reduced-motion`: la animación se detiene con `animation: none`.
+- **WCAG 1.4.11** — `--color-border-focus` sobre fondos claros cumple ≥ 3:1.
+- El contenedor debe tener `aria-busy="true"` y un `aria-label` de estado accesible.

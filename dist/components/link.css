@@ -1,0 +1,61 @@
+/* link.css — Aqua DS v0.1.0 */
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--color-text-link-default);
+  text-decoration: none;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  position: relative;
+}
+
+/* Underline — 1px rect via border-bottom, same color as text */
+.link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: currentColor;
+}
+
+.link:hover {
+  color: var(--color-text-link-hover);
+}
+
+.link:active {
+  color: var(--color-text-link-active);
+}
+
+.link:focus-visible {
+  outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
+  outline-offset: 2px;
+  color: var(--color-text-link-default);
+}
+
+.link[aria-disabled="true"],
+.link--disabled {
+  color: var(--color-text-disabled-default);
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+/* No underline variant */
+.link--no-underline::after { display: none; }
+
+/* Size variants */
+.link--sm { font-size: 12px; font-weight: 400; line-height: 16px; }
+.link--md { font-size: 14px; font-weight: 400; line-height: 20px; }
+.link--lg { font-size: 16px; font-weight: 400; line-height: 24px; }
+
+/* Standalone — 44×44px touch target */
+.link--standalone {
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

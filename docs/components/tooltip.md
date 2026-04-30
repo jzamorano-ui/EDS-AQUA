@@ -45,9 +45,9 @@ interface TooltipProps {
 
 | Elemento | Propiedad CSS | CSS custom property |
 |---|---|---|
-| `tooltip-body` | background | `--color-bg-fill-inverse-default` |
-| `label` | color | `--color-text-inverse-default` |
-| `arrow` | fill | `--color-bg-fill-inverse-default` |
+| `tooltip-body` | background | `--color-bg-fill-inverse-strong` |
+| `label` | color | `--color-text-inverse` |
+| `arrow` | fill | `--color-bg-fill-inverse-strong` |
 
 Tokens iguales en todas las variantes de `Type`.
 
@@ -59,12 +59,13 @@ Tokens iguales en todas las variantes de `Type`.
 | `padding-block` | `--space-2xs` | 4px |
 | `border-radius` | `--radius-xs` | 4px |
 | Tamaño arrow | — | 12×6px |
+| Margen trigger → tooltip | `--space-xs` | 8px |
 
 ### Tipografía
 
 | Elemento | Estilo | font-size | font-weight | line-height |
 |---|---|---|---|---|
-| `label` | `caption/sm-regular` | 12px | 400 | 16px |
+| `label` | `body/md-regular` | 14px | 400 | 20px |
 
 ---
 
@@ -109,11 +110,10 @@ Este componente no recibe foco — el foco es del trigger. El tooltip aparece al
 
 ## Reglas
 
-- Texto máximo ~40 caracteres — una sola línea.
+- Texto máximo ~40 caracteres — máximo 1–2 líneas.
 - No dejar el placeholder `"My Tooltip"` en producción.
 - Usar `Type=none` cuando el posicionamiento lo controla el layout.
 - El `Type` elegido debe coincidir con la posición real del tooltip en la interfaz.
-- No usar para información crítica — si el contenido es esencial, colocarlo visible en el layout.
 
 ---
 

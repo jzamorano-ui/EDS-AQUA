@@ -8,7 +8,8 @@ Filtro o selección interactiva compacta dentro de la misma vista. Para navegar 
 
 | Propiedad | Valores |
 |---|---|
-| `type` | filled (activo) · outline (disponible) |
+| `state` | default · hover · focus |
+| `variant` | filled (activo) · outlined (disponible) |
 | `leading-icon` | opcional · referencial |
 | `trailing-action` | opcional · solo en chips removibles |
 
@@ -42,13 +43,21 @@ interface ChipGroupProps {
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| `chip` filled | — | background | `--color-bg-fill-active` |
-| `chip` outline | — | background | `--color-bg-fill-default` |
-| `chip` outline | — | border | `--color-border-default` |
-| `Label chip` | — | color | `--color-text-primary-default` |
-| `system` (iconos) | — | fill | `icon/system/context-color` (hereda del contenedor) |
-
-> Estados hover, focus y active no tienen tokens definidos en el spec actual — pendiente de próxima iteración.
+| `chip` | outlined | background | `--color-bg-fill-neutral-subtle` |
+| `chip` | outlined | border | `--color-border-default` |
+| `chip` | hover | background | `--color-bg-fill-neutral-medium` |
+| `chip` | hover | border | `--color-border-default` |
+| `chip` | filled (selected) | background | `--color-action-primary-default` |
+| `chip` | filled (selected) | border | `--color-action-primary-default` |
+| `chip` | disabled | background | `--color-bg-fill-neutral-medium` |
+| `chip` | disabled | border | `--color-border-disabled` |
+| `label` | outlined | color | `--color-text-primary` |
+| `label` | filled (selected) | color | `--color-text-inverse` |
+| `label` | disabled | color | `--color-text-disabled` |
+| `icon` | outlined | fill | `--color-icon-system-secondary` |
+| `icon` | filled (selected) | fill | `--color-icon-system-inverse` |
+| `icon` | disabled | fill | `--color-icon-system-disabled` |
+| focus ring | focus | outline | `--color-focus-ring-default` |
 
 ### Layout
 
@@ -81,13 +90,13 @@ interface ChipGroupProps {
   <div role="option" aria-selected="false" tabindex="-1" class="chip chip--outline">Farmacia</div>
 </div>
 
-<!-- chip removible -->
-<button type="button" aria-pressed="true" class="chip chip--filled">
-  Dental
+<!-- chip removible — usar div+tabindex para evitar button anidado (HTML inválido) -->
+<div class="chip chip--filled chip--removable" role="option" aria-selected="true" tabindex="0">
+  <span>Dental</span>
   <button type="button" aria-label="Eliminar Dental">
     <svg aria-hidden="true">…</svg>
   </button>
-</button>
+</div>
 ```
 
 ---
@@ -120,7 +129,6 @@ interface ChipGroupProps {
 - `type=filled` = chip activo. `type=outline` = chip disponible. No mezclar semántica.
 - Multi-select y single-select no se mezclan en el mismo grupo.
 - El trailing-action (remove) tiene su propio `aria-label` — no hereda el del chip padre.
-- No usar chips para navegar entre secciones → `tabs`.
 - Labels máximo 1–2 palabras, ~20 caracteres.
 
 ---

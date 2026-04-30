@@ -13,7 +13,9 @@ Ejecuta acciones. Para navegar usar `link`; para opciones on/off usar `toggle`.
 | `size` | Large · Medium · Small · _(Brand: solo Large)_ |
 | `state` | Default · Hover · Active · Focus · Disabled · Loading |
 
-**Combos válidos (8):** Primary/Default · Primary/Inverse · Secondary/Default · Tertiary/Default · Brand · Disabled (todos) · Loading (Primary/Secondary/Tertiary) · Focus (todos).
+**Combos válidos:** Primary/Default · Primary/Inverse · Secondary/Default · Secondary/Inverse · Tertiary/Default · Tertiary/Inverse · Brand (solo surface=Default) · Disabled (todos) · Loading (Primary/Secondary/Tertiary — solo `button`) · Focus (todos).
+
+> **button/icon** soporta todos los combos anteriores excepto `Loading` — incluyendo `Brand`. `Brand` es exclusivamente talla `Large` en ambos componentes.
 
 ---
 
@@ -42,16 +44,32 @@ interface ButtonProps {
 
 | Combo | `background` | `color` | `icon` | `focus-ring` |
 |---|---|---|---|---|
-| Primary Default | `--color-action-primary-*` | `--color-text-inverse-default` | `--color-icon-system-inverse-default` | `--color-focus-ring-default` |
-| Primary Inverse | `--color-action-inverse-*` | `--color-text-primary-default` | `--color-icon-system-primary-default` | `--color-focus-ring-inverse` |
-| Secondary Default | `--color-action-secondary-*` | `--color-text-primary-default` | `--color-icon-system-primary-default` | `--color-focus-ring-default` |
-| Tertiary Default | `--color-action-tertiary-*` | `--color-text-primary-default` | `--color-icon-system-primary-default` | `--color-focus-ring-default` |
-| Brand | `--color-action-brand-*` | `--color-text-inverse-default` | `--color-icon-system-inverse-default` | `--color-focus-ring-default` |
-| **Disabled (todos)** | `--color-action-primary-disabled` | `--color-text-disabled-default` | `--color-icon-system-disabled-default` | — |
+| Primary Default | `--color-action-primary-*` | `--color-text-inverse` | context-color → **inverse** | `--color-focus-ring-default` |
+| Primary Inverse | `--color-action-primary-inverse-*` | `--color-text-primary` | context-color → **default** | `--color-focus-ring-inverse` |
+| Secondary Default | `--color-action-secondary-*` | `--color-text-primary` | context-color → **default** | `--color-focus-ring-default` |
+| Secondary Inverse | `--color-action-secondary-inverse-*` | `--color-text-inverse` | context-color → **inverse** | `--color-focus-ring-inverse` |
+| Tertiary Default | `--color-action-tertiary-*` | `--color-text-primary` | context-color → **default** | `--color-focus-ring-default` |
+| Tertiary Inverse | `--color-action-tertiary-inverse-*` | `--color-text-inverse` | context-color → **inverse** | `--color-focus-ring-inverse` |
+| Brand | `--color-action-brand-primary-*` | `--color-text-inverse` | context-color → **inverse** | `--color-focus-ring-default` |
+| **Disabled (todos)** | `--color-action-primary-disabled` | `--color-text-disabled` | context-color → **disabled** | — |
 
 `*` = sufijo por estado interactivo: `-default` · `-hover` · `-active`
 
-Focus: `outline: var(--focus-ring-width) solid var(--color-focus-ring-default); outline-offset: 2px`
+**context-color**: el color del ícono se resuelve via la colección `Icon/Context` con modo `default` (sobre fondo claro) o `inverse` (sobre fondo oscuro/color). Nunca bindear el fill del vector directamente — siempre heredar del modo.
+
+**Focus ring** (Figma): 2 capas de stroke — `color/focus/ring-*` en la capa exterior, `color/focus/ring-gap-*` en la capa interior. Secondary añade una tercera capa con el border de botón preservado.
+
+```css
+/* Default surface */
+outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
+outline-offset: 2px;
+box-shadow: 0 0 0 2px var(--color-focus-ring-gap-default);
+
+/* Inverse surface */
+outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-inverse);
+outline-offset: 2px;
+box-shadow: 0 0 0 2px var(--color-focus-ring-gap-inverse);
+```
 
 ### Layout
 
@@ -65,15 +83,16 @@ Focus: `outline: var(--focus-ring-width) solid var(--color-focus-ring-default); 
 | `padding-inline` | Small | `--space-sm` | 12px |
 | `gap` (icon · label) | todos | `--space-xs` | 8px |
 | `border-radius` | todos | `--radius-pill` | 999px |
-| `focus-ring-width` | todos | `--focus-ring-width` | 2px |
+| `focus-ring-width` | todos | `--stroke-focus-ring-width` | 2px |
 
 ### Tipografía
 
-| Size | Estilo | font-size | font-weight | line-height |
-|---|---|---|---|---|
-| Large | `body/lg-bold` | 16px | 700 | 24px |
-| Medium | `body/md-bold` | 14px | 700 | 20px |
-| Small | `caption/sm-medium` | 12px | 500 | 16px |
+| Size | Tipo | Estilo | font-size | font-weight | line-height |
+|---|---|---|---|---|---|
+| Large | System | `body/lg-bold` | 16px | 700 | 24px |
+| Large | **Brand** | `title/md-bold` | **20px** | **700** | **28px** |
+| Medium | System | `body/md-bold` | 14px | 700 | 20px |
+| Small | System | `caption/sm-medium` | 12px | 500 | 16px |
 
 ---
 
@@ -122,10 +141,9 @@ Focus: `outline: var(--focus-ring-width) solid var(--color-focus-ring-default); 
 ## Reglas
 
 - Un solo `Primary` por vista — múltiples anulan la jerarquía.
-- `surface=Inverse` solo aplica a `Primary Default`.
+- `surface=Inverse` aplica a `Primary`, `Secondary` y `Tertiary` — usar cuando el botón se sitúa sobre fondo oscuro o de color. `Brand` no tiene surface=Inverse.
 - Acciones irreversibles (eliminar, cancelar proceso en curso) → usar `Primary` en modal de confirmación — el contexto hace el trabajo de señalar el peligro.
 - `Loading` solo en `button` — `button/icon` no soporta loading.
-- No uses `button` para navegar → usar `link`.
 - `button/icon` sin `aria-label` es un error, no un warning.
 
 ### Brand — uso restringido
@@ -136,8 +154,8 @@ El botón `Brand` es una variante expresiva de alto impacto visual. **No es un b
 |---|---|
 | ✔ Usar en | Hero · Landings · Campañas |
 | ✗ No usar en | Formularios · Pagos · Contratación · Acciones críticas · Navegación |
-| Tamaño | Solo `Large` — no configurable en `sm`/`md` |
-| Tipografía mínima | 16px Bold (`body/lg-bold`) |
+| Tamaño | Solo `Large` — no configurable en `sm`/`md` · no admite `surface=Inverse` |
+| Tipografía mínima | 20px Bold (`title/md-bold`) — requerido para cumplir WCAG AA |
 | Jerarquía | No reemplaza a `Primary` — si es una acción funcional → usar `Primary` |
 
 ---
@@ -148,4 +166,4 @@ El botón `Brand` es una variante expresiva de alto impacto visual. **No es un b
 - Focus visible siempre — no suprimir en ningún contexto.
 - Contraste mínimo 3:1 texto sobre fondo del botón.
 - **WCAG 2.5.3** — el `aria-label` de `button/icon` debe describir la acción, no el ícono.
-- **Brand** — `#FF585C` (red/500) no cumple WCAG AA en contextos funcionales. Su uso está restringido a contextos de marketing donde la accesibilidad de contraste se compensa con tamaño de texto ≥18px y contexto visual rico.
+- **Brand** — el fondo `--color-action-brand-primary-default` pasa WCAG AA para texto grande: contraste 3.09:1 ≥ 3:1 requerido. Condición obligatoria: ≥14pt bold (≥19px) · ≥18pt regular (≥24px). No reducir el tamaño ni el peso del label — por debajo de ese umbral el contraste es insuficiente.

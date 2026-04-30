@@ -4,6 +4,36 @@
 
 ---
 
+## Contrato de fundación — v0.2.1 (2026-04-30)
+
+> **Regla a fuego — no negociable.**
+
+A partir del release v0.2.1, este sistema es la base con la que se casa el proyecto. La arquitectura, la estructura de tokens y los 13 componentes certificados son el contrato con los consumidores.
+
+**Lo que está congelado:**
+
+- **Arquitectura de capas** — `primitives → semantics → responsive`. No se añaden colecciones, no se cambian modos.
+- **Naming T/P/R/S** — la convención de naming es definitiva. No se renombran segmentos, no se cambia el separador, no se rompe la jerarquía.
+- **Los 149 tokens semánticos** — sus nombres son el contrato con el código consumidor. Renombrar o eliminar un token es un BREAKING CHANGE (requiere MAJOR + 2 sprints de aviso).
+- **Los 13 componentes y sus variantes/props** — estructura congelada. Eliminar o renombrar una prop es BREAKING.
+
+**Lo que puede crecer:**
+
+- Añadir nuevos tokens semánticos (MINOR)
+- Añadir nuevos componentes (MINOR)
+- Añadir nuevas variantes a componentes existentes (MINOR)
+- Corregir valores de tokens sin cambiar nombres (PATCH)
+
+**Lo que nunca ocurre sin MAJOR + proceso completo:**
+
+- Renombrar un token semántico existente
+- Eliminar un token semántico
+- Cambiar la estructura de una colección de Figma Variables
+- Cambiar el naming convention (T/P/R/S)
+- Refactoring masivo del árbol de tokens
+
+---
+
 ## Principios
 
 1. Accesibilidad como criterio de diseño, no validación final (WCAG 2.2 AA)
@@ -19,22 +49,39 @@
 
 ### Naming de tokens
 
-**Formato:** `kebab-case`
-**Estructura:** `topic-property-role-state`
+**Formato en Figma/JSON:** `Topic/Property/Role/State` — separador `/`
+**Formato en CSS:** `kebab-case` — separador `-` (generado por Style Dictionary)
 
 | Segmento | Definición | Ejemplos |
 |---|---|---|
-| `topic` | Categoría técnica | `color`, `space`, `type`, `radius`, `stroke`, `elevation`, `motion`, `layout` |
-| `property` | Propiedad afectada | `bg`, `fg`, `border`, `icon`, `link`, `surface` |
-| `role` | Intención | `primary`, `secondary`, `neutral`, `success`, `warning`, `danger`, `info`, `focus` |
-| `state` | Estado | `default`, `hover`, `active`, `pressed`, `selected`, `disabled`, `focus`, `visited`, `inverse` |
+| `Topic` | Tipo de valor | `color`, `space`, `type`, `radius`, `stroke`, `elevation`, `layout` |
+| `Property` | Sub-dominio | `bg`, `border`, `icon`, `text`, `action`, `focus` |
+| `Role` | Variante semántica | `primary`, `secondary`, `neutral`, `brand`, `inverse`, `surface`, `fill` |
+| `State` | Estado de interacción | `default`, `hover`, `active`, `disabled`, `focus`, `inverse` |
 
-**Ejemplo válido:** `color-bg-action-primary-default`
+**Ejemplo válido:**
+- Figma/JSON: `color/bg/surface/default`
+- CSS output: `--color-bg-surface-default`
 
-**Reglas:**
-- `state` siempre explícito (incluyendo `default`)
-- No mezclar idiomas dentro del mismo token
-- Sin nombres de componentes (`button`, `card`, etc.)
+**Reglas de naming:**
+
+1. **`/` como separador** entre segmentos — el guion `-` solo dentro de un segmento para nombres compuestos (`ring-gap`, `brand-strong`, `danger-focus`).
+
+2. **`default` únicamente como State** — solo cuando el token tiene al menos un hermano de estado (`hover`, `active`, `disabled`, `inverse`). Nunca como nombre de Role o dominio.
+   - ✅ `color/action/primary/default` — tiene hermanos hover/active
+   - ✅ `color/focus/ring/default` — tiene hermano inverse
+   - ❌ `color/bg/fill/default/subtle` — "default" como dominio → usar `neutral`
+
+3. **`neutral` para variante base sin estado** — cuando se necesita nombrar el dominio neutro/estándar dentro de un grupo (`neutral`, no `default`).
+   - ✅ `color/bg/fill/neutral/subtle` · `color/bg/status/neutral`
+
+4. **Profundidad variable, mínimo T/P/R** — el framework requiere al menos 3 segmentos. Dominios complejos pueden agregar un 5° nivel como calificador entre P y R:
+   - 4 niveles: `color/action/primary/default` (T/P/R/S)
+   - 5 niveles: `color/action/brand/primary/default` (T/P/calificador/R/S) — excepción documentada para variantes compuestas
+
+5. **Sin nombres de componentes** — `button`, `card`, `modal` están prohibidos en tokens semánticos.
+
+6. **Sin mezcla de idiomas** dentro del mismo token.
 
 ---
 
@@ -48,7 +95,7 @@
 #### `semantics`
 - Define la intención de uso
 - Siempre alias a primitives — nunca valores directos (HEX)
-- Ejemplo: `color-bg-action-primary-default → {color-blue-500}`
+- Ejemplo: `color-action-primary-default → {color-blue-500}`
 
 #### `responsive`
 - Reglas por dispositivo: breakpoints, grid, type-modes
@@ -70,6 +117,7 @@
 | 24 | 300 | `--space-lg` |
 | 32 | 400 | `--space-xl` |
 | 48 | 600 | `--space-2xl` |
+| 64 | 800 | `--space-3xl` |
 
 > Excepción documentada: stroke 1px/2px se puede salir de la escala — usar `--stroke-xs` (1px) y `--stroke-sm` (2px).
 
@@ -81,6 +129,29 @@
 - **Pesos:** Regular (400), Medium (500), Bold (700)
 - H1 máximo: 64px · Caption mínimo: 12px
 - Line-height headings mínimo: 1.2 · body mínimo: 1.4
+
+---
+
+### Elevation
+
+El sistema de elevación representa jerarquía e interacción entre elementos. No es decorativo: indica capas, foco o elementos accionables.
+
+| Token | CSS value | Uso | Interactivo |
+|---|---|---|---|
+| `--elevation-none` | `0px 0px 0px 0px transparent` | Superficie base — layout, fondos | — |
+| `--elevation-sm` | `0px 2px 4px 0px rgba(49,49,49,0.08)` | Separación sutil entre bloques | — |
+| `--elevation-md` | `0px 4px 12px 0px rgba(49,49,49,0.10)` | Cards, elementos accionables | Sí |
+| `--elevation-lg` | `0px 8px 24px 0px rgba(49,49,49,0.12)` | Dropdown, tooltip, flotantes | Sí |
+| `--elevation-top-md` | `0px -4px 8px 0px rgba(49,49,49,0.10)` | Modal, drawer, overlay | Sí |
+
+**Regla crítica:** `elevation-md` o superior implica interacción — el usuario esperará que el elemento sea accionable. No usar en contenedores estáticos.
+
+**Orden de decisión — antes de usar sombra:**
+
+1. Separar contenido → `spacing` o `divider`
+2. Destacar contenido → `color` o `tipografía`
+3. Agrupar contenido → `background`
+4. Indicar interacción → **recién entonces `elevation`**
 
 ---
 
@@ -121,7 +192,7 @@ Formato: `color-palette-<color>-<step>-default`
 
 **Dominios semánticos:** `surface`, `text`, `action`, `border`, `status`, `focus`, `overlay`
 **Estados requeridos:** `default`, `disabled`, `hover`, `active`, `focus`
-**Breakpoints:** 3 · **Type modes:** `mobile`, `desktop`
+**Breakpoints:** 5 · **Type modes:** `mobile`, `desktop`
 
 ---
 

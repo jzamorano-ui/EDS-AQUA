@@ -1,0 +1,152 @@
+/* button.css — Aqua DS v0.2.0 */
+
+/* Base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  border: var(--stroke-xs) solid transparent;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: background 100ms ease, color 100ms ease, border-color 100ms ease, box-shadow 100ms ease;
+  text-decoration: none;
+}
+
+.btn:focus-visible {
+  outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
+  outline-offset: var(--stroke-focus-ring-width);
+}
+
+.btn[disabled],
+.btn--disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn svg {
+  flex-shrink: 0;
+}
+
+/* Sizes */
+.btn--lg {
+  padding-inline: var(--space-lg);
+  padding-block: var(--space-sm);
+  font-size: 16px;
+  line-height: 24px;
+  min-height: 48px;
+}
+
+.btn--md {
+  padding-inline: var(--space-md);
+  padding-block: var(--space-sm);
+  font-size: 14px;
+  line-height: 20px;
+  min-height: 44px;
+}
+
+.btn--sm {
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-2xs);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+  min-height: 32px;
+}
+
+/* Icon sizes */
+.btn--lg svg { width: 20px; height: 20px; }
+.btn--md svg { width: 16px; height: 16px; }
+.btn--sm svg { width: 14px; height: 14px; }
+
+/* Variant — Primary */
+.btn--primary {
+  background: var(--color-action-primary-default);
+  color: var(--color-text-inverse-default);
+  border-color: transparent;
+}
+
+.btn--primary:hover {
+  background: var(--color-action-primary-hover);
+}
+
+.btn--primary:active {
+  background: var(--color-action-primary-active);
+}
+
+.btn--primary[disabled] {
+  background: var(--color-action-primary-disabled);
+  color: var(--color-text-disabled-default);
+}
+
+/* Variant — Secondary */
+.btn--secondary {
+  background: transparent;
+  color: var(--color-text-primary-default);
+  border-color: var(--color-border-default);
+}
+
+.btn--secondary:hover {
+  background: var(--color-action-secondary-hover);
+  border-color: var(--color-border-hover);
+}
+
+.btn--secondary:active {
+  background: var(--color-action-secondary-active);
+}
+
+.btn--secondary[disabled] {
+  color: var(--color-text-disabled-default);
+  border-color: var(--color-border-disabled);
+}
+
+/* Variant — Tertiary */
+.btn--tertiary {
+  background: transparent;
+  color: var(--color-text-primary-default);
+  border-color: transparent;
+}
+
+.btn--tertiary:hover {
+  background: var(--color-action-tertiary-hover);
+}
+
+.btn--tertiary:active {
+  background: var(--color-action-tertiary-active);
+}
+
+.btn--tertiary[disabled] {
+  color: var(--color-text-disabled-default);
+}
+
+/* Tone — Brand (hero/landing only — not for functional actions) */
+.btn--brand {
+  background: var(--color-action-brand-primary-default);
+  color: var(--color-text-inverse-default);
+  border-color: transparent;
+}
+
+.btn--brand:hover {
+  background: var(--color-action-brand-primary-hover);
+}
+
+.btn--brand:active {
+  background: var(--color-action-brand-primary-active);
+}
+
+/* Tone — Inverse (Primary only, on dark surfaces) */
+.btn--inverse.btn--primary {
+  background: var(--color-bg-surface-primary-default);
+  color: var(--color-text-primary-default);
+}
+
+/* Icon-only button — equal padding, square */
+.btn--icon-only {
+  padding: 0;
+}
+
+.btn--icon-only.btn--lg { width: 48px; height: 48px; }
+.btn--icon-only.btn--md { width: 40px; height: 40px; }
+.btn--icon-only.btn--sm { width: 32px; height: 32px; }

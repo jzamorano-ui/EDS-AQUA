@@ -13,7 +13,7 @@ Comunica mensajes del sistema que el usuario necesita leer. No usar para decorac
 | `close` | Boolean | true · false |
 | `link` | Boolean | true · false |
 
-`link=true` requiere `title=true`. `close=true` y `link=true` no coexisten.
+`link=true` requiere `title=true`. `close=true` y `link=true` pueden coexistir.
 
 ---
 
@@ -41,24 +41,25 @@ interface AlertProps {
 
 | Elemento | Variant | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| Componente | info | background | `--color-bg-status-info-default` |
-| Componente | info | border | `--color-border-status-info-default` |
-| Componente | success | background | `--color-bg-status-success-default` |
-| Componente | success | border | `--color-border-status-success-default` |
-| Componente | warning | background | `--color-bg-status-warning-default` |
-| Componente | warning | border | `--color-border-status-warning-default` |
-| Componente | danger | background | `--color-bg-status-danger-default` |
-| Componente | danger | border | `--color-border-status-danger-default` |
-| `título` | info | color | `--color-text-status-info-default` |
-| `título` | success | color | `--color-text-status-success-default` |
-| `título` | warning | color | `--color-text-status-warning-default` |
-| `título` | danger | color | `--color-text-status-danger-default` |
-| `descripción` | todos | color | `--color-text-primary-default` |
-| `ícono semántico` | info | fill | `--color-icon-semantic-info-default` |
-| `ícono semántico` | success | fill | `--color-icon-semantic-success-default` |
-| `ícono semántico` | warning | fill | `--color-icon-semantic-warning-default` |
-| `ícono semántico` | danger | fill | `--color-icon-semantic-danger-default` |
-| `botón cierre` | — | icon fill | `--color-icon-system-secondary-default` |
+| Componente | info | background | `--color-bg-status-info` |
+| Componente | info | border | `--color-border-status-info` |
+| Componente | success | background | `--color-bg-status-success` |
+| Componente | success | border | `--color-border-status-success` |
+| Componente | warning | background | `--color-bg-status-warning` |
+| Componente | warning | border | `--color-border-status-warning` |
+| Componente | danger | background | `--color-bg-status-danger` |
+| Componente | danger | border | `--color-border-status-danger` |
+| `título` | info | color | `--color-text-status-info` |
+| `título` | success | color | `--color-text-status-success` |
+| `título` | warning | color | `--color-text-status-warning` |
+| `título` | danger | color | `--color-text-status-danger` |
+| `link` | todos | color | `--color-text-link-default` |
+| `descripción` | todos | color | `--color-text-primary` |
+| `ícono semántico` | info | fill | `--color-icon-status-info` |
+| `ícono semántico` | success | fill | `--color-icon-status-success` |
+| `ícono semántico` | warning | fill | `--color-icon-status-warning` |
+| `ícono semántico` | danger | fill | `--color-icon-status-danger` |
+| `botón cierre` | — | icon fill | `--color-icon-system-secondary` |
 
 ### Layout
 
@@ -77,7 +78,7 @@ interface AlertProps {
 |---|---|---|---|---|
 | `título` | `body/md-bold` | 14px | 700 | 20px |
 | `descripción` | `body/md-regular` | 14px | 400 | 20px |
-| `link` | `caption/sm-regular` | 12px | 400 | 16px |
+| `link` | `caption/sm-medium` | 12px | 500 | 16px |
 
 ---
 
@@ -91,7 +92,7 @@ interface AlertProps {
     <p class="alert__title">Título informativo</p>
     <p class="alert__description">Descripción del mensaje.</p>
   </div>
-  <button type="button" aria-label="Cerrar alerta" class="btn-icon btn-icon--tertiary">
+  <button type="button" aria-label="Cerrar alerta" class="btn btn--icon-only btn--tertiary btn--sm">
     <svg aria-hidden="true">…</svg>
   </button>
 </div>
@@ -124,7 +125,7 @@ interface AlertProps {
 
 | Tecla | Acción |
 |---|---|
-| `Tab` | Foco al botón de cierre (`close=true`) o al link (`link=true`) |
+| `Tab` | Foco al link (`link=true`) y/o al botón de cierre (`close=true`) en orden DOM |
 | `Enter` · `Space` | Activa el elemento con foco |
 | `Shift + Tab` | Retrocede al elemento anterior |
 
@@ -135,8 +136,11 @@ El contenedor del alert no recibe foco — solo sus elementos internos accionabl
 ## Reglas
 
 - Un solo alert por contexto — consolidar mensajes si hay varios.
+- La descripción no debe superar 2 líneas de texto — mensaje claro y puntual.
 - `danger` con `close=false` indica que el error debe resolverse antes de continuar.
 - No usar `danger` para advertencias → `warning`. No usar `info` para confirmaciones → `success`.
+- `link=true` debe ser único y secundario al mensaje — no reemplaza el contenido principal.
+- Ubicar el alert cerca del contenido afectado, no como elemento flotante global.
 - El alert ocupa el 100% del ancho del contenedor padre.
 - No ocultar con `display: none` al cerrar — usar `aria-hidden` o remover del DOM.
 

@@ -10,16 +10,16 @@ Selección múltiple independiente. Para selección exclusiva usar `radio button
 |---|---|
 | `state` | default · selected · focus |
 | `disabled` | true · false |
-| `label` | texto visible (obligatorio) |
+| `label` | string (requerido) |
 
 **Combinatoria válida (5):** default/false · selected/false · focus/false · default/true · selected/true.
-`focus + disabled` no existe.
+`focus + disabled` no existe — un campo deshabilitado no recibe foco.
 
 ### checkbox group
 
 | Propiedad | Valores |
 |---|---|
-| `option-1` … `option-5` | true · false |
+| `option-1` … `option-5` | true · false — visibilidad de cada opción |
 
 Solo soporta layout vertical en MVP.
 
@@ -54,24 +54,27 @@ interface CheckboxGroupProps {
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| `Vector` | default | fill | `--color-border-default` |
-| `Vector` | selected · focus | fill | `--color-action-primary-default` |
-| `Vector` | disabled default | fill | `--color-border-disabled` |
-| `Vector` | disabled selected | fill | `--color-action-primary-disabled` |
-| `checkbox-control` | focus | outline (outside) | `--color-focus-ring-default` |
-| `Vector` | focus | outline (inside) | `--color-focus-ring-gap` |
-| `label` | default · selected | color | `--color-text-primary-default` |
-| `label` | disabled | color | `--color-text-disabled-default` |
+| `checkbox-control` | default | background | `--color-bg-surface-default` |
+| `checkbox-control` | selected · focus | background | `--color-action-primary-default` |
+| `checkbox-control` | disabled | background | `--color-bg-fill-neutral-medium` |
+| `checkbox-control` | default | border | `--color-border-default` |
+| `checkbox-control` | hover | border | `--color-border-focus` |
+| `checkbox-control` | selected · focus | border | `--color-action-primary-default` |
+| `checkbox-control` | disabled | border | `--color-border-disabled` |
+| `checkmark` (ícono) | selected · focus | fill | `--color-icon-system-inverse` |
+| `label` | default · selected · focus | color | `--color-text-primary` |
+| `label` | disabled | color | `--color-text-disabled` |
+| focus ring | focus | outline | `--color-focus-ring-default` |
 
 ### Layout
 
 | Propiedad | CSS custom property | Valor |
 |---|---|---|
 | `gap` (control · label) | `--space-md` | 16px |
-| Área touch (control-wrapper) | — | 40×44px |
-| Control visual (checkbox-control) | — | 24×24px |
-| `border-radius` (checkbox-control) | `--radius-xs` | 4px |
-| `focus-ring-width` | `--focus-ring-width` | 2px |
+| Área touch (`checkbox-wrapper`) | — | 40×44px |
+| Control visual (`checkbox-control`) | — | 24×24px |
+| `border-radius` (`checkbox-control`) | `--radius-xs` | 4px |
+| `focus-ring-width` | `--stroke-focus-ring-width` | 2px |
 
 ### Tipografía
 
@@ -85,21 +88,27 @@ interface CheckboxGroupProps {
 
 ```html
 <!-- Checkbox aislado -->
-<label>
+<label class="checkbox">
   <input type="checkbox" id="terms">
-  <span>Acepto los términos</span>
+  <span class="checkbox__label">Acepto los términos</span>
+</label>
+
+<!-- Checkbox deshabilitado -->
+<label class="checkbox checkbox--disabled">
+  <input type="checkbox" id="opt-off" disabled aria-disabled="true">
+  <span class="checkbox__label">Opción no disponible</span>
 </label>
 
 <!-- Checkbox group -->
 <fieldset>
-  <legend>Opciones adicionales</legend>
-  <label>
-    <input type="checkbox" id="opt1" name="opts" checked>
-    <span>Dental</span>
+  <legend>Coberturas adicionales</legend>
+  <label class="checkbox">
+    <input type="checkbox" id="opt1" name="coberturas" checked aria-checked="true">
+    <span class="checkbox__label">Dental</span>
   </label>
-  <label>
-    <input type="checkbox" id="opt2" name="opts">
-    <span>Farmacia</span>
+  <label class="checkbox">
+    <input type="checkbox" id="opt2" name="coberturas">
+    <span class="checkbox__label">Farmacia</span>
   </label>
 </fieldset>
 ```
@@ -115,7 +124,7 @@ interface CheckboxGroupProps {
 | Group container | `<fieldset>` | — |
 | Group legend | `<legend>` | texto descriptivo del grupo |
 | Disabled | `<input type="checkbox">` | `disabled` · `aria-disabled="true"` |
-| Indeterminado | `<input type="checkbox">` | `aria-checked="mixed"` *(no soportado en MVP)* |
+| Indeterminado | `<input type="checkbox">` | `aria-checked="mixed"` *(no soportado en MVP — no implementar)* |
 
 ---
 
@@ -132,16 +141,18 @@ interface CheckboxGroupProps {
 ## Reglas
 
 - `label` obligatorio — no ocultar para simular checkbox sin texto.
-- `focus + disabled` no existe.
+- Cada opción funciona de forma independiente — marcar una no afecta a las demás.
+- El área clickeable incluye el control y el texto — ambos activan el checkbox.
+- No usar para selección exclusiva — cuando solo una opción es válida, usar `radio button`.
+- Agrupar opciones relacionadas con `<fieldset>` + `<legend>` para dar contexto al grupo.
 - `checkbox group` solo layout vertical en MVP.
-- No usar para selección exclusiva → `radio button`.
-- No usar para acciones con efecto inmediato → `toggle`.
 
 ---
 
 ## Accesibilidad
 
-- Touch target mínimo 44×44px — `control-wrapper` cumple (40×44px).
-- Focus visible siempre.
-- **WCAG 1.3.1** — usar `<fieldset>` + `<legend>` para grupos relacionados.
+- Touch target mínimo 44×44px — `checkbox-wrapper` cumple (40×44px con padding-block 10px).
+- Focus visible siempre — no suprimir el outline en ningún contexto.
+- **WCAG 1.3.1** — usar `<fieldset>` + `<legend>` para grupos; el `<label>` asocia texto a cada control.
+- **WCAG 2.5.3** — el texto del label describe la opción, no el estado.
 - **WCAG 4.1.2** — `aria-checked` debe reflejar el estado real en todo momento.

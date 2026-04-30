@@ -1,0 +1,78 @@
+/* badge.css — Aqua DS v0.1.0 */
+
+/* badge/indicator — number */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding-inline: var(--space-xs);
+  padding-block: var(--space-2xs);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.badge--indicator {
+  background: var(--color-bg-fill-attention-default);
+  color: var(--color-text-inverse-default);
+}
+
+/* badge — dot variant */
+.badge--dot {
+  width: 8px;
+  height: 8px;
+  min-width: unset;
+  padding: 0;
+  border-radius: var(--radius-pill);
+}
+
+/* badge/state — semantic variants */
+/* State badges have wider padding and a visible border */
+.badge--neutral,
+.badge--info,
+.badge--success,
+.badge--warning,
+.badge--danger {
+  padding-inline: var(--space-sm);
+  border: var(--stroke-xs) solid transparent;
+}
+
+.badge--neutral {
+  background: var(--color-bg-status-neutral-default);
+  border-color: var(--color-border-default);
+  color: var(--color-text-primary-default);
+}
+
+.badge--info {
+  background: var(--color-bg-status-info-default);
+  border-color: var(--color-border-status-info-default);
+  color: var(--color-text-status-info-default);
+}
+
+.badge--success {
+  background: var(--color-bg-status-success-default);
+  border-color: var(--color-border-status-success-default);
+  color: var(--color-text-status-success-default);
+}
+
+.badge--warning {
+  background: var(--color-bg-status-warning-default);
+  border-color: var(--color-border-status-warning-default);
+  color: var(--color-text-status-warning-default);
+}
+
+.badge--danger {
+  background: var(--color-bg-status-danger-default);
+  border-color: var(--color-border-status-danger-default);
+  color: var(--color-text-status-danger-default);
+}
+
+/* dot — semantic colors */
+.badge--dot.badge--neutral  { background: var(--color-icon-system-secondary-default); }
+.badge--dot.badge--info     { background: var(--color-icon-semantic-info-default); }
+.badge--dot.badge--success  { background: var(--color-icon-semantic-success-default); }
+.badge--dot.badge--warning  { background: var(--color-icon-semantic-warning-default); }
+.badge--dot.badge--danger   { background: var(--color-icon-semantic-danger-default); }

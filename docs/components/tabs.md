@@ -1,6 +1,6 @@
 # Tabs
 
-Organiza contenido en secciones accesibles horizontalmente. Cambia la sección visible — no filtra contenido dentro de una misma vista (eso es `chips`).
+Elemento de navegación que organiza contenido en secciones dentro de una misma vista. Para filtrar o seleccionar items usar `chips`; para navegar entre páginas usar `link`.
 
 ---
 
@@ -8,9 +8,9 @@ Organiza contenido en secciones accesibles horizontalmente. Cambia la sección v
 
 | Propiedad | Valores |
 |---|---|
-| `state` | default · active · focus · disabled |
-| `label` | texto visible (obligatorio) |
-| `left-icon` | opcional · decorativo |
+| `state` | default · hover · active · focus · disabled |
+| `icon` | true · false |
+| `Text` | texto editable vía component property |
 
 Siempre exactamente un tab en `state=active`. Mínimo 2 tabs por grupo.
 
@@ -43,18 +43,17 @@ interface TabsProps {
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| `label` | default | color | `--color-text-secondary-default` |
-| `label` | active | color | `--color-text-primary-default` |
-| `label` | disabled | color | `--color-text-disabled-default` |
-| `icon` | default | fill | `--color-icon-system-secondary-default` |
-| `icon` | active | fill | `icon/system/context-color` (hereda del contenedor) |
-| `icon` | disabled | fill | `--color-icon-system-disabled-default` |
+| `label` | default | color | `--color-text-secondary` |
+| `label` | active | color | `--color-text-primary` |
+| `label` | disabled | color | `--color-text-disabled` |
+| `icon` | default | fill | `--color-icon-system-secondary` |
+| `icon` | active | fill | `currentColor` (hereda `--color-text-primary`) |
+| `icon` | disabled | fill | `--color-icon-system-disabled` |
 | `indicator` | active | fill | `--color-border-focus` |
 | `indicator` | default · disabled | fill | transparent |
-| `tab-content` | focus | outline (outside) | `--color-focus-ring-default` |
-| `tab-content` | focus | outline gap (inside) | `--color-focus-ring-gap` |
+| `tab-content` | focus | outline | `--color-focus-ring-default` |
 | `divider` | — | fill | `--color-border-default` |
-| `tab-group` | — | background | `--color-bg-surface-primary-default` |
+| `tab-group` | — | background | `--color-bg-surface-default` |
 
 ### Layout
 
@@ -64,7 +63,7 @@ interface TabsProps {
 | `padding-block` (tab) | `--space-sm` | 12px |
 | `gap` (icon · label) | `--space-xs` | 8px |
 | Altura `indicator` | — | 2px |
-| `focus-ring-width` | `--focus-ring-width` | 2px |
+| `focus-ring-width` | `--stroke-focus-ring-width` | 2px |
 
 ### Tipografía
 
@@ -122,7 +121,7 @@ interface TabsProps {
 | `End` | Foco al último tab |
 | `Enter` · `Space` | Activa el tab con foco |
 
-Las Arrow Keys mueven el foco sin activar (modelo "manual activation"). `Enter` o `Space` confirman.
+Las Arrow Keys mueven el foco sin activar (modelo "manual activation"). `Enter` o `Space` activan el tab y muestran su panel.
 
 ---
 
@@ -130,9 +129,10 @@ Las Arrow Keys mueven el foco sin activar (modelo "manual activation"). `Enter` 
 
 - Siempre exactamente un tab `active` — cero o más de uno es un error.
 - Mínimo 2 tabs, máximo ~6 — más opciones, considerar patrón alternativo.
-- Label obligatorio en cada tab — no usar solo iconos.
-- No usar tabs para filtrar contenido dentro de la misma vista → `chips`.
+- `Text` obligatorio en cada tab — no usar solo iconos.
+- Si un tab tiene ícono, todos los del grupo deben tenerlo.
 - No usar tabs para navegar entre páginas → `link`.
+- No anidar tabs dentro de tabs.
 
 ---
 
@@ -141,4 +141,4 @@ Las Arrow Keys mueven el foco sin activar (modelo "manual activation"). `Enter` 
 - **WCAG 1.3.1** — roles `tablist` / `tab` / `tabpanel` correctos para lectores de pantalla.
 - **WCAG 2.1.1** — navegación completa por teclado con Arrow Keys + Enter/Space.
 - **WCAG 2.4.7** — focus visible siempre en el tab con foco activo.
-- **WCAG 1.4.3** — `color/text/primary-default` y `color/text/secondary-default` cumplen ≥ 4.5:1 sobre el fondo.
+- **WCAG 1.4.3** — `--color-text-primary` y `--color-text-secondary` cumplen ≥ 4.5:1 sobre el fondo.

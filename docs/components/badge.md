@@ -10,8 +10,8 @@ Comunica estado del sistema o conteo de actividad de forma compacta. No es inter
 
 | Propiedad | Valores |
 |---|---|
-| `type` | indicator · status |
-| `semantic` | error · warning · success · info · neutral *(solo `type=status`)* |
+| `type` (badge) | indicator · Number |
+| `type` (badge/state) | neutral · info · success · warning · danger |
 
 ---
 
@@ -19,7 +19,7 @@ Comunica estado del sistema o conteo de actividad de forma compacta. No es inter
 
 ```typescript
 interface BadgeStateProps {
-  semantic: 'error' | 'warning' | 'success' | 'info' | 'neutral'
+  type: 'danger' | 'warning' | 'success' | 'info' | 'neutral'
   label: string   // máximo 1–2 palabras
 }
 
@@ -38,23 +38,23 @@ interface BadgeIndicatorProps {
 
 | Elemento | Propiedad CSS | CSS custom property |
 |---|---|---|
-| `badge` (indicator · number) | background | `--color-bg-fill-attention-default` |
-| `badge` texto | color | `--color-text-inverse-default` |
-| `badge/state` error | background | `--color-bg-status-danger-default` |
-| `badge/state` error | border | `--color-border-status-danger-default` |
-| `badge/state` error · label | color | `--color-text-status-danger-default` |
-| `badge/state` warning | background | `--color-bg-status-warning-default` |
-| `badge/state` warning | border | `--color-border-status-warning-default` |
-| `badge/state` warning · label | color | `--color-text-status-warning-default` |
-| `badge/state` success | background | `--color-bg-status-success-default` |
-| `badge/state` success | border | `--color-border-status-success-default` |
-| `badge/state` success · label | color | `--color-text-status-success-default` |
-| `badge/state` info | background | `--color-bg-status-info-default` |
-| `badge/state` info | border | `--color-border-status-info-default` |
-| `badge/state` info · label | color | `--color-text-status-info-default` |
-| `badge/state` neutral | background | `--color-bg-status-neutral-default` |
+| `badge` (indicator · number) | background | `--color-bg-fill-brand-strong` |
+| `badge` texto | color | `--color-text-inverse` |
+| `badge/state` danger | background | `--color-bg-status-danger` |
+| `badge/state` danger | border | `--color-border-status-danger` |
+| `badge/state` danger · label | color | `--color-text-status-danger` |
+| `badge/state` warning | background | `--color-bg-status-warning` |
+| `badge/state` warning | border | `--color-border-status-warning` |
+| `badge/state` warning · label | color | `--color-text-status-warning` |
+| `badge/state` success | background | `--color-bg-status-success` |
+| `badge/state` success | border | `--color-border-status-success` |
+| `badge/state` success · label | color | `--color-text-status-success` |
+| `badge/state` info | background | `--color-bg-status-info` |
+| `badge/state` info | border | `--color-border-status-info` |
+| `badge/state` info · label | color | `--color-text-status-info` |
+| `badge/state` neutral | background | `--color-bg-status-neutral` |
 | `badge/state` neutral | border | `--color-border-default` |
-| `badge/state` neutral · label | color | `--color-text-primary-default` |
+| `badge/state` neutral · label | color | `--color-text-primary` |
 
 ### Layout
 
@@ -80,7 +80,7 @@ interface BadgeIndicatorProps {
 
 ```html
 <!-- badge/state -->
-<span class="badge badge--error">Rechazada</span>
+<span class="badge badge--danger">Rechazada</span>
 <span class="badge badge--success">Aprobada</span>
 
 <!-- badge indicator dot -->

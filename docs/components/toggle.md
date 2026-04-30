@@ -20,7 +20,7 @@ Control on/off con efecto inmediato. No incluye label propio — el texto visibl
 
 ```typescript
 interface ToggleProps {
-  label: string                  // requerido — mostrado externamente en el layout
+  label: string                  // requerido — el componente renderiza un <span> externo con este texto, referenciado con aria-labelledby
   checked?: boolean              // default: false
   disabled?: boolean             // default: false
   onChange?: (checked: boolean) => void
@@ -35,14 +35,13 @@ interface ToggleProps {
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| `track` | default | background | `--color-icon-system-secondary-default` |
-| `thumb` | default | background | `--color-icon-system-inverse-default` |
-| `track` | selected · focus | background | `--color-icon-semantic-success-default` |
-| `thumb` | selected · focus | background | `--color-icon-system-inverse-default` |
-| `focus-ring` | focus | outline (outside) | `--color-focus-ring-default` |
-| `track` | focus | outline (inside) | `--color-focus-ring-gap` |
-| `track` | disabled | background | `--color-icon-system-disabled-default` |
-| `thumb` | disabled | background | `--color-icon-system-tertiary-default` |
+| `track` | default | background | `--color-icon-system-secondary` |
+| `thumb` | default | background | `--color-icon-system-inverse` |
+| `track` | selected · focus | background | `--color-icon-status-success` |
+| `thumb` | selected · focus | background | `--color-icon-system-inverse` |
+| `focus-ring` | focus | outline | `--color-focus-ring-default` |
+| `track` | disabled | background | `--color-icon-system-disabled` |
+| `thumb` | disabled | background | `--color-icon-system-disabled` |
 
 `disabled` aplica igual a `state=default` y `state=selected`.
 
@@ -55,7 +54,7 @@ interface ToggleProps {
 | `border-radius` (track) | `--radius-pill` | 999px |
 | Thumb | — | 16×16px |
 | `border-radius` (thumb) | `--radius-pill` | 999px |
-| `focus-ring-width` | `--focus-ring-width` | 2px |
+| `focus-ring-width` | `--stroke-focus-ring-width` | 2px |
 
 ---
 
@@ -104,11 +103,11 @@ interface ToggleProps {
 
 ## Reglas
 
-- Label externo obligatorio — el componente no incluye label propio.
-- El cambio se aplica inmediatamente — no requiere confirmación adicional.
-- No usar para acciones destructivas o irreversibles → flujo con confirmación explícita.
+- Es un control binario — activa o desactiva una única opción.
+- El cambio se aplica inmediatamente, sin confirmación — no usar para acciones destructivas o irreversibles.
+- `label` obligatorio en el layout consumidor — el componente no incluye texto propio.
+- El área clickeable incluye el control y el label — ambos activan el toggle.
 - No usar para selección entre más de dos opciones → `radio group`.
-- `focus + disabled` no existe.
 
 ---
 

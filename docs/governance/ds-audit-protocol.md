@@ -1,466 +1,688 @@
-# DS Audit Protocol
+# DS Audit Protocol — Maestro
 
-**Versión:** 1.2  
-**Rol:** Arquitecto Senior de Design Systems  
-**Aplicación:** auditoría completa o parcial del sistema OPS-Library-[Aqua]
+**Versión:** 2.0  
+**Última actualización:** 2026-04-25  
+**Scope:** Sistema completo OPS-Library-[Aqua]
 
 ---
 
-## 1. Fuente de verdad y alcance
-
-### Cadena de dependencias
+## 0. Jerarquía de fuentes de verdad — no negociable
 
 ```
-Token → Icons → DS → Figma docs → JSON → dist → .md
+Tokens (Figma)  ←  fuente de verdad absoluta para valores
+    ↓
+Icons (Figma)   ←  fuente de verdad para componentes de ícono
+    ↓
+DS (Figma)      ←  consumer únicamente; no define ni redefine nada
+    ↓
+JSON            ←  reflejo exacto de Tokens (Figma → JSON, nunca al revés)
+    ↓
+dist            ←  output de Style Dictionary; reflejo exacto de JSON
+    ↓
+.md             ←  documentación; reflejo exacto de Figma DS
 ```
 
-Cada capa hereda de la anterior. Ninguna puede redefinir lo que ya existe arriba.
+**Regla absoluta:** Ninguna capa puede introducir valores que no existan en la capa superior. DS no crea tokens. Icons no crea colores. JSON no inventa variables. La auditoría detecta cualquier quiebre en esta cadena.
 
 ### Librerías Figma
 
-| Librería | URL | Rol |
+| Librería | File key | Rol |
 |---|---|---|
-| **Token** | https://www.figma.com/design/ml3ScFhJNwgs6xZpKUKuok | Fuente de verdad única |
-| **Icons** | https://www.figma.com/design/zIbuWAvLhwTlwnVwbDgY5n | Consume Token |
-| **DS** | https://www.figma.com/design/9FoTERLTyDXz3gmPLjjJ09 | Consume Token + Icons |
-
-### Documentación de tokens en Figma
-
-Referencia obligatoria: `node-id=41-106` (OPS-Library-[Aqua] Tokens)
-
-**Regla crítica:** Cada variable creada en la librería Token debe estar documentada en esa página. La documentación debe ser el reflejo exacto de las variables existentes — ni más ni menos.
-
-Falta de documentación de token = **🔴 BLOCKER** potencial.
+| **Tokens** | `ml3ScFhJNwgs6xZpKUKuok` | Fuente de verdad — primitives + semánticos |
+| **Icons** | `zIbuWAvLhwTlwnVwbDgY5n` | Fuente de verdad — componentes de ícono |
+| **DS** | `9FoTERLTyDXz3gmPLjjJ09` | Consumer — componentes de interfaz |
 
 ---
 
-## 2. Capas auditables
+## 1. Tipos de auditoría
 
-| Capa | Descripción | Dependencias |
+| Tipo | Cuándo usar | Layers obligatorios |
 |---|---|---|
-| **Token** | Primitives + semánticos. Fuente de verdad. | — |
-| **Icons** | Componentes de ícono. Consume Token. Sin lógica propia. | Token |
-| **DS** | Componentes de interfaz. Consume Token + Icons. | Token + Icons |
-| **Figma docs** | Documentación visible en Token (node 41:106). Debe reflejar variables exactas. | Token |
-| **JSON** | Exportación de Token para código. Formato DTCG. | Token |
-| **dist** | Output compilado por Style Dictionary v4 (`tokens.css`, `layout.css`, `tokens.js`). | JSON |
-| **.md** | Documentación de componentes en markdown. | DS + Figma |
+| **Full** | Antes de release o publicación de librería | L1 → L2 → L3 → L4 → L5 |
+| **Triggered** | Al crear/modificar token, componente o docs | Ver tabla de triggers §1.1 |
+| **Spot** | Corrección de hallazgo puntual | Layer afectado + L4 parcial + L5 |
+| **Post-fix** | Después de resolver un BLOCKER | Layer afectado + L4-V1/V2/V3 |
 
-### Reglas de capa — no negociables
+### 1.1 Triggers y layers mínimos
 
-- Token = única fuente de verdad
-- Semánticos = alias de primitives (0 valores hardcodeados)
-- Componentes = solo tokens semánticos (nunca primitives directo)
-- Sin component tokens
-- Icons = no define lógica paralela a Token
-- DS = no redefine ni duplica fundamentos de Token
-- JSON refleja Token exactamente
-- dist refleja JSON exactamente
-- `.md` refleja Figma exactamente
-- Figma no puede contradecir JSON, dist ni `.md`
+| Trigger | Layers obligatorios |
+|---|---|
+| Nuevo token primitivo o semántico | L1 + L4-V1 + L4-V2 |
+| Nuevo componente DS | L3 + L4-V3 |
+| Cambio en token existente | L1 + L3-C1 + L4 completo |
+| Publicación librería Tokens | L1 + L4-V1 + L4-V2 |
+| Publicación librería Icons | L2 + L3-C2 |
+| Actualización .md | L4-V3 |
+| Release a desarrollo | **Full** |
 
 ---
 
-## 3. Tipos de auditoría
+## 2. Pre-flight
 
-| Tipo | Cuándo | Alcance |
+Antes de iniciar cualquier auditoría:
+
+```javascript
+// 1. Conectar a los 3 archivos vía MCP — confirmar que están activos
+// figma_list_open_files → verificar DS, Tokens e Icons presentes
+
+// 2. Cargar todas las páginas en el archivo activo
+await figma.loadAllPagesAsync();
+
+// 3. Confirmar colecciones en Tokens library
+// Navegar a Tokens → getLocalVariableCollectionsAsync()
+// Esperado: Primitives + Semantics + Layout
+
+// 4. Confirmar colección en Icons library
+// Navegar a Icons → getLocalVariableCollectionsAsync()
+// Esperado: Icon/Context con modos [default, inverse, brand, disabled]
+
+// 5. Confirmar ComponentSets en DS library
+// Navegar a DS → contar CS en todas las páginas
+// Esperado: ≥ 16 CS (ver lista en §3-L3)
+
+// 6. PUBLISH GATE — verificar estado de publicación en las 3 librerías
+// Navegar a cada librería → Main menu → Libraries → revisar "Unpublished changes"
+// Si hay cambios pendientes en Tokens o Icons → registrar como hallazgo Info antes de continuar.
+// Razón: la auditoría corre sobre el estado LOCAL; los consumidores ven el SNAPSHOT publicado.
+// Si hay cambios críticos (codeSyntax, alias, modos) sin publicar → escala a Warning.
+```
+
+Si alguna conexión falla → detener auditoría y reportar el problema de conexión antes de continuar.
+
+---
+
+## 3. Layer 1 — Token Library
+
+**Archivo:** `ml3ScFhJNwgs6xZpKUKuok`  
+**Protocolo especializado:** [`audit-tokens.md`](../audit-tokens.md) — ejecutar completo.
+
+### Resumen de dominios
+
+| Dominio | Peso | Qué verifica |
 |---|---|---|
-| **Full** | Antes de release o publicación de librería | Todas las dimensiones (DIM-A → DIM-H) |
-| **Triggered** | Al crear nuevo token, componente o actualizar docs | Dimensiones afectadas (ver tabla de triggers) |
-| **Spot** | Corrección de hallazgo puntual | Dimensión afectada + validación de cadena parcial |
-| **Post-fix** | Después de corregir un BLOCKER | DIM afectada + DIM-G + DIM-H |
+| D1 — Arquitectura | Medio | Colecciones y modos declarados en CONFIG |
+| **D2 — Naming** | **Crítico** | kebab-case, jerarquía `/`, sin uppercase |
+| **D3 — Alias chain** | **Crítico** | Semantics = alias a Primitives en ≤ 2 saltos |
+| D4 — Cobertura de modos | Medio | Todos los modos con valor definido |
+| **D5 — codeSyntax WEB** | **Crítico** | 100% semánticos con `--css-var` correcto |
+| D6 — Doc sync | Medio | Tabla doc Figma (41:106) refleja variables |
+| D7 — WCAG contraste | Bajo | Pares texto/fondo ≥ 4.5:1 (AA) |
+| D8 — Escalabilidad | Bajo | Naming no bloquea crecimiento futuro |
+| **S1 — Sync Primitivos** | **Crítico** | Figma Primitives ↔ JSON primitivos |
+| **S2 — Sync Semánticos** | **Crítico** | Figma Semantics + Layout ↔ JSON semánticos |
 
-### Triggers y alcance mínimo
+**Score L1:** X/10 dominios en PASS  
+**Gate:** D2, D3, D5, S1, S2 deben ser PASS para release.
 
-| Trigger | Dimensiones obligatorias |
+---
+
+## 4. Layer 2 — Icons Library
+
+**Archivo:** `zIbuWAvLhwTlwnVwbDgY5n`  
+**Protocolo especializado:** [`audit-icons.md`](../audit-icons.md) — ejecutar completo.
+
+### Resumen de dominios
+
+| Dominio | Peso | Qué verifica |
+|---|---|---|
+| D1 — Arquitectura Icon/Context | Medio | Colección única, 4 modos exactos |
+| **D2 — Naming** | **Crítico** | `source/{categoría}/{nombre-kebab}` |
+| **D3 — Bindings fill** | **Crítico** | System → `context-color` local; brand → Tokens Semantics |
+| **D4 — Modos explícitos** | **Crítico** | `_source/system` con modo `default`; sin modos externos |
+| **D5 — Snapshot publicado** | **Crítico** | Snapshot = estado local; modos correctos en consumidores |
+| **D6 — Referencias Tokens** | **Crítico** | 4 aliases de `context-color` apuntan a Tokens actual |
+| D7 — Cobertura de variantes | Bajo | Sin duplicados; tamaños tokenizados |
+| D8 — Escalabilidad | Bajo | Agregar ícono/modo no requiere refactoring |
+
+**Score L2:** X/8 dominios en PASS  
+**Gate:** D2, D3, D4, D5, D6 deben ser PASS para release.
+
+---
+
+## 5. Layer 3 — DS Components
+
+**Archivo:** `9FoTERLTyDXz3gmPLjjJ09`
+
+DS es un consumer puro. Cada check en esta capa valida que DS consume correctamente Tokens e Icons — nunca que define algo propio.
+
+### C1 — Cascade token binding
+
+Verificar que cada propiedad visual en cada ComponentSet está bindeada a una variable semántica de Tokens. Sin valores hardcodeados, sin primitives directos, sin locales.
+
+**ComponentSets a auditar:**
+
+| CS | ID | Variantes | Nota |
+|---|---|---|---|
+| button | `557:1953` | 126 | |
+| button/icon | `561:10356` | 105 | |
+| radio button | `40002291:3851` | 5 | |
+| radio group | `40002291:4232` | 5 | Mismo page que radio button |
+| toggle | `40002351:6594` | 5 | |
+| checkbox | `40002312:6388` | 5 | |
+| chips | `40002386:4344` | 2 | |
+| link | `564:2268` | 48 | |
+| tabs | `40002386:6744` | 5 | |
+| alert | `881:18695` | 4 | |
+| spinner | `774:29702` | 24 | |
+| badge | `40002369:4082` | 2 | |
+| badge/state | `40002369:4091` | 5 | |
+| tooltip | `40002339:1862` | 9 | |
+| text fields | `40002482:2745` | 14 | |
+| icon/system (en DS) | `40002045:2142` | 8 | |
+| tag | `40002386:4144` | 1 | **COMPONENT** (no COMPONENT_SET) — una sola variante |
+
+**Script de referencia:**
+
+> **CRÍTICO — resolución cross-library:** En DS (consumer puro), `figma.variables.getVariableById(id)` (sync) devuelve `null` para variables de librerías externas. Usar siempre `await figma.variables.getVariableByIdAsync(id)` para resolver bindings.
+
+```javascript
+function hasRadiusBinding(node) {
+  const bv = node.boundVariables || {};
+  // IMPORTANTE: verificar AMBAS formas — shorthand y por esquina
+  return !!(
+    bv.cornerRadius ||
+    bv.topLeftRadius || bv.topRightRadius ||
+    bv.bottomLeftRadius || bv.bottomRightRadius
+  );
+}
+
+async function auditNode(node, issues, seen) {
+  // Fills — toda pintura sólida debe ser variable semántica
+  if (node.fills?.some(f => f.type === 'SOLID' && f.visible !== false)) {
+    if (!node.boundVariables?.fills?.length) {
+      const k = `fill::${node.name}::${node.type}`;
+      if (!seen.has(k)) { seen.add(k); issues.push({ type: 'UNBOUND_FILL', node: node.name }); }
+    } else {
+      // DANGLING check — binding existe pero la variable fue renombrada o eliminada
+      for (const binding of (node.boundVariables.fills || [])) {
+        const resolved = await figma.variables.getVariableByIdAsync(binding.id);
+        if (!resolved) {
+          const k = `dangling-fill::${node.name}::${binding.id}`;
+          if (!seen.has(k)) { seen.add(k); issues.push({ type: 'DANGLING_BINDING', node: node.name, variableId: binding.id, property: 'fill' }); }
+        }
+      }
+    }
+  }
+  // Strokes — ídem
+  if (node.strokes?.some(s => s.type === 'SOLID' && s.visible !== false)) {
+    if (!node.boundVariables?.strokes?.length) {
+      const k = `stroke::${node.name}::${node.type}`;
+      if (!seen.has(k)) { seen.add(k); issues.push({ type: 'UNBOUND_STROKE', node: node.name }); }
+    } else {
+      for (const binding of (node.boundVariables.strokes || [])) {
+        const resolved = await figma.variables.getVariableByIdAsync(binding.id);
+        if (!resolved) {
+          const k = `dangling-stroke::${node.name}::${binding.id}`;
+          if (!seen.has(k)) { seen.add(k); issues.push({ type: 'DANGLING_BINDING', node: node.name, variableId: binding.id, property: 'stroke' }); }
+        }
+      }
+    }
+  }
+  // Text style — todo TEXT debe referenciar un estilo de librería
+  if (node.type === 'TEXT' && !node.textStyleId) {
+    const k = `text::${node.name}`;
+    if (!seen.has(k)) { seen.add(k); issues.push({ type: 'NO_TEXT_STYLE', node: node.name }); }
+  }
+  // Radius — verificar shorthand Y corners individuales
+  const r = typeof node.cornerRadius === 'number' ? node.cornerRadius :
+            (node.topLeftRadius || 0);
+  if (r > 0 && !hasRadiusBinding(node)) {
+    const k = `radius::${node.name}::${r}`;
+    if (!seen.has(k)) { seen.add(k); issues.push({ type: 'UNBOUND_RADIUS', node: node.name, value: r }); }
+  }
+  if (node.children) for (const c of node.children) await auditNode(c, issues, seen);
+}
+```
+
+**Resultado esperado:**
+
+| Componente | UNBOUND_FILL | UNBOUND_STROKE | NO_TEXT_STYLE | UNBOUND_RADIUS | DANGLING_BINDING | Score |
+|---|---|---|---|---|---|---|
+| (cada CS) | 0 | 0 | 0 | 0 | 0 | ✅ |
+
+> `DANGLING_BINDING` = binding a variable renombrada o eliminada. Causa: variable renombrada en Tokens sin rebind en DS. Acción: rebindear al token correcto via `setBoundVariable` + `getVariableByIdAsync` del token actual.
+
+**PASS:** 0 issues en todos los CS.  
+**WARN:** 1–3 issues en nodos no visibles o de estructura interna.  
+**FAIL:** Cualquier `DANGLING_BINDING`, o issue en nodo con fill/stroke/text/radius visible al usuario.
+
+---
+
+### C2 — Integración de Icons library
+
+Todos los íconos usados en componentes DS deben ser instancias provenientes de `zIbuWAvLhwTlwnVwbDgY5n`. Ningún vector o path suelto.
+
+```javascript
+// En cada ComponentSet de DS, buscar instancias de ícono
+function auditIconIntegration(cs) {
+  const issues = [];
+  // Vectores sueltos = FAIL
+  const vectors = cs.findAll(n => n.type === 'VECTOR');
+  vectors.forEach(v => {
+    if (v.parent?.type !== 'BOOLEAN_OPERATION') {
+      issues.push({ type: 'LOOSE_VECTOR', node: v.name, id: v.id });
+    }
+  });
+  // Instancias de ícono — verificar que vienen de Icons library
+  const iconInstances = cs.findAll(n =>
+    n.type === 'INSTANCE' &&
+    (n.name.startsWith('source/system') || n.name.startsWith('icon/'))
+  );
+  iconInstances.forEach(inst => {
+    const mainComp = inst.mainComponent;
+    // El mainComponent debe estar en el file de Icons
+    if (!mainComp || !mainComp.remote) {
+      issues.push({ type: 'LOCAL_ICON', node: inst.name, id: inst.id });
+    }
+  });
+  return issues;
+}
+```
+
+**PASS:** 0 vectores sueltos; todos los íconos son instancias remotas de Icons library.  
+**WARN:** Ícono local con binding correcto a `context-color` (estructura válida pero no de librería).  
+**FAIL:** Vector suelto con color hardcodeado, o instancia de ícono local sin binding semántico.
+
+---
+
+### C3 — Estructura interna de componentes
+
+```javascript
+// Checks por ComponentSet
+async function auditStructure(cs) {
+  const issues = [];
+  // Sin variables locales propias en DS
+  const localVars = figma.variables.getLocalVariablesAsync
+    ? await figma.variables.getLocalVariablesAsync() : [];
+  if (localVars.length > 0) {
+    issues.push({ type: 'LOCAL_VARIABLES', count: localVars.length });
+  }
+  // Variantes sin propiedades — orphan components
+  cs.children?.forEach(v => {
+    if (!v.variantProperties || Object.keys(v.variantProperties).length === 0) {
+      issues.push({ type: 'ORPHAN_VARIANT', id: v.id, name: v.name });
+    }
+  });
+  return issues;
+}
+```
+
+**PASS:** Sin variables locales en DS; todas las variantes con propiedades definidas.  
+**FAIL:** Variables locales en DS que replican semánticos de Tokens. Variables locales = BLOCKER.
+
+---
+
+### C4 — Accesibilidad en componentes
+
+Verificar que los componentes DS cumplen criterios de accesibilidad a nivel Figma y documentación:
+
+**C4.1 — Focus states token-bound**
+
+Todo componente interactivo debe tener un `state=Focus` con:
+- Focus ring bindeado a `color/focus/ring-*` de Tokens
+- Gap bindeado a `color/focus/ring-gap-*` de Tokens
+- `stroke-width` bindeado a `stroke/focus-ring-width` de Tokens
+
+Componentes con estado Focus obligatorio: `button`, `button/icon`, `checkbox`, `radio button`, `toggle`, `link`, `tabs`, `text fields`, `chips`.
+
+**C4.2 — ARIA y teclado en .md**
+
+Cada `.md` de componente debe tener las secciones:
+- `## ARIA` — con tabla de atributos requeridos
+- `## Teclado` — con tabla de teclas y acciones
+- Si el componente tiene `button/icon` → `aria-label` marcado como obligatorio, no como warning
+
+**C4.3 — Contraste en Figma**
+
+Para los colores de texto sobre fondo en cada variante:
+- Resolver el hex real del token (primitivo referenciado por el semántico)
+- Calcular contraste WCAG 2.1 con la fórmula estándar
+- Referencia: los resultados de D7 en L1 (audit-tokens) aplican aquí directamente
+
+**PASS:** Focus states en 100% de componentes interactivos; .md con ARIA y Teclado; sin pares texto/fondo bajo AA.  
+**WARN:** 1 componente sin sección Teclado o ARIA incompleta.  
+**FAIL:** Componente interactivo sin estado Focus, o focus sin tokens semánticos.
+
+---
+
+### C5 — Documentation links
+
+Cada ComponentSet (y COMPONENT standalone como `tag`) debe tener exactamente un documentation link configurado apuntando a la página Figma de ese componente.
+
+**Formato obligatorio:**
+```
+https://www.figma.com/design/9FoTERLTyDXz3gmPLjjJ09/OPS-Library-Aqua-DS-MVP?node-id={pageId}
+```
+Donde `{pageId}` es el ID de la página Figma con `-` como separador (no `:`).
+
+**Reglas:**
+- El link apunta al `node-id` de la **página** (no al ID del ComponentSet).
+- Páginas con múltiples ComponentSets (ej: `radio button` + `radio group`) → todos apuntan al mismo `node-id`.
+- COMPONENT standalone (`tag`) también requiere documentation link.
+
+**Script de verificación:**
+```javascript
+const componentPages = figma.root.children.filter(p => p.name.includes('❖'));
+const missing = [];
+for (const page of componentPages) {
+  await page.loadAsync();
+  const sets = page.findAll(n => n.type === 'COMPONENT_SET' || n.type === 'COMPONENT');
+  for (const n of sets) {
+    if (!n.documentationLinks?.length) {
+      missing.push({ page: page.name.trim(), name: n.name, type: n.type });
+    }
+  }
+}
+return missing; // Esperado: []
+```
+
+**Script de corrección:**
+```javascript
+// Para un nodo sin link:
+const node = await figma.getNodeByIdAsync(nodeId);
+node.documentationLinks = [{ uri: 'https://www.figma.com/design/9FoTERLTyDXz3gmPLjjJ09/OPS-Library-Aqua-DS-MVP?node-id=' + pageId.replace(':', '-') }];
+```
+
+**PASS:** 100% de ComponentSets y COMPONENTs standalone con documentation link correcto.  
+**WARN:** 1–2 sets con link faltante o apuntando al node-id del set en lugar de la página.  
+**FAIL:** > 2 sets sin documentation link, o links que apuntan a archivo incorrecto.
+
+---
+
+## 6. Layer 4 — Chain validation
+
+Validar que la cadena completa no tiene quiebres entre capas.
+
+### V1 — Figma Tokens ↔ JSON
+
+```bash
+# Desde la raíz del repo
+# 1. Exportar variables actuales de Figma (vía script o manual)
+# 2. Comparar contra tokens/primitives/*.json y tokens/semantics/*.json
+
+# Check rápido: ¿el build usa todas las variables que existen en Figma?
+cat dist/tokens.css | grep "undefined"   # → debe retornar vacío
+cat dist/tokens.js  | grep "undefined"   # → debe retornar vacío
+```
+
+**Checks:**
+- Cada variable primitiva de Figma tiene entrada en `tokens/primitives/`
+- Cada variable semántica de Figma tiene entrada en `tokens/semantics/`
+- Los valores/aliases en JSON coinciden con Figma (FIGMA_SOURCE = true)
+- Sin entradas JSON huérfanas (variables en JSON que no existen en Figma)
+
+**PASS:** 100% de variables representadas; 0 huérfanas; 0 valores incorrectos.  
+**FAIL:** Variable activa en Figma sin entrada JSON, o alias JSON incorrecto.
+
+---
+
+### V2 — JSON ↔ dist
+
+```bash
+npm run build   # → debe completar con 0 errores
+
+# Verificar los 3 archivos generados
+ls dist/tokens.css dist/layout.css dist/tokens.js
+
+# Verificar ausencia de valores inválidos
+grep -c "undefined\|null\|NaN" dist/tokens.css    # → 0
+grep -c "undefined\|null\|NaN" dist/tokens.js     # → 0
+
+# Verificar formato dual en colores (HEX + oklch)
+grep -c "oklch" dist/tokens.css   # → > 0 (debe tener overrides oklch)
+```
+
+**Checks:**
+- `npm run build` termina con exit code 0
+- Los 3 archivos `tokens.css`, `layout.css`, `tokens.js` existen y no están vacíos
+- Sin valores `undefined`, `null` o `NaN` en ningún archivo dist
+- Los custom properties CSS siguen el formato `--{category}-{subcategory}-{role}-{state}`
+- Cada token de color tiene HEX fallback + override oklch
+
+**PASS:** Build limpio, 3 archivos válidos, 0 valores inválidos.  
+**FAIL:** Build con errores, archivo faltante, o `undefined` en dist.
+
+---
+
+### V3 — .md ↔ Figma DS
+
+Para cada componente activo:
+
+**Check de variantes:**
+```javascript
+// Extraer propiedades reales del ComponentSet en Figma
+const cs = await figma.getNodeByIdAsync(csId);
+const realProps = {};
+cs.children?.forEach(v => {
+  Object.entries(v.variantProperties || {}).forEach(([key, val]) => {
+    if (!realProps[key]) realProps[key] = new Set();
+    realProps[key].add(val);
+  });
+});
+// Comparar contra tabla Propiedades del .md correspondiente
+```
+
+**Check de tokens:**
+- Cada token CSS mencionado en el `.md` (`--color-*`, `--space-*`, `--radius-*`) debe existir en `dist/tokens.css`
+- Sin tokens en `.md` que no estén en dist
+
+**Check de secciones:**
+Cada `.md` debe tener exactamente estas 8 secciones: `Propiedades`, `Props`, `Tokens`, `HTML`, `ARIA`, `Teclado`, `Reglas`, `Accesibilidad`.
+
+**Componentes .md a verificar:**
+
+| Componente | Archivo .md |
 |---|---|
-| Nuevo token primitivo o semántico | DIM-A · DIM-B · DIM-G + documentar en Figma docs |
-| Nuevo componente | DIM-C · DIM-D · DIM-F · DIM-H |
-| Cambio de token existente | DIM-A · DIM-C · DIM-G |
-| Release a desarrollo | **Todas (DIM-A → DIM-H)** |
-| Cambio en breakpoints / layout | DIM-A · DIM-G |
-| Actualización de doc de componente | DIM-F · DIM-H |
-| Publicación de librería Figma | DIM-A · DIM-B · DIM-F · DIM-G |
+| alert | `docs/components/alert.md` |
+| badge | `docs/components/badge.md` |
+| button | `docs/components/button.md` |
+| checkbox | `docs/components/checkbox.md` |
+| chips | `docs/components/chips.md` |
+| link | `docs/components/link.md` |
+| radio-button | `docs/components/radio-button.md` |
+| spinner | `docs/components/spinner.md` |
+| tabs | `docs/components/tabs.md` |
+| text-field | `docs/components/text-field.md` |
+| toggle | `docs/components/toggle.md` |
+| tag | `docs/components/tag.md` |
+| tooltip | `docs/components/tooltip.md` |
+
+**PASS:** Variantes, tokens y secciones coinciden al 100% con Figma y dist.  
+**WARN:** 1–2 tokens en .md con nombre desactualizado pero valor correcto.  
+**FAIL:** Variante en .md que no existe en Figma, o token en .md que no existe en dist.
 
 ---
 
-## 4. Proceso de validación y aprobación
+## 7. Layer 5 — Release gate
 
-> **Regla de proceso — no negociable.**
-
-La auditoría es un proceso de diagnóstico y reporte. **Ningún cambio se aplica sin validación explícita del responsable del sistema.**
-
-### Flujo obligatorio por hallazgo
+### Scoring unificado
 
 ```
-[1] Detectar → registrar el hallazgo con diagnóstico claro
-[2] Clasificar → severidad + tipo (ver sección 7)
-[3] Proponer → describir la acción correctiva concreta
-[4] Esperar → no ejecutar hasta recibir aprobación explícita
-[5] Aplicar → solo después de "sí, procede" o equivalente
-[6] Verificar → confirmar que el cambio resolvió el hallazgo
+Score sistema = suma ponderada:
+
+  L1 Token      → peso 0.35  (fuente de verdad)
+  L2 Icons      → peso 0.15
+  L3 DS         → peso 0.30
+  L4 Chain      → peso 0.20
+
+Score por layer = (dominios/checks en PASS) / (total dominios/checks) × 10
+Score sistema   = L1×0.35 + L2×0.15 + L3×0.30 + L4×0.20
 ```
 
-### Reglas del proceso
+### Release decision
 
-| Regla | Descripción |
+| Condición | Decisión |
 |---|---|
-| Diagnóstico primero | Reportar el hallazgo antes de tocar nada. Nunca encadenar detección + corrección automáticamente. |
-| Propuesta clara | Describir qué se va a cambiar, en qué capa, en qué nodo/archivo, y por qué. |
-| Aprobación explícita | Esperar confirmación del responsable antes de ejecutar. Un silencio o "mira esto" no es aprobación. |
-| Un hallazgo a la vez | Si hay múltiples hallazgos, presentar todos primero como tabla. Luego esperar aprobación por bloque o por ítem. |
-| Verificación post-fix | Después de aplicar un cambio, confirmar que el estado final es el esperado y reportarlo. |
-| Sin rollback silencioso | Si un fix aplicado resulta incorrecto, reportar inmediatamente y esperar instrucción antes de revertir. |
+| Score sistema ≥ 9.5 + 0 BLOCKERs | ✅ RELEASE APROBADO |
+| Score sistema ≥ 8.0 + 0 BLOCKERs + WARNs documentados | ⚠️ RELEASE CON OBSERVACIONES |
+| Score sistema < 8.0 O ≥ 1 BLOCKER | ❌ RELEASE BLOQUEADO |
 
-> Esta regla aplica a: rebindings en Figma, creación o edición de variables, ediciones de JSON/CSS/.md, cualquier cambio en archivos del sistema.
+### BLOCKERs automáticos — cualquiera bloquea release
 
----
-
-## 5. Orden de ejecución
-
-Seguir este orden estrictamente. No saltar capas. Si una capa falla con BLOCKER, documentar y continuar para registrar el estado completo del sistema.
-
-```
-[1] Token (Figma)          → validar primitives + semánticos + documentación interna
-[2] Icons (Figma)          → validar consumo de Token + estructura
-[3] DS — componentes       → validar consumo Token + Icons + estructura interna
-[4] Figma docs             → validar reflejo exacto de variables (node 41:106)
-[5] JSON                   → validar alineación con Token (naming, valores, alias)
-[6] dist                   → validar output de Style Dictionary (CSS + JS)
-[7] .md de componentes     → validar alineación con Figma + tokens + variantes
-[8] Validación de cadena   → cross-check completo entre todas las capas
-[9] Evaluación y reporte   → clasificar hallazgos, calcular score, decisión de release
-```
-
----
-
-## 6. Dimensiones
-
-### DIM-A — Consistencia vertical
-
-**Objetivo:** Sin ruptura entre capas. Todo remite a Token.
-
-Verificar que:
-- Cada token semántico es alias de un primitive existente
-- Ninguna capa introduce valores que no existen en Token
-- La cadena Token → Icons → DS → JSON → dist → .md no tiene quiebres
-
-### DIM-B — Consistencia horizontal
-
-**Objetivo:** Naming uniforme, escalas coherentes, sin duplicados entre librerías.
-
-Verificar que:
-- Naming sigue el formato `topic/property/role/state` (kebab-case en CSS: `topic-property-role-state`)
-- `state` siempre explícito (incluyendo `default`)
-- Sin nombres de componentes en tokens
-- Sin duplicación de tokens entre colecciones o librerías
-- Sin escalas paralelas o redundantes
-
-### DIM-C — Consumo de tokens
-
-**Objetivo:** Componentes usan exclusivamente tokens semánticos. Sin excepciones.
-
-Verificar que:
-- Todos los fills, strokes, radii, spacing, type de componentes están bindeados a variables semánticas
-- Ningún componente usa primitives directos
-- Ningún valor está hardcodeado (HEX, px directo, etc.)
-- No existen component tokens propios
-
-### DIM-D — Integración de Icons
-
-**Objetivo:** Icons se usa como librería, no como fuente de vectores sueltos.
-
-Verificar que:
-- Los íconos en DS provienen de la librería OPS-Library-[Aqua] Icons
-- No existen vectores, paths o SVGs sueltos dentro de componentes DS
-- Icons no define colores, tamaños ni espaciado propios — consumen Token
-- El token `icon/system/context-color` se usa con `currentColor` en implementación
-
-### DIM-E — Integridad de DS
-
-**Objetivo:** DS no redefine, no duplica, no contradice Token.
-
-Verificar que:
-- DS no crea variables locales que repliquen semánticos de Token
-- DS no introduce breakpoints, tipografías ni colores propios
-- Todos los componentes en DS están vinculados a librerías oficiales (Token + Icons)
-- No existen estilos locales que dupliquen variables de Token
-
-### DIM-F — Figma ↔ documentación
-
-**Objetivo:** La documentación en Figma (node 41:106) es el reflejo exacto de las variables.
-
-Verificar que:
-- Cada variable en la colección Semantics tiene su fila en la sección correspondiente del doc page
-- Cada variable en la colección Primitives está representada en su sección
-- No hay filas documentadas para tokens que no existen como variable
-- Los nombres en la doc coinciden con los nombres de las variables (formato CSS)
-- Los swatches de color están bindeados a la variable correspondiente (no hardcodeados)
-- Las descripciones son correctas y consistentes
-- Componentes documentados tienen variantes alineadas con las de Figma
-- Nombres de capas en doc coinciden con los nombres reales del componente
-
-### DIM-G — Figma ↔ JSON ↔ dist
-
-**Objetivo:** La cadena de exportación es exacta y sin pérdidas.
-
-Verificar que:
-- Todos los tokens en JSON existen como variables en Token (Figma)
-- Todos los tokens en Token (Figma) existen en JSON
-- Los alias en JSON apuntan a tokens válidos (sin referencias rotas)
-- dist no contiene valores `undefined`
-- dist contiene output dual por token de color: HEX fallback + oklch override
-- Unidades son correctas (`px` para dimensiones, `rem` donde corresponda)
-- Los 3 archivos dist están generados: `tokens.css`, `layout.css`, `tokens.js`
-- `node sd.config.mjs` compila limpio (0 errores)
-
-### DIM-H — Readiness de release
-
-**Objetivo:** El sistema está cohesionado y listo para ser consumido.
-
-Verificar que:
-- Cada componente activo en DS tiene su `.md` correspondiente en `/Docs`
-- Cada `.md` refleja las variantes actuales de Figma (tokens, estados, ARIA, keyboard)
-- El build de dist está actualizado respecto al JSON actual
-- La librería Token está publicada con todos los cambios pendientes
-- No existen tokens creados localmente en DS sin pasar por Token
-- No existen hallazgos 🔴 BLOCKER sin resolver
-
----
-
-## 7. Audit de componentes — dimensión individual
-
-Cada componente activo debe auditarse individualmente siguiendo esta secuencia:
-
-### 6.1 Consumo de tokens
-
-Verificar por propiedad:
-
-| Propiedad | Qué verificar |
-|---|---|
-| Color (fill / bg) | Variable semántica bindeada. Sin hardcode, sin primitive. |
-| Color (text / fg) | Variable semántica bindeada. |
-| Border / stroke | Variable semántica. Ancho dentro de escala (excepción documentada si aplica). |
-| Radius | Variable semántica de radius. |
-| Spacing / padding | Variable semántica de spacing. |
-| Typography | Text style de la librería Token. Sin binding directo a fontSize/fontFamily/fontWeight. |
-| Effects / elevation | Variable semántica de elevation si aplica. |
-
-### 6.2 Consistencia interna
-
-- Misma lógica de tokens en todos los estados del componente
-- Estados (default / hover / active / disabled / focus) son coherentes entre sí
-- Sin excepciones arbitrarias entre variantes del mismo componente
-
-### 6.3 Estructura de capas
-
-- Nombres de capas coinciden con los definidos en el `.md`
-- Sin duplicación de capas o frames innecesarios
-- Sin dependencia de overrides manuales en instancias
-
-### 6.4 Excepción controlada — Focus
-
-El estado focus puede tener estructura distinta (anillo externo, offset, doble anillo). **No marcar como error** si:
-- Responde a criterios de accesibilidad (WCAG 2.2 AA — contraste mínimo 3:1 del indicador)
-- Usa tokens semánticos de focus (`color/focus/ring-*`, `focus/ring-width`)
-- Es consistente a nivel sistema (mismo patrón en todos los componentes)
+- Valor hardcodeado (HEX, px) fuera de la capa Primitives
+- Token semántico con valor directo (no alias)
+- Primitive usado directamente en un componente DS
+- Variable local en DS que replica un semántico de Tokens
+- Componente DS con ícono no proveniente de Icons library
+- Build dist con errores o valores `undefined`
+- Componente activo sin `.md`
+- `.md` con variante o token que no existe en Figma/dist
+- JSON con variable activa en producción sin correspondencia en Figma
+- Icons con modos obsoletos en snapshot publicado
 
 ---
 
 ## 8. Tipos de hallazgo
 
-### Por severidad
-
-| Nivel | Símbolo | Criterio | Acción |
+| Nivel | Símbolo | Criterio | Impacto en release |
 |---|---|---|---|
-| Blocker | 🔴 BLOCKER | Rompe la cadena, impide release o genera inconsistencia UX↔código | Resolver antes de liberar. Release bloqueado. |
-| Warning | 🟡 WARNING | Inconsistencia parcial, riesgo técnico futuro, doc incompleta | Resolver en el ciclo actual si es posible. |
-| Info | 🔵 INFO | Mejora de calidad, convención, optimización sin impacto funcional | Registrar, resolver sin urgencia. |
-
-### Por tipo
+| Blocker | 🔴 | Rompe cadena, impide implementación correcta, inconsistencia UX↔código | **Detiene release** |
+| Warning | 🟡 | Inconsistencia parcial, deuda técnica acumulable, doc incompleta | Release con condición |
+| Info | 🔵 | Mejora de calidad, convención, optimización | Backlog |
 
 | Tipo | Descripción |
 |---|---|
-| **Estructural** | Rompe la arquitectura de capas (ej: primitive en componente, component token, hardcode) |
-| **Sincronización** | Desalineación entre capas (ej: variable en Figma sin doc, JSON sin equivalente en dist) |
-| **Gobernanza** | Violación de regla de naming, scope o proceso (ej: token con nombre de componente) |
-| **Calidad** | No rompe el sistema pero reduce mantenibilidad (ej: descripción faltante, orden irregular) |
+| **Estructural** | Rompe arquitectura de capas (HEX en componente, component token, variable local en DS) |
+| **Sincronización** | Desalineación entre capas (Figma sin doc, JSON sin dist, .md sin Figma) |
+| **Gobernanza** | Violación de naming, scope o proceso |
+| **Calidad** | No rompe el sistema pero reduce mantenibilidad |
 
 ---
 
-## 9. Checks críticos
+## 9. Proceso de validación
 
-Los siguientes hallazgos son automáticamente 🔴 BLOCKER:
+> **Regla de proceso — no negociable.**
 
-- Valor hardcodeado (HEX, px, nombre) fuera de la capa primitives
-- Primitive usado directamente en un componente
-- Token semántico con valor directo (no alias)
-- Component token creado dentro de DS o Icons
-- Variable en Token sin fila en la documentación de Figma (node 41:106)
-- Token en JSON sin correspondencia en Token (Figma)
-- dist con valores `undefined` o alias rotos
-- Componente activo sin `.md`
-- `.md` con tokens o variantes que no existen en Figma
-- Icons con vectores sueltos no provenientes de la librería oficial
-- DS con variables locales que replican semánticos de Token
-
-Los siguientes son 🟡 WARNING:
-
-- Token documentado en Figma con swatch hardcodeado (no bindeado a variable)
-- `.md` con tokens correctos pero descripción desactualizada
-- Espaciado o radius con valor fuera de escala sin excepción documentada
-- Componente sin ARIA o keyboard en `.md`
-- Build con warnings no fatales en Style Dictionary
-
----
-
-## 10. Método de evaluación
-
-### Score por capa
-
-Cada capa se evalúa con el siguiente criterio:
-
-| Estado | Símbolo | Criterio |
-|---|---|---|
-| Aprobado | ✅ | 0 blockers, ≤ 3 warnings, issues documentados |
-| Con advertencias | ⚠️ | 0 blockers, > 3 warnings o warnings críticos |
-| Rechazado | ❌ | 1 o más blockers sin resolver |
-
-### Validación de cadena completa
-
-Verificar el flujo completo en este orden:
+La auditoría es diagnóstico y reporte. Ningún cambio se aplica sin validación explícita del responsable.
 
 ```
-Token (Figma)
-  └─ ¿Variables primitivas con valores reales? ✓/✗
-  └─ ¿Semánticos = alias de primitives? ✓/✗
-  └─ ¿Documentación en node 41:106 refleja todas las variables? ✓/✗
-
-Icons (Figma)
-  └─ ¿Consume Token? ✓/✗
-  └─ ¿Sin vectores sueltos? ✓/✗
-  └─ ¿Sin lógica propia? ✓/✗
-
-DS — Componentes (Figma)
-  └─ ¿Solo tokens semánticos? ✓/✗
-  └─ ¿Icons desde librería oficial? ✓/✗
-  └─ ¿Sin component tokens? ✓/✗
-
-Figma docs (node 41:106)
-  └─ ¿Cada variable tiene su fila? ✓/✗
-  └─ ¿Swatches bindeados a variables? ✓/✗
-  └─ ¿Sin filas huérfanas? ✓/✗
-
-JSON
-  └─ ¿Todos los tokens de Token presentes? ✓/✗
-  └─ ¿Alias válidos (sin referencias rotas)? ✓/✗
-  └─ ¿0 valores hardcodeados? ✓/✗
-
-dist
-  └─ ¿Build limpio (0 errores)? ✓/✗
-  └─ ¿0 valores undefined? ✓/✗
-  └─ ¿HEX + oklch presentes en todos los colores? ✓/✗
-  └─ ¿3 archivos generados? ✓/✗
-
-.md de componentes
-  └─ ¿Cada componente activo tiene su .md? ✓/✗
-  └─ ¿Tokens en .md coinciden con Figma? ✓/✗
-  └─ ¿Variantes en .md coinciden con Figma? ✓/✗
+[1] Detectar  → registrar el hallazgo con diagnóstico claro
+[2] Clasificar → severidad + tipo
+[3] Proponer  → describir la acción correctiva concreta
+[4] Esperar   → NO ejecutar hasta recibir aprobación explícita
+[5] Aplicar   → solo después de "sí, procede"
+[6] Verificar → confirmar que el cambio resolvió el hallazgo
 ```
 
 ---
 
-## 11. Formato de salida
+## 10. Output de auditoría
+
+### Por hallazgo
+
+```
+[{Layer}-{Check}-{seq}] {Blocker | Warning | Info}
+Capa:      {Token | Icons | DS | Chain}
+Archivo:   {figma file key | json path | dist file | .md path}
+Elemento:  {nombre de variable / CS / nodo / token}
+Hallazgo:  {descripción exacta de qué falla y por qué}
+Acción:    {corrección específica — en qué archivo/nodo, qué cambiar}
+Estado:    Pending | In-progress | Resolved
+```
+
+### Resumen final
 
 ```markdown
-# Auditoría DS — [versión / fecha]
-Ejecutada por: [rol]
-Tipo: Full / Triggered / Spot / Post-fix
-Trigger: [motivo]
+# Auditoría DS — {fecha}
+Tipo: Full / Triggered / Spot
+Trigger: {motivo}
 
----
+## Score global: {X.X}/10
 
-## Resumen ejecutivo
-
-Estado general: ✅ Aprobado / ⚠️ Con advertencias / ❌ Rechazado
-Blockers pendientes: N
-Warnings activos: N
-Decisión de release: APROBADO / BLOQUEADO
-
----
-
-## Estado por capa
-
-| Capa | Estado | Blockers | Warnings | Notas |
+| Layer | Peso | Score | BLOCKERs | WARNs |
 |---|---|---|---|---|
-| Token (Figma) | ✅/⚠️/❌ | N | N | |
-| Icons (Figma) | ✅/⚠️/❌ | N | N | |
-| DS — Componentes | ✅/⚠️/❌ | N | N | |
-| Figma docs | ✅/⚠️/❌ | N | N | |
-| JSON | ✅/⚠️/❌ | N | N | |
-| dist | ✅/⚠️/❌ | N | N | |
-| .md componentes | ✅/⚠️/❌ | N | N | |
+| L1 — Token    | 35% | X/10 | N | N |
+| L2 — Icons    | 15% | X/10 | N | N |
+| L3 — DS       | 30% | X/10 | N | N |
+| L4 — Chain    | 20% | X/10 | N | N |
+| **SISTEMA**   | —   | **X.X/10** | **N** | **N** |
 
----
+## Decisión de release: ✅ APROBADO / ⚠️ CON OBSERVACIONES / ❌ BLOQUEADO
 
 ## Validación de cadena
-
-Token ✓/✗ → Icons ✓/✗ → DS ✓/✗ → Figma docs ✓/✗ → JSON ✓/✗ → dist ✓/✗ → .md ✓/✗
+Tokens ✓/✗ → Icons ✓/✗ → DS ✓/✗ → JSON ✓/✗ → dist ✓/✗ → .md ✓/✗
 
 Quiebres detectados:
-- [capa]: [descripción del quiebre]
+- {capa}: {descripción}
 
----
+## Hallazgos
 
-## Tabla de hallazgos
+### 🔴 Blockers
+| # | Capa | Elemento | Hallazgo | Acción |
+|---|---|---|---|---|
 
-| # | Capa | Componente | Dimensión | Tipo | Problema | Severidad | Acción | Estado |
-|---|---|---|---|---|---|---|---|---|
-| 1 | | | | | | 🔴/🟡/🔵 | | Abierto/Resuelto |
+### 🟡 Warnings
+| # | Capa | Elemento | Hallazgo | Acción |
+|---|---|---|---|---|
 
----
-
-## Riesgos
-
-- [descripción del riesgo y su impacto potencial]
-
----
+### 🔵 Info / Backlog
+| # | Capa | Elemento | Hallazgo | Acción |
+|---|---|---|---|---|
 
 ## Acciones priorizadas
+1. {acción concreta — capa — urgencia}
 
-### 🔴 Blockers (resolver antes de release)
-1. [acción concreta — capa — responsable]
-
-### 🟡 Warnings (resolver en ciclo actual)
-1. [acción concreta — capa]
-
-### 🔵 Info (backlog)
-1. [acción concreta — capa]
-
----
-
-## Decisión final
-
-**Release:** APROBADO / NO APROBADO
-
-**Justificación:**
-[razón clara y directa basada en los hallazgos]
-
-**Condición de desbloqueo (si aplica):**
-[qué debe resolverse para aprobar el release]
+## Condición de desbloqueo (si aplica)
+{qué debe resolverse exactamente para aprobar el release}
 ```
 
 ---
 
-## Apéndice — Reglas de naming
+## 11. Historial de auditorías
 
-| Segmento | Definición | Ejemplos |
+| Fecha | Tipo | Score | BLOCKERs | WARNs | Decisión | Notas |
+|---|---|---|---|---|---|---|
+| 2026-04-23 | Full | 10/10 | 0 | 0 | ✅ APROBADO | Auditoría inicial — 16 hallazgos resueltos en sesión |
+| 2026-04-24 | Triggered | ⚠️ L2: 9/10 | 0 | 1 | ⚠️ CON OBSERVACIONES | D3 Icons resuelto (222 vectores). D5 snapshot pendiente verificación desde consumidor |
+| 2026-04-25 | Spot | 10/10 | 0 | 0 | ✅ APROBADO | Cascade component audit: 3 UNBOUND_RADIUS corregidos (radio/checkbox/badge) |
+| 2026-04-27 | Full | 8.65/10 | 0 | 3 | ⚠️ CON OBSERVACIONES | Full audit v2.0: B1+B2 resueltos (semantics-color.json alias + badge.md token); W4 (4 docs focus-ring-gap-default); W5 (tag añadido a CS list). WARNs activos: W1 (doc page sync), W2 (derivacion-out), W3 (chips focus state) |
+| 2026-04-27 | Fix | 10/10 | 0 | 0 | ✅ APROBADO | W1+W2+W3 resueltos: doc page token name sync (Tokens lib), icon rename derivacion-out (Icons lib), chips CS focus state añadido (2×2 grid, ring-default + ring-gap-default). Pendiente: publicar 3 librerías en Figma UI |
+| 2026-04-30 | Full | 9.88/10 | 0 | 3 | ✅ APROBADO | Pre-release Full audit: W1 toggle thumb radius/pill bindeado, W2 notification doc link añadido, W3 button.md focus-ring-gap tokens corregidos. 0 BLOCKERs. Release a dev aprobado. |
+| 2026-04-30 | Full (2nd) | 10/10 | 0 | 0 | ✅ APROBADO | Auditoría exhaustiva pre-release v0.2.1: B1 button.md outline-offset (color→px+box-shadow), B2 chips.md label/icon filled tokens (→inverse), W4–W9 docs corregidos (tabs, radio-button, chips HTML, audit protocol), W-02/W-03/I-06 design-system-rules, I-03 tokens-map, I-04 component-guide. Fundación congelada. |
+
+---
+
+## Apéndice A — Checks críticos de referencia rápida
+
+Al iniciar cualquier auditoría, estos son los checks de mayor impacto:
+
+```
+Token library
+  □ D3 — ningún semántico alias a otro semántico (max 2 niveles)
+  □ D5 — 100% semánticos con codeSyntax WEB
+  □ S1 — Figma Primitives = JSON primitivos (sin huérfanos)
+  □ S2 — Figma Semantics = JSON semánticos (alias correctos)
+
+Icons library
+  □ D3 — todos los vectores system con context-color local (ID 40002056:1518)
+  □ D4 — cero nodos con explicitVariableModes apuntando a colección externa
+  □ D5 — snapshot publicado sin modos obsoletos
+  □ D6 — 4 aliases de context-color al Tokens actual
+
+DS components
+  □ C1 — 0 fills/strokes hardcoded en ningún CS
+  □ C1 — radius verificado vía topLeftRadius (no solo cornerRadius shorthand)
+  □ C1 — 0 DANGLING_BINDING (getVariableByIdAsync retorna null → variable renombrada/eliminada)
+  □ C1 — usar getVariableByIdAsync (async) — getVariableById (sync) devuelve null en cross-library
+  □ C2 — 0 vectores sueltos; íconos = instancias de Icons library
+  □ C3 — 0 variables locales en DS
+  □ C5 — 100% de ComponentSets con documentation link → página Figma del componente
+
+Chain
+  □ V2 — npm run build → exit code 0
+  □ V2 — grep "undefined" dist/tokens.css → 0 resultados
+  □ V3 — cada .md tiene 8 secciones obligatorias
+```
+
+---
+
+## Apéndice B — Tokens de sistema (referencia)
+
+| Token | ID Figma | Valor |
 |---|---|---|
-| `topic` | Categoría técnica | `color` · `space` · `type` · `radius` · `stroke` · `elevation` · `layout` |
-| `property` | Propiedad afectada | `bg` · `text` · `border` · `icon` · `focus` |
-| `role` | Intención semántica | `primary` · `secondary` · `neutral` · `success` · `warning` · `danger` · `info` |
-| `state` | Estado de interacción | `default` · `hover` · `active` · `disabled` · `focus` · `inverse` |
+| `radius/pill` | `VariableID:46edf422.../301:273` | 999px |
+| `radius/sm` | `VariableID:fe4654de.../301:xxx` | 8px |
+| `radius/xs` | `VariableID:8708eef3.../301:267` | 4px |
+| `icon/system/context-color` | `VariableID:40002056:1518` | (alias a Tokens Semantics) |
 
-**Formato Figma:** `topic/property/role/state`  
-**Formato CSS:** `topic-property-role-state`  
-**Regla:** `state` siempre explícito · sin nombres de componentes · sin idiomas mezclados
+> Los IDs completos se obtienen en cada sesión vía `figma.variables.getVariableByIdAsync()`. Usar los nombres como referencia canónica; los IDs pueden cambiar si la variable es recreada.

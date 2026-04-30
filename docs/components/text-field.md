@@ -1,6 +1,6 @@
 # Text Field
 
-Campo de entrada de texto. `input` para texto corto de una línea; `text-area` para texto multilínea.
+Dos componentes, un mismo sistema: `input` para texto corto en una línea; `text-area` para texto largo en múltiples líneas.
 
 ---
 
@@ -12,9 +12,11 @@ Campo de entrada de texto. `input` para texto corto de una línea; `text-area` p
 | `label` | texto visible (obligatorio) | input · text-area |
 | `placeholder` | ejemplo del formato esperado | input · text-area |
 | `helper-text` | instrucciones o mensaje de error | input · text-area |
-| `left-icon` | opcional · decorativo | input |
-| `right-icon` | opcional · funcional | input |
-| `counter` | conteo de caracteres | solo text-area |
+| `icon-left` | visible · hidden — decorativo | solo input |
+| `icon-right` | visible · hidden — funcional (limpiar, mostrar contraseña) | solo input |
+| `prefix` | texto prefijo fijo (ej: "+56") | solo input |
+| `counter` | visible · hidden — conteo de caracteres | solo text-area |
+| `tooltip` | visible · hidden — ícono de ayuda junto al label | input · text-area |
 
 ---
 
@@ -24,8 +26,8 @@ Campo de entrada de texto. `input` para texto corto de una línea; `text-area` p
 interface InputProps {
   label: string                   // requerido
   placeholder?: string
-  helperText?: string
-  errorMessage?: string           // reemplaza helperText si hay error
+  helperText?: string             // texto informativo — ocultar en estado error
+  feedbackMessage?: string        // mensaje de error — requerido si state='error'
   state?: 'default' | 'focus' | 'writing' | 'filled' | 'error' | 'disabled' | 'read-only'
   leftIcon?: React.ReactNode
   rightIcon?: React.ReactNode
@@ -36,8 +38,8 @@ interface InputProps {
 interface TextAreaProps {
   label: string                   // requerido
   placeholder?: string
-  helperText?: string
-  errorMessage?: string
+  helperText?: string             // texto informativo — ocultar en estado error
+  feedbackMessage?: string        // mensaje de error — requerido si state='error'
   state?: 'default' | 'focus' | 'writing' | 'filled' | 'error' | 'disabled' | 'read-only'
   counter?: boolean               // default: false
   maxLength?: number              // requerido si counter=true
@@ -55,25 +57,26 @@ interface TextAreaProps {
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| `input-container` | default · filled · disabled | background | `--color-bg-surface-primary-default` |
-| `input-container` | read-only | background | `--color-bg-surface-secondary-default` |
+| `input-container` | default · focus · writing · filled · error · disabled | background | `--color-bg-fill-neutral-subtle` |
+| `input-container` | read-only | background | `--color-bg-fill-neutral-medium` |
 | `input-container` | default | border | `--color-border-default` |
-| `input-container` | hover | border | `--color-border-hover` |
+| `input-container` | hover | border | `--color-border-default` |
 | `input-container` | focus · writing | border | `--color-border-focus` |
 | `input-container` | error | border | `--color-border-danger-focus` |
 | `input-container` | disabled | border | `--color-border-disabled` |
-| `label` | default | color | `--color-text-primary-default` |
-| `label` | error | color | `--color-text-status-danger-default` |
-| `label` | disabled | color | `--color-text-disabled-default` |
-| `input-text` (valor) | default | color | `--color-text-primary-default` |
-| `input-text` (placeholder) | — | color | `--color-text-secondary-default` |
-| `input-text` | disabled | color | `--color-text-disabled-default` |
-| `helper-text` | default | color | `--color-text-secondary-default` |
-| `helper-text` | error | color | `--color-text-status-danger-default` |
-| `left-slot` · `right-slot` | default | fill | `--color-icon-system-primary-default` |
-| `right-slot` | error | fill | `--color-icon-semantic-danger-default` |
-| `counter` | default | color | `--color-text-secondary-default` |
-| `counter` | error | color | `--color-text-status-danger-default` |
+| `label` | default | color | `--color-text-primary` |
+| `label` | error | color | `--color-text-status-danger` |
+| `label` | disabled | color | `--color-text-disabled` |
+| `input-text` (valor) | default | color | `--color-text-primary` |
+| `input-text` (placeholder) | — | color | `--color-text-secondary` |
+| `input-text` | disabled | color | `--color-text-disabled` |
+| `helper-text` | default · focus · writing · filled · read-only | color | `--color-text-secondary` |
+| `helper-text` | disabled | color | `--color-text-disabled` |
+| `feedback-message` | error | color | `--color-text-status-danger` |
+| `left-slot` · `right-slot` | default | fill | `--color-icon-system-primary` |
+| `left-slot` · `right-slot` | disabled | fill | `--color-icon-system-disabled` |
+| `counter` | default | color | `--color-text-secondary` |
+| `counter` | error | color | `--color-text-status-danger` |
 
 ### Layout
 
@@ -92,7 +95,7 @@ interface TextAreaProps {
 | `label` | `body/md-medium` | 14px | 500 | 20px |
 | `input-text` (valor) | `body/md-regular` | 14px | 400 | 20px |
 | `input-text` (placeholder) | `body/md-regular` | 14px | 400 | 20px |
-| `helper-text` · `error` | `caption/sm-regular` | 12px | 400 | 16px |
+| `helper-text` · `feedback-message` | `caption/sm-regular` | 12px | 400 | 16px |
 | `counter` | `caption/sm-regular` | 12px | 400 | 16px |
 
 ---
@@ -133,8 +136,8 @@ interface TextAreaProps {
 | Input | `<input type="text">` | `id` · `aria-labelledby` o `aria-label` |
 | Text area | `<textarea>` | `id` · `aria-labelledby` o `aria-label` |
 | Label | `<label>` | `for="[input-id]"` |
-| Helper text | `<span>` | `id` · referenciado en `aria-describedby` del input |
-| Error message | `<span>` | `role="alert"` · referenciado en `aria-describedby` |
+| Helper text | `<span>` | `id` · referenciado en `aria-describedby` del input (coexiste con `aria-labelledby`) |
+| Error message | `<span>` | `role="alert"` · referenciado en `aria-describedby` (coexiste con `aria-labelledby`) |
 | Campo con error | `<input>` | `aria-invalid="true"` · `aria-describedby="[error-id]"` |
 | Disabled | `<input>` | `disabled` |
 | Read-only | `<input>` | `readonly` · `aria-readonly="true"` |
@@ -158,9 +161,10 @@ interface TextAreaProps {
 ## Reglas
 
 - `label` siempre visible — el placeholder no lo reemplaza.
-- `counter` solo en `text-area` — no agregar a inputs de una línea.
 - `read-only` ≠ `disabled`: read-only permite leer y copiar; disabled excluye el campo del formulario.
 - En `state=error` siempre incluir mensaje de texto — no depender solo del color de borde.
+- Iconos con rol definido — decorativo (`aria-hidden`) o funcional (`<button>` con `aria-label`). Nunca ambiguo.
+- Para texto libre únicamente — para elegir entre opciones usar `select` o `radio group`.
 
 ---
 

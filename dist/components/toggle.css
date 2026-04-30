@@ -1,0 +1,71 @@
+/* toggle.css — Aqua DS v0.1.0 */
+
+.toggle-field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+[role="switch"] {
+  position: relative;
+  width: 48px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.toggle__track {
+  width: 48px;
+  height: 24px;
+  border-radius: var(--radius-pill);
+  background: var(--color-icon-system-secondary-default);
+  position: relative;
+  transition: background 150ms ease;
+  display: flex;
+  align-items: center;
+  padding-inline: 4px;
+}
+
+.toggle__thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-pill);
+  background: var(--color-icon-system-inverse-default);
+  position: absolute;
+  left: 4px;
+  transition: left 150ms ease, transform 150ms ease;
+}
+
+/* Checked state */
+[role="switch"][aria-checked="true"] .toggle__track {
+  background: var(--color-icon-semantic-success-default);
+}
+
+[role="switch"][aria-checked="true"] .toggle__thumb {
+  left: calc(100% - 20px);
+}
+
+/* Focus */
+[role="switch"]:focus-visible .toggle__track {
+  outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
+  outline-offset: var(--stroke-focus-ring-width);
+}
+
+/* Disabled */
+[role="switch"][disabled] {
+  cursor: not-allowed;
+}
+
+[role="switch"][disabled] .toggle__track {
+  background: var(--color-icon-system-disabled-default);
+}
+
+[role="switch"][disabled] .toggle__thumb {
+  background: var(--color-icon-system-tertiary-default);
+}

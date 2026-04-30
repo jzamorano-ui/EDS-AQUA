@@ -60,14 +60,17 @@ interface RadioGroupProps {
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| `Vector` | default | fill | `--color-border-default` |
-| `Vector` | selected · focus | fill | `--color-action-primary-default` |
-| `Vector` | disabled default | fill | `--color-border-disabled` |
-| `Vector` | disabled selected | fill | `--color-action-primary-disabled` |
-| `radio-control` | focus | outline (outside) | `--color-focus-ring-default` |
-| `Vector` | focus | outline (inside) | `--color-focus-ring-gap` |
-| `label` | default · selected | color | `--color-text-primary-default` |
-| `label` | disabled | color | `--color-text-disabled-default` |
+| `radio-control` | default | background | `--color-bg-surface-default` |
+| `radio-control` | selected · focus | background | `--color-action-primary-default` |
+| `radio-control` | disabled | background | `--color-bg-fill-neutral-medium` |
+| `radio-control` | default | border | `--color-border-default` |
+| `radio-control` | hover | border | `--color-border-focus` |
+| `radio-control` | selected · focus | border | `--color-action-primary-default` |
+| `radio-control` | disabled | border | `--color-border-disabled` |
+| `radio-dot` | selected · focus | fill | `--color-icon-system-inverse` |
+| `label` | default · selected · focus | color | `--color-text-primary` |
+| `label` | disabled | color | `--color-text-disabled` |
+| focus ring | focus | outline | `--color-focus-ring-default` |
 
 ### Layout
 
@@ -77,7 +80,7 @@ interface RadioGroupProps {
 | Área touch (control-wrapper) | — | 40×44px |
 | Control visual (radio-control) | — | 24×24px |
 | `border-radius` (radio-control) | `--radius-pill` | 12px (50%) |
-| `focus-ring-width` | `--focus-ring-width` | 2px |
+| `focus-ring-width` | `--stroke-focus-ring-width` | 2px |
 
 ### Tipografía
 
@@ -92,14 +95,14 @@ interface RadioGroupProps {
 ```html
 <fieldset>
   <legend>Frecuencia de pago</legend>
-  <label>
+  <div>
     <input type="radio" id="mensual" name="freq" value="mensual">
-    <span>Mensual</span>
-  </label>
-  <label>
+    <label for="mensual">Mensual</label>
+  </div>
+  <div>
     <input type="radio" id="anual" name="freq" value="anual" checked>
-    <span>Anual</span>
-  </label>
+    <label for="anual">Anual</label>
+  </div>
 </fieldset>
 ```
 
@@ -132,10 +135,11 @@ El radio group es un único tab stop. Las flechas navegan y seleccionan dentro d
 
 ## Reglas
 
-- `radio button` siempre dentro de `radio group` — nunca aislado.
-- Solo una opción puede estar en `state=selected` por grupo.
-- `focus + disabled` no existe.
-- No usar para selección múltiple → `checkbox`.
+- Solo una opción puede estar `selected` por grupo — seleccionar una deselecciona las demás.
+- No usar de forma aislada — un radio button sin grupo pierde su semántica de exclusividad.
+- `label` obligatorio en cada opción — no ocultar para simular radio sin texto.
+- El área clickeable incluye el control y el texto — ambos activan la selección.
+- La selección se indica con el dot interior, no solo con color — no depender únicamente del relleno.
 - Máximo ~6 opciones por grupo — más opciones sugieren un `<select>`.
 
 ---

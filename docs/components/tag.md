@@ -8,9 +8,9 @@ Etiqueta informativa de clasificación. Comunica a qué categoría pertenece un 
 
 | Propiedad | Valores |
 |---|---|
-| `left-icon` | opcional · referencial |
-| `right-icon` | opcional · referencial |
-| `label` | texto corto (máximo ~15 caracteres) |
+| `icon left` | true · false (default: true) |
+| `icon right` | true · false (default: true) |
+| `Text` | texto corto (máximo ~15 caracteres) |
 
 Un único componente base sin variantes de color — el tag es neutral.
 
@@ -34,10 +34,10 @@ interface TagProps {
 
 | Elemento | Propiedad CSS | CSS custom property |
 |---|---|---|
-| Tag (frame) | background | `--color-bg-fill-subtle-default` |
+| Tag (frame) | background | `--color-bg-fill-neutral-medium` |
 | Tag (frame) | border | `--color-border-default` |
-| `Label content` | color | `--color-text-secondary-default` |
-| Iconos | fill | `--color-icon-system-secondary-default` |
+| `Label content` | color | `--color-text-secondary` |
+| Iconos | fill | `--color-icon-system-secondary` |
 
 ### Layout
 
@@ -91,8 +91,6 @@ Este componente no es interactivo — no recibe foco.
 
 ## Reglas
 
-- No usar como elemento interactivo — sin hover, focus ni estados activos.
-- No usar para estados del sistema → `badge/state`. No usar para selección → `chip`.
 - Texto máximo 1–2 palabras. Sin puntuación al final.
 - Iconos solo cuando aporten claridad semántica al label.
 

@@ -1,0 +1,91 @@
+/* checkbox.css — Aqua DS v0.1.0 */
+
+.checkbox {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  cursor: pointer;
+  min-height: 44px;
+  padding-block: 10px;
+}
+
+.checkbox__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.checkbox__control {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-xs);
+  border: var(--stroke-xs) solid var(--color-border-default);
+  background: var(--color-bg-surface-primary-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 100ms ease, border-color 100ms ease;
+}
+
+.checkbox__control svg {
+  display: none;
+  fill: var(--color-icon-system-inverse-default);
+  width: 16px;
+  height: 16px;
+}
+
+.checkbox__label {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--color-text-primary-default);
+  padding-top: 2px;
+}
+
+/* Hover */
+.checkbox:hover .checkbox__control {
+  border-color: var(--color-border-focus);
+}
+
+/* Checked */
+.checkbox--checked .checkbox__control,
+input[type="checkbox"]:checked + .checkbox__control {
+  background: var(--color-action-primary-default);
+  border-color: var(--color-action-primary-default);
+}
+
+.checkbox--checked .checkbox__control svg,
+input[type="checkbox"]:checked + .checkbox__control svg {
+  display: block;
+}
+
+/* Indeterminate */
+.checkbox--indeterminate .checkbox__control {
+  background: var(--color-action-primary-default);
+  border-color: var(--color-action-primary-default);
+}
+
+/* Focus */
+.checkbox:focus-within .checkbox__control {
+  outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
+  outline-offset: var(--stroke-focus-ring-width);
+}
+
+/* Disabled */
+.checkbox--disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.checkbox--disabled .checkbox__control {
+  background: var(--color-bg-fill-subtle-default);
+  border-color: var(--color-border-disabled);
+}
+
+.checkbox--disabled .checkbox__label {
+  color: var(--color-text-disabled-default);
+}

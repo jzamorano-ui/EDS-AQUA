@@ -1,0 +1,127 @@
+/* text-field.css — Aqua DS v0.1.0 */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  width: 100%;
+}
+
+.field__label {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--color-text-primary-default);
+}
+
+.field__label--required::after {
+  content: ' *';
+  color: var(--color-text-status-danger-default);
+}
+
+.field__input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-xs);
+  border: var(--stroke-xs) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-surface-primary-default);
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+
+.field__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--color-text-primary-default);
+  outline: none;
+  min-width: 0;
+}
+
+.field__input::placeholder {
+  color: var(--color-text-secondary-default);
+}
+
+.field__icon {
+  fill: var(--color-icon-system-primary-default);
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+/* States */
+
+/* Focus */
+.field__input-wrapper:focus-within {
+  border-color: var(--color-border-focus);
+  box-shadow: 0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-default);
+}
+
+/* Error */
+.field--error .field__input-wrapper {
+  border-color: var(--color-border-status-danger-default);
+}
+
+.field--error .field__input-wrapper:focus-within {
+  box-shadow: 0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-default);
+}
+
+/* Read-only */
+.field--readonly .field__input-wrapper {
+  background: var(--color-bg-surface-secondary-default);
+  border-color: var(--color-border-default);
+}
+
+.field--readonly .field__input {
+  color: var(--color-text-secondary-default);
+  cursor: default;
+}
+
+/* Disabled */
+.field--disabled .field__input-wrapper {
+  background: var(--color-bg-fill-subtle-default);
+  border-color: var(--color-border-disabled);
+  pointer-events: none;
+}
+
+.field--disabled .field__label,
+.field--disabled .field__input {
+  color: var(--color-text-disabled-default);
+}
+
+.field--disabled .field__icon {
+  fill: var(--color-icon-system-disabled-default);
+}
+
+/* Helper text & counter */
+.field__footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+
+.field__helper {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--color-text-secondary-default);
+}
+
+.field--error .field__helper {
+  color: var(--color-text-status-danger-default);
+}
+
+.field__counter {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+  color: var(--color-text-secondary-default);
+  white-space: nowrap;
+  flex-shrink: 0;
+}

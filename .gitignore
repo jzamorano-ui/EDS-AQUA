@@ -1,9 +1,9 @@
 node_modules/
-dist/
 System figma/
 .DS_Store
+*.pdf
 
-# Pipeline — no va al repo público
+# Pipeline — vive en repositorio separado
 tokens/
 package.json
 package-lock.json
