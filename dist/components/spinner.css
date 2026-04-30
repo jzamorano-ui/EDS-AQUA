@@ -19,4 +19,4 @@
 
 .spinner--sm { width: 1.25rem; height: 1.25rem; border-width: 0.125rem; }
 .spinner--md { width: 1.5rem; height: 1.5rem; border-width: 0.125rem; }
-.spinner--lg { width: 2rem; height: 2rem; border-width: 3px; }
+.spinner--lg { width: 2rem; height: 2rem; border-width: 0.1875rem; }

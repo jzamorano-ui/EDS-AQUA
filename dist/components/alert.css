@@ -30,8 +30,8 @@
 
 .alert__title {
   font-size: var(--type-body-md-bold-size);
-  font-weight: 700;
-  line-height: 1.25rem;
+  font-weight: var(--type-body-md-bold-weight);
+  line-height: var(--type-body-md-bold-line-height);
 }
 
 .alert__description {
