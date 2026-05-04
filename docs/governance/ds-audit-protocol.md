@@ -78,9 +78,21 @@ await figma.loadAllPagesAsync();
 
 // 5. Confirmar ComponentSets en DS library
 // Navegar a DS → contar CS en todas las páginas
-// Esperado: ≥ 16 CS (ver lista en §3-L3)
+// Esperado: 21 CS/COMPONENT total: 17 en páginas ❖ + icon/semantic + icon/brand + layout/grids + _slot (ver lista en §3-L3)
 
-// 6. PUBLISH GATE — verificar estado de publicación en las 3 librerías
+// 6. SCOPE COMPLETO — verificar que no hay CS/COMPONENT en páginas no listadas en §3-L3
+// Para cada página de DS que NO sea ❖ ni → Icon ni → Layout:
+// page.children.filter(n => n.type === 'COMPONENT_SET' || n.type === 'COMPONENT')
+// Esperado: [] en páginas de Foundations, Gobernanza, Cover, separadores y secciones.
+// Verificado 2026-04-30: 8 foundation pages + 10 otras = 0 CS/COMPONENT fuera de scope.
+
+// 7. WCAG PRIMITIVES MATCH — verificar que los HEX documentados en doc page 41:106 coinciden con Primitives
+// En Tokens library: extraer hex de todas las variables de Primitives collection
+// En doc page 41:106 sección "Primitives / Color System": extraer text nodes con patrón /^#[0-9A-Fa-f]{6}$/
+// Comparar sets: inActualNotInDoc y inDocNotInActual deben ser [].
+// Verificado 2026-04-30: 102/102 hex values coinciden exactamente. PASS.
+
+// 8. PUBLISH GATE — verificar estado de publicación en las 3 librerías
 // Navegar a cada librería → Main menu → Libraries → revisar "Unpublished changes"
 // Si hay cambios pendientes en Tokens o Icons → registrar como hallazgo Info antes de continuar.
 // Razón: la auditoría corre sobre el estado LOCAL; los consumidores ven el SNAPSHOT publicado.
@@ -125,12 +137,12 @@ Si alguna conexión falla → detener auditoría y reportar el problema de conex
 
 | Dominio | Peso | Qué verifica |
 |---|---|---|
-| D1 — Arquitectura Icon/Context | Medio | Colección única, 4 modos exactos |
+| D1 — Arquitectura Icon/Context | Medio | Colección única, 5 modos exactos |
 | **D2 — Naming** | **Crítico** | `source/{categoría}/{nombre-kebab}` |
 | **D3 — Bindings fill** | **Crítico** | System → `context-color` local; brand → Tokens Semantics |
 | **D4 — Modos explícitos** | **Crítico** | `_source/system` con modo `default`; sin modos externos |
 | **D5 — Snapshot publicado** | **Crítico** | Snapshot = estado local; modos correctos en consumidores |
-| **D6 — Referencias Tokens** | **Crítico** | 4 aliases de `context-color` apuntan a Tokens actual |
+| **D6 — Referencias Tokens** | **Crítico** | 5 aliases de `context-color` apuntan a Tokens actual |
 | D7 — Cobertura de variantes | Bajo | Sin duplicados; tamaños tokenizados |
 | D8 — Escalabilidad | Bajo | Agregar ícono/modo no requiere refactoring |
 
@@ -170,6 +182,14 @@ Verificar que cada propiedad visual en cada ComponentSet está bindeada a una va
 | text fields | `40002482:2745` | 14 | |
 | icon/system (en DS) | `40002045:2142` | 8 | |
 | tag | `40002386:4144` | 1 | **COMPONENT** (no COMPONENT_SET) — una sola variante |
+| icon/semantic | `40002045:2159` | 8 | Página `→ Icon` |
+| icon/brand | `40002045:2176` | 8 | Página `→ Icon` |
+| layout/grids | `40002037:59` | 6 | Página `→ Layout` |
+| _slot | `40002038:102` | 1 | **COMPONENT** — utility placeholder interno; ver nota de exclusión abajo |
+
+**Exclusión documentada — `_slot`:**
+
+`_slot` es un utility placeholder interno (fill púrpura `#9747FF` + text "Instance Slot"). Tiene prefix `_` por convención interna. Sus fills y text nodes NO necesitan binding semántico — no son visibles al usuario final. Los hallazgos de `UNBOUND_FILL` / `NO_TEXT_STYLE` en `_slot` y en instancias de `_slot` dentro de `layout/grids` son **falsos positivos** esperados — ignorar.
 
 **Script de referencia:**
 
@@ -203,8 +223,8 @@ async function auditNode(node, issues, seen) {
       }
     }
   }
-  // Strokes — ídem
-  if (node.strokes?.some(s => s.type === 'SOLID' && s.visible !== false)) {
+  // Strokes — ídem. COMPONENT_SET root lleva stroke visual de Figma (borde púrpura de contenedor) — excluir.
+  if (node.type !== 'COMPONENT_SET' && node.strokes?.some(s => s.type === 'SOLID' && s.visible !== false)) {
     if (!node.boundVariables?.strokes?.length) {
       const k = `stroke::${node.name}::${node.type}`;
       if (!seen.has(k)) { seen.add(k); issues.push({ type: 'UNBOUND_STROKE', node: node.name }); }
@@ -218,10 +238,15 @@ async function auditNode(node, issues, seen) {
       }
     }
   }
-  // Text style — todo TEXT debe referenciar un estilo de librería
-  if (node.type === 'TEXT' && !node.textStyleId) {
-    const k = `text::${node.name}`;
-    if (!seen.has(k)) { seen.add(k); issues.push({ type: 'NO_TEXT_STYLE', node: node.name }); }
+  // Text style — todo TEXT debe referenciar un estilo REMOTO de la librería Tokens
+  // Los IDs remotos tienen formato "S:xxxxxxxx,..." — un textStyleId local o vacío es FAIL
+  if (node.type === 'TEXT') {
+    const sid = node.textStyleId;
+    const hasRemoteStyle = sid && sid !== figma.mixed && sid !== '' && typeof sid === 'string' && sid.startsWith('S:');
+    if (!hasRemoteStyle) {
+      const k = `text::${node.name}`;
+      if (!seen.has(k)) { seen.add(k); issues.push({ type: 'NO_REMOTE_TEXT_STYLE', node: node.name, styleId: sid || 'none' }); }
+    }
   }
   // Radius — verificar shorthand Y corners individuales
   const r = typeof node.cornerRadius === 'number' ? node.cornerRadius :
@@ -639,6 +664,8 @@ Quiebres detectados:
 | 2026-04-27 | Fix | 10/10 | 0 | 0 | ✅ APROBADO | W1+W2+W3 resueltos: doc page token name sync (Tokens lib), icon rename derivacion-out (Icons lib), chips CS focus state añadido (2×2 grid, ring-default + ring-gap-default). Pendiente: publicar 3 librerías en Figma UI |
 | 2026-04-30 | Full | 9.88/10 | 0 | 3 | ✅ APROBADO | Pre-release Full audit: W1 toggle thumb radius/pill bindeado, W2 notification doc link añadido, W3 button.md focus-ring-gap tokens corregidos. 0 BLOCKERs. Release a dev aprobado. |
 | 2026-04-30 | Full (2nd) | 10/10 | 0 | 0 | ✅ APROBADO | Auditoría exhaustiva pre-release v0.2.1: B1 button.md outline-offset (color→px+box-shadow), B2 chips.md label/icon filled tokens (→inverse), W4–W9 docs corregidos (tabs, radio-button, chips HTML, audit protocol), W-02/W-03/I-06 design-system-rules, I-03 tokens-map, I-04 component-guide. Fundación congelada. |
+| 2026-04-30 | Full Cascade | 10/10 | 0 | 0 | ✅ APROBADO | Cascade audit L1→L2→L3→L4→L5 + fixes: W-01 doc Focus names corregidos en Figma, W-02 modo neutral formalizado en protocolos, W-03 script C1 excluye COMPONENT_SET root. D5 Icons snapshot verificado manualmente. 0 issues abiertos. |
+| 2026-04-30 | Gap Verification | 10/10 | 0 | 0 | ✅ APROBADO | 3 gaps explícitos verificados: (1) text styles DS — 329/329 TEXT en COMPONENT_SET/COMPONENT usan estilo remoto de Tokens library (100%); (2) primitives WCAG — 102/102 hex coinciden con doc page 41:106; (3) scope DS — 21 CS/COMPONENT totales, 0 fuera de scope. C1+C5 en 4 nodos previamente no auditados (icon/semantic, icon/brand, layout/grids, _slot): PASS. |
 
 ---
 
@@ -657,16 +684,21 @@ Icons library
   □ D3 — todos los vectores system con context-color local (ID 40002056:1518)
   □ D4 — cero nodos con explicitVariableModes apuntando a colección externa
   □ D5 — snapshot publicado sin modos obsoletos
-  □ D6 — 4 aliases de context-color al Tokens actual
+  □ D6 — 5 aliases de context-color al Tokens actual (default/inverse/brand/disabled/neutral)
 
 DS components
-  □ C1 — 0 fills/strokes hardcoded en ningún CS
+  □ C1 — 0 fills/strokes hardcoded en ningún CS (excluir stroke visual de COMPONENT_SET root)
   □ C1 — radius verificado vía topLeftRadius (no solo cornerRadius shorthand)
   □ C1 — 0 DANGLING_BINDING (getVariableByIdAsync retorna null → variable renombrada/eliminada)
   □ C1 — usar getVariableByIdAsync (async) — getVariableById (sync) devuelve null en cross-library
+  □ C1 — 100% TEXT en COMPONENT_SET/COMPONENT usan textStyle REMOTO (S: prefix) de Tokens library
+  □ C1 — scope = 21 nodos (17 páginas ❖ + icon/semantic + icon/brand + layout/grids + _slot)
+  □ C1 — _slot y sus instancias: UNBOUND_FILL/NO_TEXT_STYLE esperados → ignorar (utility placeholder)
   □ C2 — 0 vectores sueltos; íconos = instancias de Icons library
   □ C3 — 0 variables locales en DS
   □ C5 — 100% de ComponentSets con documentation link → página Figma del componente
+  □ Pre-flight 6 — scope check: 0 CS/COMPONENT en páginas fuera de lista §3-L3
+  □ Pre-flight 7 — WCAG primitives: hex doc page 41:106 = hex Primitives collection (0 diff)
 
 Chain
   □ V2 — npm run build → exit code 0

@@ -8,8 +8,8 @@ Filtro o selección interactiva compacta dentro de la misma vista. Para navegar 
 
 | Propiedad | Valores |
 |---|---|
-| `state` | default · hover · focus |
-| `variant` | filled (activo) · outlined (disponible) |
+| `type` | filled · outline |
+| `state` | default · hover · active · focus |
 | `leading-icon` | opcional · referencial |
 | `trailing-action` | opcional · solo en chips removibles |
 

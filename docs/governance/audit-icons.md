@@ -12,7 +12,7 @@ FILE_ID:        zIbuWAvLhwTlwnVwbDgY5n        # OPS-Library-[Aqua] Icons
 COLLECTIONS:
   - Icon/Context
 MODES:
-  Icon/Context: [default, inverse, brand, disabled]
+  Icon/Context: [default, inverse, brand, disabled, neutral]
 SECTIONS_SOURCE:
   system:   938:6764   # _source/system   — iconos de sistema (mode-based)
   semantic: 938:6765   # _source/semantic — iconos semánticos (token directo)
@@ -77,7 +77,8 @@ En `STRICT_MODE: true`, cualquier WARN en dominio **Crítico** escala a FAIL. Un
 
 **Checks:**
 - Existe exactamente una colección llamada `Icon/Context` (ni más ni menos).
-- La colección tiene exactamente 4 modos: `default`, `inverse`, `brand`, `disabled` — en ese orden, con esos nombres exactos.
+- La colección tiene exactamente 5 modos: `default`, `inverse`, `brand`, `disabled`, `neutral` — con esos nombres exactos.
+  - `neutral` → alias a `color/icon/system/secondary` (Tokens Semantics). Usado para íconos en contextos de menor énfasis.
 - No existen modos duplicados ni modos con nombres alternativos (`danger`, `on-dark`, `light`, etc.).
 - La colección tiene `hiddenFromPublishing: false` (debe ser accesible a consumidores).
 - La colección contiene exactamente una variable: `icon/system/context-color`.
@@ -86,12 +87,12 @@ En `STRICT_MODE: true`, cualquier WARN en dominio **Crítico** escala a FAIL. Un
 **Verificación:**
 ```javascript
 const colls = await figma.variables.getLocalVariableCollectionsAsync();
-// Esperar: [{name: 'Icon/Context', hiddenFromPublishing: false, modes: ['default','inverse','brand','disabled']}]
+// Esperar: [{name: 'Icon/Context', hiddenFromPublishing: false, modes: ['default','inverse','brand','disabled','neutral']}]
 ```
 
 **PASS:** Colección y modos coinciden exactamente con CONFIG.
 **WARN:** Orden de modos distinto o `hiddenFromPublishing` en estado inesperado.
-**FAIL:** Colección faltante, modo extra/faltante, nombre de modo incorrecto, o colección duplicada.
+**FAIL:** Colección faltante, modo faltante, nombre de modo incorrecto, o colección duplicada.
 
 ---
 

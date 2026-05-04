@@ -290,10 +290,50 @@ Los estilos de tipo no se exponen como CSS custom properties individuales — se
 
 Disponibles en `dist/layout.css`. No usar como CSS vars en `@media` — usar rem directamente.
 
-| Token | Valor |
+| Token CSS | Valor |
 |---|---|
-| `xs` | 0px — mobile-first base |
-| `sm` | 576px / 36rem |
-| `md` | 768px / 48rem |
-| `lg` | 1024px / 64rem |
-| `xl` | 1440px / 90rem |
+| `--breakpoint-xs` | 0px — mobile-first base |
+| `--breakpoint-sm` | 576px / 36rem |
+| `--breakpoint-md` | 768px / 48rem |
+| `--breakpoint-lg` | 1024px / 64rem |
+| `--breakpoint-xl` | 1440px / 90rem |
+
+---
+
+## Layout — Grid
+
+Tres sistemas de grid responsivos. Cada uno tiene variantes por breakpoint: `-mobile` · `-tablet` · `-desktop` · `-desktop-lg`.
+
+### Grid Base — layouts de producto estándar
+
+| CSS custom property | mobile | tablet | desktop | desktop-lg |
+|---|---|---|---|---|
+| `--grid-base-columns-{bp}` | 4 | 8 | 12 | 12 |
+| `--grid-base-gutter-{bp}` | 16px | 24px | 24px | 24px |
+| `--grid-base-margin-{bp}` | 16px | 24px | 32px | 32px |
+
+### Grid Product — interfaces de aplicación
+
+| CSS custom property | mobile | tablet | desktop | desktop-lg |
+|---|---|---|---|---|
+| `--grid-product-columns-{bp}` | 4 | 8 | 12 | 12 |
+| `--grid-product-gutter-{bp}` | 16px | 24px | 24px | 24px |
+| `--grid-product-margin-{bp}` | 16px | 24px | 32px | 32px |
+
+### Grid Marketing — páginas de landing y comunicación
+
+| CSS custom property | mobile | tablet | desktop | desktop-lg |
+|---|---|---|---|---|
+| `--grid-marketing-columns-{bp}` | 4 | 8 | 12 | 12 |
+| `--grid-marketing-gutter-{bp}` | 16px | 24px | 24px | 24px |
+| `--grid-marketing-margin-{bp}` | 16px | 24px | 80px | 320px |
+
+---
+
+## Layout — Container y Viewport
+
+| CSS custom property | mobile | tablet | desktop | desktop-lg |
+|---|---|---|---|---|
+| `--container-max-width-{bp}` | 0 (full) | 0 (full) | 1280px | 1280px |
+| `--viewport-width-{bp}` | 375px | 768px | 1440px | 1920px |
+| `--viewport-height-{bp}` | 812px | 1024px | 1024px | 1080px |

@@ -8,12 +8,13 @@ Ejecuta acciones. Para navegar usar `link`; para opciones on/off usar `toggle`.
 
 | Propiedad | Valores |
 |---|---|
-| `variant` | Primary · Secondary · Tertiary · Brand |
+| `type` | System · Brand |
+| `variant` | Primary · Secondary · Tertiary |
 | `surface` | Default · Inverse |
 | `size` | Large · Medium · Small · _(Brand: solo Large)_ |
 | `state` | Default · Hover · Active · Focus · Disabled · Loading |
 
-**Combos válidos:** Primary/Default · Primary/Inverse · Secondary/Default · Secondary/Inverse · Tertiary/Default · Tertiary/Inverse · Brand (solo surface=Default) · Disabled (todos) · Loading (Primary/Secondary/Tertiary — solo `button`) · Focus (todos).
+**Combos válidos:** System/Primary/Default · System/Primary/Inverse · System/Secondary/Default · System/Secondary/Inverse · System/Tertiary/Default · System/Tertiary/Inverse · Brand/Primary/Default (solo surface=Default) · Disabled (todos) · Loading (System — solo `button`) · Focus (todos).
 
 > **button/icon** soporta todos los combos anteriores excepto `Loading` — incluyendo `Brand`. `Brand` es exclusivamente talla `Large` en ambos componentes.
 
@@ -23,7 +24,8 @@ Ejecuta acciones. Para navegar usar `link`; para opciones on/off usar `toggle`.
 
 ```typescript
 interface ButtonProps {
-  variant?: 'Primary' | 'Secondary' | 'Tertiary' | 'Brand'  // default: 'Primary'
+  type?: 'System' | 'Brand'                                  // default: 'System'
+  variant?: 'Primary' | 'Secondary' | 'Tertiary'             // default: 'Primary'
   surface?: 'Default' | 'Inverse'                            // default: 'Default'
   size?: 'Large' | 'Medium' | 'Small'                       // default: 'Medium' — Brand: solo 'Large'
   label?: string                                             // requerido en button; omitir en button/icon
