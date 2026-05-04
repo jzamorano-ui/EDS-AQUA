@@ -8,6 +8,7 @@ Dos componentes, un mismo sistema: `input` para texto corto en una línea; `text
 
 | Propiedad | Valores | Aplica a |
 |---|---|---|
+| `type` | input · text-area | — |
 | `state` | default · focus · writing · filled · error · disabled · read-only | input · text-area |
 | `label` | texto visible (obligatorio) | input · text-area |
 | `placeholder` | ejemplo del formato esperado | input · text-area |

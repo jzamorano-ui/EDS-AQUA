@@ -63,8 +63,8 @@
 }
 
 /* Icon sizes */
-.btn--lg svg { width: 1.25rem; height: 1.25rem; }
-.btn--md svg { width: 1rem; height: 1rem; }
+.btn--lg svg { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+.btn--md svg { width: var(--icon-size-xs); height: var(--icon-size-xs); }
 .btn--sm svg { width: 0.875rem; height: 0.875rem; }
 
 /* Variant — Primary / Default surface */

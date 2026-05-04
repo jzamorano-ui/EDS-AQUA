@@ -30,10 +30,10 @@
 }
 
 /* Positioning by type — arrow location defines tooltip placement */
-.tooltip--down  { bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%); }
-.tooltip--up    { top: calc(100% + 8px);    left: 50%; transform: translateX(-50%); }
-.tooltip--left  { top: 50%; right: calc(100% + 8px); transform: translateY(-50%); }
-.tooltip--right { top: 50%; left: calc(100% + 8px);  transform: translateY(-50%); }
+.tooltip--down  { bottom: calc(100% + var(--space-xs)); left: 50%; transform: translateX(-50%); }
+.tooltip--up    { top: calc(100% + var(--space-xs));    left: 50%; transform: translateX(-50%); }
+.tooltip--left  { top: 50%; right: calc(100% + var(--space-xs)); transform: translateY(-50%); }
+.tooltip--right { top: 50%; left: calc(100% + var(--space-xs));  transform: translateY(-50%); }
 
 .tooltip--down  .tooltip__arrow { top: 100%; left: 50%; transform: translateX(-50%) rotate(180deg); }
 .tooltip--up    .tooltip__arrow { bottom: 100%; left: 50%; transform: translateX(-50%); }

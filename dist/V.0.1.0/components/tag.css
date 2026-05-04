@@ -20,6 +20,6 @@
 .tag [aria-hidden="true"] {
   flex-shrink: 0;
   fill: var(--color-icon-system-secondary);
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
 }

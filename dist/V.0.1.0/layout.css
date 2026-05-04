@@ -49,10 +49,10 @@
   --grid-base-margin-tablet: 24px; /* 1.5rem */
   --grid-base-margin-desktop: 32px; /* 2rem */
   --grid-base-margin-desktop-lg: 32px; /* 2rem */
-  --container-max-width-mobile: 0;
-  --container-max-width-tablet: 0;
-  --container-max-width-desktop: 1280;
-  --container-max-width-desktop-lg: 1280;
+  --container-max-width-mobile: 0px;
+  --container-max-width-tablet: 0px;
+  --container-max-width-desktop: 1280px;
+  --container-max-width-desktop-lg: 1280px;
   --viewport-width-mobile: 375;
   --viewport-width-tablet: 768;
   --viewport-width-desktop: 1440;

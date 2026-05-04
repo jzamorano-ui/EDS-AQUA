@@ -17,6 +17,6 @@
   .spinner { animation: none; }
 }
 
-.spinner--sm { width: 1.25rem; height: 1.25rem; border-width: 0.125rem; }
-.spinner--md { width: 1.5rem; height: 1.5rem; border-width: 0.125rem; }
-.spinner--lg { width: 2rem; height: 2rem; border-width: 0.1875rem; }
+.spinner--sm { width: var(--icon-size-sm); height: var(--icon-size-sm); border-width: var(--stroke-sm); }
+.spinner--md { width: var(--icon-size-md); height: var(--icon-size-md); border-width: var(--stroke-sm); }
+.spinner--lg { width: var(--icon-size-lg); height: var(--icon-size-lg); border-width: 0.1875rem; }

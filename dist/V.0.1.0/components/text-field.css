@@ -49,8 +49,8 @@
 
 .field__icon {
   fill: var(--color-icon-system-primary);
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
   flex-shrink: 0;
 }
 
