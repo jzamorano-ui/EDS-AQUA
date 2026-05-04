@@ -38,7 +38,7 @@ dist            ←  output de Style Dictionary; reflejo exacto de JSON
 
 | Tipo | Cuándo usar | Layers obligatorios |
 |---|---|---|
-| **Full** | Antes de release o publicación de librería | L1 → L2 → L3 → L4 → L5 |
+| **Full** | Antes de release o publicación de librería | L1 → L2 → L3 → L4 → L5 → L6 |
 | **Triggered** | Al crear/modificar token, componente o docs | Ver tabla de triggers §1.1 |
 | **Spot** | Corrección de hallazgo puntual | Layer afectado + L4 parcial + L5 |
 | **Post-fix** | Después de resolver un BLOCKER | Layer afectado + L4-V1/V2/V3 |
@@ -53,6 +53,8 @@ dist            ←  output de Style Dictionary; reflejo exacto de JSON
 | Publicación librería Tokens | L1 + L4-V1 + L4-V2 |
 | Publicación librería Icons | L2 + L3-C2 |
 | Actualización .md | L4-V3 |
+| Nuevo pattern | L6 |
+| Actualización pattern (frame o .md) | L6 |
 | Release a desarrollo | **Full** |
 
 ---
@@ -518,6 +520,25 @@ Cada `.md` debe tener exactamente estas 8 secciones: `Propiedades`, `Props`, `To
 
 ---
 
+## 6.5 Layer 6 — Patterns
+
+**Archivo:** `9FoTERLTyDXz3gmPLjjJ09` — página `Patterns 🚧`  
+**Protocolo especializado:** [`audit-patterns.md`](audit-patterns.md) — ejecutar completo.
+
+### Resumen de dominios
+
+| Dominio | Peso | Qué verifica |
+|---|---|---|
+| **P1 — Estructura frame** | Crítico | Header, body, secciones, mob-row y tabla presentes |
+| **P2 — Contenido** | Crítico | Lede claro, reglas accionables, sin tecnicismos |
+| P3 — Componentes | Medio | Instancias reales del DS en cards y phones |
+| **P4 — .md sync** | Crítico | `.md` existe y refleja el frame Patrón sin discrepancias |
+
+**Score L6:** X/4 dominios en PASS  
+**Gate:** P1, P2, P4 deben ser PASS para release.
+
+---
+
 ## 7. Layer 5 — Release gate
 
 ### Scoring unificado
@@ -525,13 +546,14 @@ Cada `.md` debe tener exactamente estas 8 secciones: `Propiedades`, `Props`, `To
 ```
 Score sistema = suma ponderada:
 
-  L1 Token      → peso 0.35  (fuente de verdad)
+  L1 Token      → peso 0.30  (fuente de verdad)
   L2 Icons      → peso 0.15
-  L3 DS         → peso 0.30
+  L3 DS         → peso 0.28
   L4 Chain      → peso 0.20
+  L6 Patterns   → peso 0.07
 
 Score por layer = (dominios/checks en PASS) / (total dominios/checks) × 10
-Score sistema   = L1×0.35 + L2×0.15 + L3×0.30 + L4×0.20
+Score sistema   = L1×0.30 + L2×0.15 + L3×0.28 + L4×0.20 + L6×0.07
 ```
 
 ### Release decision
@@ -552,6 +574,8 @@ Score sistema   = L1×0.35 + L2×0.15 + L3×0.30 + L4×0.20
 - Build dist con errores o valores `undefined`
 - Componente activo sin `.md`
 - `.md` con variante o token que no existe en Figma/dist
+- Pattern con frame Patrón en Figma sin `.md` en `docs/patterns/`
+- `.md` de pattern con reglas que no coinciden con el frame Figma
 - JSON con variable activa en producción sin correspondencia en Figma
 - Icons con modos obsoletos en snapshot publicado
 
@@ -620,6 +644,7 @@ Trigger: {motivo}
 | L2 — Icons    | 15% | X/10 | N | N |
 | L3 — DS       | 30% | X/10 | N | N |
 | L4 — Chain    | 20% | X/10 | N | N |
+| L6 — Patterns | 7%  | X/10 | N | N |
 | **SISTEMA**   | —   | **X.X/10** | **N** | **N** |
 
 ## Decisión de release: ✅ APROBADO / ⚠️ CON OBSERVACIONES / ❌ BLOQUEADO
