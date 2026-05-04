@@ -4,7 +4,7 @@ Las versiones marcadas **⚠ BREAKING** requieren ajustes en el código consumid
 
 ---
 
-## [0.1.0] — 2026-04-30
+## [0.1.0] — 2026-05-04
 
 Primera entrega al equipo de desarrollo.
 
