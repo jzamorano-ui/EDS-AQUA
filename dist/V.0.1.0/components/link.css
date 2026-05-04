@@ -18,7 +18,7 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 0.0625rem;
+  height: var(--stroke-xs);
   background: currentColor;
 }
 

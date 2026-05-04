@@ -27,5 +27,5 @@ Primera entrega al equipo de desarrollo.
 | `tabs.css` | `.tabs` |
 | `tag.css` | `.tag` |
 | `text-field.css` | `.field` |
-| `toggle.css` | `.toggle` |
+| `toggle.css` | `.toggle-field` |
 | `tooltip.css` | `.tooltip` |

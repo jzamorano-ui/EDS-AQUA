@@ -9,7 +9,7 @@
 [role="tablist"] {
   display: flex;
   align-items: stretch;
-  border-bottom: 0.0625rem solid var(--color-border-default);
+  border-bottom: var(--stroke-xs) solid var(--color-border-default);
   position: relative;
 }
 
@@ -45,7 +45,7 @@
   bottom: -1px;
   left: 0;
   right: 0;
-  height: 0.125rem;
+  height: var(--stroke-sm);
   background: transparent;
   transition: background 100ms ease;
 }
