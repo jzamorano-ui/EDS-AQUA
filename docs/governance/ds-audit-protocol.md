@@ -429,8 +429,8 @@ Validar que la cadena completa no tiene quiebres entre capas.
 # 2. Comparar contra tokens/primitives/*.json y tokens/semantics/*.json
 
 # Check rápido: ¿el build usa todas las variables que existen en Figma?
-cat dist/tokens.css | grep "undefined"   # → debe retornar vacío
-cat dist/tokens.js  | grep "undefined"   # → debe retornar vacío
+cat dist/V.0.1.0/tokens.css | grep "undefined"   # → debe retornar vacío
+cat dist/V.0.1.0/tokens.js  | grep "undefined"   # → debe retornar vacío
 ```
 
 **Checks:**
@@ -450,19 +450,19 @@ cat dist/tokens.js  | grep "undefined"   # → debe retornar vacío
 npm run build   # → debe completar con 0 errores
 
 # Verificar los 3 archivos generados
-ls dist/tokens.css dist/layout.css dist/tokens.js
+ls dist/V.0.1.0/tokens.css dist/V.0.1.0/layout.css dist/V.0.1.0/tokens.js
 
 # Verificar ausencia de valores inválidos
-grep -c "undefined\|null\|NaN" dist/tokens.css    # → 0
-grep -c "undefined\|null\|NaN" dist/tokens.js     # → 0
+grep -c "undefined\|null\|NaN" dist/V.0.1.0/tokens.css    # → 0
+grep -c "undefined\|null\|NaN" dist/V.0.1.0/tokens.js     # → 0
 
 # Verificar formato dual en colores (HEX + oklch)
-grep -c "oklch" dist/tokens.css   # → > 0 (debe tener overrides oklch)
+grep -c "oklch" dist/V.0.1.0/tokens.css   # → > 0 (debe tener overrides oklch)
 ```
 
 **Checks:**
 - `npm run build` termina con exit code 0
-- Los 3 archivos `tokens.css`, `layout.css`, `tokens.js` existen y no están vacíos
+- Los 3 archivos `dist/V.x.x.x/tokens.css`, `dist/V.x.x.x/layout.css`, `dist/V.x.x.x/tokens.js` existen y no están vacíos
 - Sin valores `undefined`, `null` o `NaN` en ningún archivo dist
 - Los custom properties CSS siguen el formato `--{category}-{subcategory}-{role}-{state}`
 - Cada token de color tiene HEX fallback + override oklch
@@ -491,7 +491,7 @@ cs.children?.forEach(v => {
 ```
 
 **Check de tokens:**
-- Cada token CSS mencionado en el `.md` (`--color-*`, `--space-*`, `--radius-*`) debe existir en `dist/tokens.css`
+- Cada token CSS mencionado en el `.md` (`--color-*`, `--space-*`, `--radius-*`) debe existir en `dist/V.x.x.x/tokens.css`
 - Sin tokens en `.md` que no estén en dist
 
 **Check de secciones:**
@@ -805,7 +805,7 @@ DS components
 
 Chain
   □ V2 — npm run build → exit code 0
-  □ V2 — grep "undefined" dist/tokens.css → 0 resultados
+  □ V2 — grep "undefined" dist/V.0.1.0/tokens.css → 0 resultados
   □ V3 — cada .md tiene 8 secciones obligatorias
   □ V4 — grep "border-color" en todos los CSS de componentes → cada valor no-transparent tiene stroke en Figma
   □ V4 — grep "background:" en todos los CSS de componentes → cada valor no-transparent tiene fill en Figma
