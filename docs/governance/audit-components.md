@@ -134,23 +134,23 @@ Un componente llega al **10** cuando todas las dimensiones están cubiertas sin 
 
 ## Estado por componente
 
-_Última revisión: 2026-04-30 — Doc links añadidos a todos los component sets_
+_Última revisión: 2026-05-29 — A11y y Responsive verificados (cascade audit + .md review)_
 
 | Componente | System | Matriz | Use | Tokens | A11y | Responsive | .md | Doc link | Score |
 |---|---|---|---|---|---|---|---|---|---|
-| Button | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Text Field | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 9 |
-| Check box | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Radio button | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Toggle | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Chips | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Link | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Tabs | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Alert | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Spinner | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Tooltip | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Badge | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
-| Tag | ✅ | ✅ | ✅ | ✅ | — | — | ✅ | ✅ | 10 |
+| Button | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Text Field | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Check box | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Radio button | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Toggle | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Chips | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Link | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Tabs | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Alert | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Spinner | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Tooltip | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Badge | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
+| Tag | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | 10 |
 
 `✅` completo · `🔄` en revisión · `⚠️` tiene issues · `—` pendiente
 

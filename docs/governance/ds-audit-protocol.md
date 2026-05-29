@@ -417,9 +417,41 @@ Para los colores de texto sobre fondo en cada variante:
 - Calcular contraste WCAG 2.1 con la fórmula estándar
 - Referencia: los resultados de D7 en L1 (audit-tokens) aplican aquí directamente
 
-**PASS:** Focus states en 100% de componentes interactivos; .md con ARIA y Teclado; sin pares texto/fondo bajo AA.  
+**C4.4 — Completitud de estados requeridos**
+
+Todo componente interactivo debe tener los 5 estados definidos en las reglas del sistema. Un componente que sale sin alguno de estos estados puede pasar C1–C3 sin ser detectado.
+
+**Estados requeridos para componentes interactivos:**
+
+| Estado | Obligatorio en |
+|---|---|
+| `default` | Todos |
+| `hover` | Todos los interactivos |
+| `active` | Todos los interactivos |
+| `focus` | Todos los interactivos |
+| `disabled` | Todos salvo `spinner`, `alert`, `badge`, `tag`, `tooltip` |
+
+**Script de verificación:**
+
+```javascript
+// Para cada CS interactivo: extraer estados reales de las variantes
+const cs = await figma.getNodeByIdAsync(csId);
+const actualStates = new Set();
+cs.children?.forEach(v => {
+  const stateVal = v.variantProperties?.state || v.variantProperties?.State;
+  if (stateVal) actualStates.add(stateVal.toLowerCase());
+});
+
+const REQUIRED = ['default', 'hover', 'active', 'focus', 'disabled'];
+const missing = REQUIRED.filter(s => !actualStates.has(s));
+// FAIL si missing.length > 0
+```
+
+**Componentes no interactivos** (exentos de hover/active/focus/disabled): `spinner`, `alert`, `badge/state`, `tag`, `tooltip`.
+
+**PASS:** Focus states en 100% de componentes interactivos; .md con ARIA y Teclado; sin pares texto/fondo bajo AA; 5 estados presentes en cada CS interactivo.  
 **WARN:** 1 componente sin sección Teclado o ARIA incompleta.  
-**FAIL:** Componente interactivo sin estado Focus, o focus sin tokens semánticos.
+**FAIL:** Componente interactivo sin estado Focus o sin `disabled`, o focus sin tokens semánticos.
 
 ---
 
@@ -851,6 +883,7 @@ DS components
   □ C1 — _slot y sus instancias: UNBOUND_FILL/NO_TEXT_STYLE esperados → ignorar (utility placeholder)
   □ C2 — 0 vectores sueltos; íconos = instancias de Icons library
   □ C3 — 0 variables locales en DS
+  □ C4.4 — estados requeridos: default/hover/active/focus/disabled en todos los CS interactivos
   □ C5 — 100% de ComponentSets con documentation link → página Figma del componente
   □ Pre-flight 5 — scope dinámico: unregistered = [] y missing = [] (script §2 pre-flight)
   □ Pre-flight 6 — scope check: 0 CS/COMPONENT en páginas fuera de lista §3-L3
