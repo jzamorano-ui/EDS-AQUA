@@ -79,9 +79,57 @@ await figma.loadAllPagesAsync();
 // Navegar a Icons → getLocalVariableCollectionsAsync()
 // Esperado: Icon/Context con modos [default, inverse, brand, disabled]
 
-// 5. Confirmar ComponentSets en DS library
-// Navegar a DS → contar CS en todas las páginas
-// Esperado: 21 CS/COMPONENT total: 17 en páginas ❖ + icon/semantic + icon/brand + layout/grids + _slot (ver lista en §3-L3)
+// 5. SCOPE DINÁMICO — descubrimiento y validación del registro de componentes
+// Este check reemplaza el count hardcodeado ("21 CS total"). Compara el estado real
+// de Figma contra la registry definida en §3-L3. FAIL si hay CS no registrado o faltante.
+
+const REGISTERED_IDS = new Set([
+  '557:1953',       // button
+  '561:10356',      // button/icon
+  '40002291:3851',  // radio button
+  '40002291:4232',  // radio group
+  '40002351:6594',  // toggle
+  '40002312:6388',  // checkbox
+  '40002386:4344',  // chips
+  '564:2268',       // link
+  '40002386:6744',  // tabs
+  '881:18695',      // alert
+  '774:29702',      // spinner
+  '40002369:4082',  // badge
+  '40002369:4091',  // badge/state
+  '40002339:1862',  // tooltip
+  '40002482:2745',  // text fields
+  '40002045:2142',  // icon/system (en DS)
+  '40002386:4144',  // tag
+  '40002045:2159',  // icon/semantic
+  '40002045:2176',  // icon/brand
+  '40002037:59',    // layout/grids
+  '40002038:102',   // _slot
+]);
+
+await figma.loadAllPagesAsync();
+const unregistered = [];
+const missing = [];
+
+// CS/COMPONENT en Figma no registrados → FAIL (componente nuevo sin registrar)
+for (const page of figma.root.children) {
+  const nodes = page.findAll(n => n.type === 'COMPONENT_SET' || n.type === 'COMPONENT');
+  for (const node of nodes) {
+    if (!REGISTERED_IDS.has(node.id)) {
+      unregistered.push({ id: node.id, name: node.name, page: page.name });
+    }
+  }
+}
+
+// IDs registrados que ya no existen en Figma → FAIL (componente eliminado sin desregistrar)
+for (const id of REGISTERED_IDS) {
+  const node = await figma.getNodeByIdAsync(id);
+  if (!node) missing.push(id);
+}
+
+// Esperado: unregistered = [] y missing = []
+// Si unregistered.length > 0 → añadir el CS a la tabla §3-L3 y a la lista de .md de V3
+// Si missing.length > 0     → eliminar el ID de la tabla §3-L3 y del registro
 
 // 6. SCOPE COMPLETO — verificar que no hay CS/COMPONENT en páginas no listadas en §3-L3
 // Para cada página de DS que NO sea ❖ ni → Icon ni → Layout:
@@ -164,7 +212,9 @@ DS es un consumer puro. Cada check en esta capa valida que DS consume correctame
 
 Verificar que cada propiedad visual en cada ComponentSet está bindeada a una variable semántica de Tokens. Sin valores hardcodeados, sin primitives directos, sin locales.
 
-**ComponentSets a auditar:**
+**ComponentSets a auditar — Registry oficial:**
+
+> Esta tabla es el registro canónico de scope. El script de pre-flight §5 la valida dinámicamente contra Figma en cada auditoría. Al añadir un componente nuevo: registrarlo aquí, en la lista `.md` de V3, y en el set `REGISTERED_IDS` del pre-flight §5.
 
 | CS | ID | Variantes | Nota |
 |---|---|---|---|
@@ -497,7 +547,9 @@ cs.children?.forEach(v => {
 **Check de secciones:**
 Cada `.md` debe tener exactamente estas 8 secciones: `Propiedades`, `Props`, `Tokens`, `HTML`, `ARIA`, `Teclado`, `Reglas`, `Accesibilidad`.
 
-**Componentes .md a verificar:**
+**Componentes .md a verificar — Registry de documentación:**
+
+> Sincronizar con la tabla C1 de §3-L3. Al añadir un componente nuevo también añadirlo aquí.
 
 | Componente | Archivo .md |
 |---|---|
@@ -800,6 +852,7 @@ DS components
   □ C2 — 0 vectores sueltos; íconos = instancias de Icons library
   □ C3 — 0 variables locales en DS
   □ C5 — 100% de ComponentSets con documentation link → página Figma del componente
+  □ Pre-flight 5 — scope dinámico: unregistered = [] y missing = [] (script §2 pre-flight)
   □ Pre-flight 6 — scope check: 0 CS/COMPONENT en páginas fuera de lista §3-L3
   □ Pre-flight 7 — WCAG primitives: hex doc page 41:106 = hex Primitives collection (0 diff)
 
