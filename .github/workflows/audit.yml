@@ -1,0 +1,84 @@
+name: Aqua DS — Audit CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  audit:
+    name: Audit L4 — Chain validation
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # ── V2 — Tokens dist válidos ─────────────────────────────────────────────
+
+      - name: V2 · tokens.css — sin undefined/null/NaN
+        run: |
+          COUNT=$(grep -c "undefined\|null\|NaN" dist/V.0.1.0/tokens.css || true)
+          if [ "$COUNT" -gt 0 ]; then
+            echo "❌ dist/V.0.1.0/tokens.css contiene $COUNT valores inválidos"
+            exit 1
+          fi
+          echo "✅ tokens.css — 0 valores inválidos"
+
+      - name: V2 · tokens.css — oklch presente
+        run: |
+          COUNT=$(grep -c "oklch" dist/V.0.1.0/tokens.css || true)
+          if [ "$COUNT" -eq 0 ]; then
+            echo "❌ dist/V.0.1.0/tokens.css no tiene overrides oklch"
+            exit 1
+          fi
+          echo "✅ tokens.css — $COUNT entradas oklch"
+
+      - name: V2 · archivos de entrega existen
+        run: |
+          for f in dist/V.0.1.0/tokens.css dist/V.0.1.0/layout.css dist/V.0.1.0/tokens.js; do
+            if [ ! -f "$f" ]; then echo "❌ Falta: $f"; exit 1; fi
+          done
+          echo "✅ tokens.css · layout.css · tokens.js presentes"
+
+      # ── V4 — CSS components sin HEX hardcodeados ────────────────────────────
+
+      - name: V4 · CSS components — sin HEX hardcodeados
+        run: |
+          FOUND=$(grep -rn --include="*.css" '#[0-9a-fA-F]\{3,8\}\b' \
+            dist/V.0.1.0/components/ src/components/ \
+            | grep -v '^\s*//' | grep -v '^\s*\*' || true)
+          if [ -n "$FOUND" ]; then
+            echo "❌ HEX hardcodeados encontrados:"
+            echo "$FOUND"
+            exit 1
+          fi
+          echo "✅ CSS components — 0 HEX hardcodeados"
+
+      # ── V3 — .md tienen las 8 secciones requeridas ──────────────────────────
+
+      - name: V3 · .md — 8 secciones obligatorias
+        run: |
+          SECTIONS="Propiedades Props Tokens HTML ARIA Teclado Reglas Accesibilidad"
+          FAIL=0
+          for md in docs/components/*.md; do
+            NAME=$(basename "$md")
+            [ "$NAME" = "_template.md" ] && continue
+            for section in $SECTIONS; do
+              if ! grep -q "^## $section" "$md"; then
+                echo "❌ $NAME — falta sección: $section"
+                FAIL=1
+              fi
+            done
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "✅ Todos los .md tienen las 8 secciones requeridas"
+
+      # ── Scope check — REGISTERED_IDS en pre-flight §5 ───────────────────────
+
+      - name: Scope · REGISTERED_IDS count en protocolo
+        run: |
+          COUNT=$(grep -c "VariableID\|COMPONENT" \
+            docs/governance/ds-audit-protocol.md | head -1 || true)
+          echo "ℹ️  Verificar REGISTERED_IDS en Figma requiere acceso MCP — ver pre-flight §5"
+          echo "✅ Workflow CI — checks locales completados"

@@ -410,12 +410,30 @@ Cada `.md` de componente debe tener las secciones:
 - `## Teclado` — con tabla de teclas y acciones
 - Si el componente tiene `button/icon` → `aria-label` marcado como obligatorio, no como warning
 
-**C4.3 — Contraste en Figma**
+**C4.3 — Contraste en Figma (texto y no-textual)**
 
-Para los colores de texto sobre fondo en cada variante:
+**Contraste textual — WCAG 1.4.3:**
 - Resolver el hex real del token (primitivo referenciado por el semántico)
 - Calcular contraste WCAG 2.1 con la fórmula estándar
 - Referencia: los resultados de D7 en L1 (audit-tokens) aplican aquí directamente
+
+**Contraste no-textual — WCAG 1.4.11 (≥3:1):**
+
+Los siguientes elementos deben tener ratio ≥3:1 sobre su fondo inmediato:
+
+| Elemento | Token de color | Fondo de comparación |
+|---|---|---|
+| Borde de inputs (default) | `--color-border-default` (#c9c9c9) | `--color-bg-fill-neutral-subtle` (#ffffff) |
+| Borde de inputs (focus) | `--color-border-focus` (#0f202b) | `--color-bg-fill-neutral-subtle` (#ffffff) |
+| Borde de inputs (error) | `--color-border-danger-focus` (#9b1020) | `--color-bg-fill-neutral-subtle` (#ffffff) |
+| Indicador activo de tabs | `--color-border-focus` (#0f202b) | `--color-bg-surface-default` (#ffffff) |
+| Indicador hover de tabs | `--color-action-primary-hover` (#304d5f) | `--color-bg-surface-default` (#ffffff) |
+| Focus ring | `--color-focus-ring-default` (#0043ce) | contexto claro |
+| Toggle track (default) | `--color-icon-system-secondary` (#737373) | `--color-bg-surface-default` (#ffffff) |
+| Toggle track (selected) | `--color-icon-status-success` (#006b27) | `--color-bg-surface-default` (#ffffff) |
+| Íconos de estado | `--color-icon-status-*` | fondo de status correspondiente |
+
+**Nota:** `--color-border-default` (#c9c9c9) sobre blanco = 1.66:1 — **por debajo de 3:1**. Es una deuda conocida: los bordes en default state no alcanzan WCAG 1.4.11. Documentar como WARN aceptado hasta que se decida elevar el token. No bloquea release pero debe registrarse en cada auditoría.
 
 **C4.4 — Completitud de estados requeridos**
 
@@ -576,6 +594,20 @@ cs.children?.forEach(v => {
 - Cada token CSS mencionado en el `.md` (`--color-*`, `--space-*`, `--radius-*`) debe existir en `dist/V.x.x.x/tokens.css`
 - Sin tokens en `.md` que no estén en dist
 
+**Check tokens-map.md:**
+- `docs/tokens-map.md` debe estar sincronizado con `dist/V.x.x.x/tokens.css`
+- Cada `--custom-property` listada en tokens-map.md debe existir en tokens.css (sin huérfanas)
+- Verificar con:
+```bash
+# Extraer tokens de tokens-map.md
+grep -o '\`--[a-z][a-z0-9-]*\`' docs/tokens-map.md | tr -d '\`' | sort -u > /tmp/map_tokens.txt
+# Extraer tokens de dist
+grep -o '^\s*--[a-z][a-z0-9-]*' dist/V.0.1.0/tokens.css | tr -d ' ' | sort -u > /tmp/dist_tokens.txt
+# Diff — debe ser vacío
+comm -23 /tmp/map_tokens.txt /tmp/dist_tokens.txt
+```
+- **Snapshot de regresión de valores:** en cada release, comparar el valor hex de cada token semántico contra el release anterior para detectar cambios de valor no intencionales. Guardar snapshot como `docs/governance/token-snapshot-vX.X.X.json` al cerrar cada versión.
+
 **Check de secciones:**
 Cada `.md` debe tener exactamente estas 8 secciones: `Propiedades`, `Props`, `Tokens`, `HTML`, `ARIA`, `Teclado`, `Reglas`, `Accesibilidad`.
 
@@ -717,13 +749,24 @@ Score por layer = (dominios/checks en PASS) / (total dominios/checks) × 10
 Score sistema   = L1×0.30 + L2×0.15 + L3×0.28 + L4×0.20 + L6×0.07
 ```
 
+### Pre-condición de release — CI gate
+
+Antes de aprobar cualquier release, el workflow de CI (`.github/workflows/audit.yml`) debe haber corrido verde en el commit de release. Los checks automatizados cubren:
+- V2: tokens.css sin undefined/NaN + oklch presente + 3 archivos de entrega existen
+- V4: CSS components sin HEX hardcodeados
+- V3: todos los .md con las 8 secciones requeridas
+
+Los checks que requieren acceso a Figma (pre-flight §5 scope dinámico, C1 cascade binding, L2 Icons) se ejecutan manualmente antes de cada Full audit y su resultado se commitea en el historial §11.
+
+**Audit report:** el output completo de cada Full audit debe commitearse en el mismo PR/commit de release. Formato: una entrada en la tabla §11 con fecha, score, BLOCKERs y WARNs. Sin audit commitado = release no aprobado.
+
 ### Release decision
 
 | Condición | Decisión |
 |---|---|
-| Score sistema ≥ 9.5 + 0 BLOCKERs | ✅ RELEASE APROBADO |
-| Score sistema ≥ 8.0 + 0 BLOCKERs + WARNs documentados | ⚠️ RELEASE CON OBSERVACIONES |
-| Score sistema < 8.0 O ≥ 1 BLOCKER | ❌ RELEASE BLOQUEADO |
+| CI verde + Score sistema ≥ 9.5 + 0 BLOCKERs | ✅ RELEASE APROBADO |
+| CI verde + Score sistema ≥ 8.0 + 0 BLOCKERs + WARNs documentados | ⚠️ RELEASE CON OBSERVACIONES |
+| CI falla O Score sistema < 8.0 O ≥ 1 BLOCKER | ❌ RELEASE BLOQUEADO |
 
 ### BLOCKERs automáticos — cualquiera bloquea release
 
@@ -890,12 +933,16 @@ DS components
   □ Pre-flight 7 — WCAG primitives: hex doc page 41:106 = hex Primitives collection (0 diff)
 
 Chain
+  □ CI — workflow .github/workflows/audit.yml verde antes de release
   □ V2 — npm run build → exit code 0
   □ V2 — grep "undefined" dist/V.0.1.0/tokens.css → 0 resultados
   □ V3 — cada .md tiene 8 secciones obligatorias
+  □ V3 — tokens-map.md sin huérfanas respecto a dist/V.0.1.0/tokens.css
   □ V4 — grep "border-color" en todos los CSS de componentes → cada valor no-transparent tiene stroke en Figma
   □ V4 — grep "background:" en todos los CSS de componentes → cada valor no-transparent tiene fill en Figma
   □ V4 — dirección inversa: strokes/fills en Figma → propiedad correspondiente en CSS
+  □ A11y — WCAG 1.4.11: bordes de inputs, indicadores de focus e íconos ≥3:1 sobre su fondo
+  □ A11y — WARN documentado: --color-border-default sobre blanco = 1.66:1 (deuda conocida)
 ```
 
 ---
