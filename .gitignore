@@ -3,6 +3,15 @@ System figma/
 .DS_Store
 *.pdf
 
+# Build artifacts — generados por npm run build
+dist/tokens.css
+dist/layout.css
+dist/tokens.js
+dist/docs/
+
+# Exports de referencia Figma
+figma_token.json
+
 # Pipeline — vive en repositorio separado
 tokens/
 package.json

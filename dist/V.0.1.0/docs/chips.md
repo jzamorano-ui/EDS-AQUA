@@ -45,10 +45,10 @@ interface ChipGroupProps {
 |---|---|---|---|
 | `chip` | outlined | background | `--color-bg-fill-neutral-subtle` |
 | `chip` | outlined | border | `--color-border-default` |
-| `chip` | hover | background | `--color-bg-fill-neutral-medium` |
+| `chip` | hover | background | `--color-bg-fill-inverse-subtle` |
 | `chip` | hover | border | `--color-border-default` |
-| `chip` | filled (selected) | background | `--color-action-primary-default` |
-| `chip` | filled (selected) | border | `--color-action-primary-default` |
+| `chip` | filled (selected) | background | `--color-bg-fill-inverse-medium` |
+| `chip` | filled (selected) | border | `--color-bg-fill-inverse-medium` |
 | `chip` | disabled | background | `--color-bg-fill-neutral-medium` |
 | `chip` | disabled | border | `--color-border-disabled` |
 | `label` | outlined | color | `--color-text-primary` |

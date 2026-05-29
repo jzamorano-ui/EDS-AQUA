@@ -4,7 +4,7 @@
 
 ---
 
-## Contrato de fundación — v0.2.1 (2026-04-30)
+## Contrato de fundación — v0.1.0 (2026-05-04)
 
 > **Regla a fuego — no negociable.**
 

@@ -84,13 +84,13 @@
 .btn--secondary {
   background: var(--color-action-secondary-default);
   color: var(--color-text-primary);
-  border-color: var(--color-border-default);
+  border-color: transparent;
 }
 .btn--secondary:hover  { background: var(--color-action-secondary-hover); }
 .btn--secondary:active { background: var(--color-action-secondary-active); }
 .btn--secondary[disabled] {
   color: var(--color-text-disabled);
-  border-color: var(--color-border-disabled);
+  border-color: transparent;
 }
 
 /* Variant — Tertiary / Default surface */

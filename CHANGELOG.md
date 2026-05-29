@@ -5,6 +5,52 @@ Ver proceso de contribución y versionado en [docs/governance/design-system-rule
 
 ---
 
+## [0.13.0] — 2026-05-05
+
+### Added — Select component (Figma + spec)
+
+Nuevo componente de selección única. Cubre tres sub-componentes coordinados:
+
+**Select** — trigger con 7 estados (default · focus · open · filled · error · read-only · disabled), props label, placeholder, helper-text, icon-tooltip. Listbox posicionado absolute — nunca empuja el layout.
+
+**Listbox** — panel flotante con dos variantes:
+- `scroll=false` — hasta 5 opciones, alto automático (236px con 5 ítems)
+- `scroll=true` — hasta 10 opciones, alto fijo 236px con scroll interno
+
+**Select Option** — ítem seleccionable con 5 estados (default · hover · selected · focus · disabled) y soporte de ícono intercambiable. Si una opción tiene ícono, todas deben tenerlo.
+
+**Entregables:**
+- `docs/components/select.md` — spec completa: propiedades, props TypeScript, tokens color/layout/tipografía, HTML (combobox pattern), ARIA, teclado, reglas, accesibilidad
+- `select.css` — pendiente para próximo dist
+
+**Figma (OPS-Library-Aqua DS MVP):**
+- Propiedades de Listbox renombradas de `item N` a `option N`
+- `scroll=false`: max 5 opciones, `primaryAxisSizingMode=AUTO`
+- `scroll=true`: 10 opciones, `primaryAxisSizingMode=FIXED`
+- `state=open` en Select: Listbox con `layoutPositioning=ABSOLUTE` — no desplaza el form
+- Frame Select / Use: correcciones de contenido (DON'T 2: listbox reducido a 2 opciones reales; DO 2: opciones Región 1–10 con nombres reales; DON'T 1: anti-pattern clarificado con label vacío; trailing space en tabla "Cuándo usar" eliminado)
+- Frame Select / System: prop `placeholder` añadida a tabla de Propiedades; `tooltip` renombrado a `icon-tooltip`
+
+### Fixed — Text Field disabled fill en Figma
+
+Variante `state=disabled` del componente Text Field: corregido el fill del `input-container`. El token aplicado era incorrecto — ajustado al valor que corresponde al estado disabled.
+
+---
+
+## [0.12.0] — 2026-05-04
+
+### Added — Patterns layer: Button Group + Form
+
+Primera capa de patrones de composición. Documentados en Figma (page Componentes Documentación) con frames /System y /Use siguiendo el estándar de componentes.
+
+**Button Group** — patrón de agrupación de acciones primaria + secundaria. Define espaciado, alineación y jerarquía entre botones en un mismo contexto.
+
+**Form** — patrón de formulario que combina Text Field, Select, Checkbox y Radio Button. Define layout vertical, gap entre campos, agrupación de secciones y comportamiento en error.
+
+Auditoría L6 de la capa de patterns completada post-entrega.
+
+---
+
 ## [0.11.0] — 2026-04-30
 
 ### Fixed — Auditoría exhaustiva pre-release v0.2.1

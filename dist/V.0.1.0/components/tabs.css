@@ -50,6 +50,15 @@
   transition: background 100ms ease;
 }
 
+/* Hover state */
+[role="tab"]:hover:not([aria-selected="true"]):not([aria-disabled="true"]) {
+  background: var(--color-action-tertiary-hover);
+}
+
+[role="tab"]:hover:not([aria-selected="true"]):not([aria-disabled="true"])::after {
+  background: var(--color-action-primary-hover);
+}
+
 /* Active state */
 [role="tab"][aria-selected="true"] {
   color: var(--color-text-primary);

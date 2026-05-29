@@ -41,7 +41,7 @@ interface ToggleProps {
 | `thumb` | selected · focus | background | `--color-icon-system-inverse` |
 | `focus-ring` | focus | outline | `--color-focus-ring-default` |
 | `track` | disabled | background | `--color-icon-system-disabled` |
-| `thumb` | disabled | background | `--color-icon-system-disabled` |
+| `thumb` | disabled | background | `--color-icon-system-secondary` |
 
 `disabled` aplica igual a `state=default` y `state=selected`.
 

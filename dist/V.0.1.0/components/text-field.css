@@ -73,7 +73,7 @@
 
 /* Read-only */
 .field--readonly .field__input-wrapper {
-  background: var(--color-bg-fill-neutral-medium);
+  background: var(--color-bg-fill-inverse-subtle);
   border-color: var(--color-border-default);
 }
 
@@ -84,7 +84,7 @@
 
 /* Disabled */
 .field--disabled .field__input-wrapper {
-  background: var(--color-bg-fill-neutral-subtle);
+  background: var(--color-bg-fill-neutral-medium);
   border-color: var(--color-border-disabled);
   pointer-events: none;
 }

@@ -48,11 +48,12 @@ dist            ←  output de Style Dictionary; reflejo exacto de JSON
 | Trigger | Layers obligatorios |
 |---|---|
 | Nuevo token primitivo o semántico | L1 + L4-V1 + L4-V2 |
-| Nuevo componente DS | L3 + L4-V3 |
+| Nuevo componente DS | L3 + L4-V3 + L4-V4 |
 | Cambio en token existente | L1 + L3-C1 + L4 completo |
 | Publicación librería Tokens | L1 + L4-V1 + L4-V2 |
 | Publicación librería Icons | L2 + L3-C2 |
 | Actualización .md | L4-V3 |
+| Modificación de CSS de componente | **L4-V4** |
 | Nuevo pattern | L6 |
 | Actualización pattern (frame o .md) | L6 |
 | Release a desarrollo | **Full** |
@@ -520,6 +521,82 @@ Cada `.md` debe tener exactamente estas 8 secciones: `Propiedades`, `Props`, `To
 
 ---
 
+### V4 — CSS components ↔ Figma DS
+
+Los archivos CSS de componentes son **handwritten** — no los genera Style Dictionary. Este check verifica que ningún CSS de componente tenga propiedades visuales que Figma no tiene, ni omita propiedades que Figma sí tiene.
+
+**Origen del gap:** el lint-tokens.js detecta tokens inválidos o HEX hardcodeados, pero no detecta propiedades CSS semánticamente correctas que sean inconsistentes con Figma (ej. `border-color: var(--color-border-default)` en una variante que en Figma no tiene stroke).
+
+**Archivos a verificar:** `dist/V.x.x.x/components/*.css` + `src/components/*.css`
+
+**Check 1 — Strokes: CSS vs Figma**
+
+Para cada componente, extraer de Figma qué variantes tienen stroke y comparar contra el CSS:
+
+```javascript
+// En Figma: obtener variantes con stroke visible (strokes.length > 0)
+const cs = await figma.getNodeByIdAsync(csId);
+const variantsWithStroke = cs.children
+  .filter(v => v.strokes?.length > 0)
+  .map(v => ({ name: v.name, strokeVar: v.boundVariables?.strokes?.[0] }));
+
+// Comparar contra el CSS correspondiente:
+// Si Figma tiene strokes: [] en una variante → el CSS no debe tener border-color visible
+// Si Figma tiene strokes: [{...}] → el CSS debe aplicar el token correcto
+```
+
+**Check 2 — Propiedades extra en CSS**
+
+Revisar manualmente (o con grep) que no existan propiedades en el CSS que no tengan respaldo en Figma:
+
+```bash
+# Buscar border-color en todos los CSS de componentes
+grep -n "border-color" dist/V.*/components/*.css src/components/*.css
+
+# Para cada resultado: verificar que la variante correspondiente en Figma
+# tenga un stroke con binding a ese mismo token.
+# border-color: transparent → siempre válido (patrón de reserva de layout)
+# border-color: var(--color-*) → requiere stroke en Figma con ese binding
+```
+
+**Check 3 — Background / fills**
+
+```bash
+# Buscar backgrounds no transparentes
+grep -n "background:" dist/V.*/components/*.css src/components/*.css | grep -v "transparent"
+
+# Cada background debe corresponder a un fill en Figma con binding al mismo token
+```
+
+**Caso documentado — button.css secondary (detectado 2026-05-28):**
+
+`.btn--secondary` tenía `border-color: var(--color-border-default)` pero Figma muestra `strokes: []` en todas las variantes Secondary/Default. El CSS debía usar `border-color: transparent`. No fue detectado por auditorías anteriores porque el check corría en dirección Figma→CSS (¿los tokens del .md son válidos?) y no CSS→Figma (¿el CSS tiene propiedades que Figma no tiene?).
+
+**Componentes CSS a verificar:**
+
+| Archivo | Clase raíz |
+|---|---|
+| `alert.css` | `.alert` |
+| `badge.css` | `.badge` |
+| `button.css` | `.btn` |
+| `checkbox.css` | `.checkbox` |
+| `chips.css` | `.chip` |
+| `link.css` | `.link` |
+| `radio-button.css` | `.radio` |
+| `spinner.css` | `.spinner` |
+| `tabs.css` | `.tabs` |
+| `tag.css` | `.tag` |
+| `text-field.css` | `.field` |
+| `toggle.css` | `.toggle-field` |
+| `tooltip.css` | `.tooltip` |
+| `select.css` (staging) | `.select` · `.listbox` |
+
+**PASS:** Toda propiedad visual con valor no-transparente en CSS tiene respaldo de binding en Figma; toda propiedad bindeada en Figma está reflejada en CSS.  
+**WARN:** Propiedad extra en CSS con valor visible pero sin stroke/fill en Figma, en un nodo no visible al usuario.  
+**FAIL:** `border-color`, `background` o `color` con valor no-transparente en CSS sin binding correspondiente en Figma en nodo visible; o binding en Figma sin propiedad en CSS.
+
+---
+
 ## 6.5 Layer 6 — Patterns
 
 **Archivo:** `9FoTERLTyDXz3gmPLjjJ09` — página `Patterns 🚧`  
@@ -572,6 +649,7 @@ Score sistema   = L1×0.30 + L2×0.15 + L3×0.28 + L4×0.20 + L6×0.07
 - Variable local en DS que replica un semántico de Tokens
 - Componente DS con ícono no proveniente de Icons library
 - Build dist con errores o valores `undefined`
+- CSS de componente con `border-color`, `background` o `color` visible sin binding correspondiente en Figma (V4)
 - Componente activo sin `.md`
 - `.md` con variante o token que no existe en Figma/dist
 - Pattern con frame Patrón en Figma sin `.md` en `docs/patterns/`
@@ -729,6 +807,9 @@ Chain
   □ V2 — npm run build → exit code 0
   □ V2 — grep "undefined" dist/tokens.css → 0 resultados
   □ V3 — cada .md tiene 8 secciones obligatorias
+  □ V4 — grep "border-color" en todos los CSS de componentes → cada valor no-transparent tiene stroke en Figma
+  □ V4 — grep "background:" en todos los CSS de componentes → cada valor no-transparent tiene fill en Figma
+  □ V4 — dirección inversa: strokes/fills en Figma → propiedad correspondiente en CSS
 ```
 
 ---

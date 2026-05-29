@@ -1,0 +1,5 @@
+/* Aqua Design System — Component styles — staging
+   CSS listo, pendiente de incorporar al próximo dist release.
+   Requiere: dist/V.0.1.0/tokens.css cargado primero. */
+
+@import './select.css';

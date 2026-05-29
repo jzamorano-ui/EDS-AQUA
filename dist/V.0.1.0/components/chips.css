@@ -28,15 +28,15 @@
 
 /* Hover */
 .chip:hover:not([disabled]):not(.chip--disabled):not([aria-pressed="true"]):not(.chip--selected) {
-  background: var(--color-bg-fill-neutral-medium);
+  background: var(--color-bg-fill-inverse-subtle);
   border-color: var(--color-border-default);
 }
 
 /* Selected state */
 .chip[aria-pressed="true"],
 .chip--selected {
-  background: var(--color-action-primary-default);
-  border-color: var(--color-action-primary-default);
+  background: var(--color-bg-fill-inverse-medium);
+  border-color: var(--color-bg-fill-inverse-medium);
   color: var(--color-text-inverse);
 }
 

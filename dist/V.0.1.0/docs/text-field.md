@@ -58,8 +58,9 @@ interface TextAreaProps {
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| `input-container` | default · focus · writing · filled · error · disabled | background | `--color-bg-fill-neutral-subtle` |
-| `input-container` | read-only | background | `--color-bg-fill-neutral-medium` |
+| `input-container` | default · focus · writing · filled · error | background | `--color-bg-fill-neutral-subtle` |
+| `input-container` | read-only | background | `--color-bg-fill-inverse-subtle` |
+| `input-container` | disabled | background | `--color-bg-fill-neutral-medium` |
 | `input-container` | default | border | `--color-border-default` |
 | `input-container` | hover | border | `--color-border-default` |
 | `input-container` | focus · writing | border | `--color-border-focus` |

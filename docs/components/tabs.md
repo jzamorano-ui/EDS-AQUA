@@ -50,7 +50,9 @@ interface TabsProps {
 | `icon` | active | fill | `currentColor` (hereda `--color-text-primary`) |
 | `icon` | disabled | fill | `--color-icon-system-disabled` |
 | `indicator` | active | fill | `--color-border-focus` |
+| `indicator` | hover | fill | `--color-action-primary-hover` |
 | `indicator` | default · disabled | fill | transparent |
+| `tab` | hover | background | `--color-action-tertiary-hover` |
 | `tab-content` | focus | outline | `--color-focus-ring-default` |
 | `divider` | — | fill | `--color-border-default` |
 | `tab-group` | — | background | `--color-bg-surface-default` |

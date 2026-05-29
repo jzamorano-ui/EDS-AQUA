@@ -29,13 +29,21 @@ Figma DS-Piloto       →  consumer de Tokens + Icons  →  docs/components/*.md
 ## Estructura del repo
 
 ```
-dist/                   ← output auto-generado — NO editar a mano
-  tokens.css            ← CSS custom properties semánticos (hex + oklch)
-  layout.css            ← breakpoints y grid
-  tokens.js             ← ES module para JS/TS
+src/
+  components/           ← CSS en staging — listo pero pendiente de release a dist/
+    index.css           ← agrega todos los componentes en staging
+
+dist/                   ← producción — NO editar hasta próximo release explícito
+  V.0.1.0/             ← base entregada a dev el 2026-05-04 — congelada
+    tokens.css          ← CSS custom properties semánticos (hex + oklch)
+    layout.css          ← breakpoints y grid
+    tokens.js           ← ES module para JS/TS
+    components/         ← 13 CSS de componentes + index.css
+    docs/               ← 13 specs .md sincronizadas con docs/components/
+  CHANGELOG.md          ← changelog de producción — solo al liberar nueva versión
 
 docs/
-  components/           ← specs de 13 componentes
+  components/           ← specs de componentes (fuente de verdad — incluye staging)
     _template.md        ← template base para nuevos componentes
   governance/
     design-system-rules.md    ← naming T/P/R/S, capas, reglas
@@ -46,9 +54,14 @@ docs/
   tokens-map.md         ← referencia plana de todos los tokens semánticos
   figma-scripts/        ← scripts para Figma Console (operacional, equipo DS)
 
-CHANGELOG.md            ← historial semver (versión actual: v0.10.0)
+CHANGELOG.md            ← historial semver de trabajo en curso (versión actual: v0.13.0)
 README.md               ← guía de consumo para devs
 ```
+
+### Flujo de trabajo día a día vs release
+
+- **Día a día** → Figma primero · `docs/components/` · `src/components/` · `CHANGELOG.md` raíz
+- **Al liberar** → el usuario lo indica explícitamente; se crea el nuevo directorio `dist/V.x.x.x/`, se definen versión semver y se actualiza `dist/CHANGELOG.md`
 
 ---
 
@@ -71,7 +84,7 @@ space / md                            →  --space-md
 
 ## Reglas críticas
 
-### Fundación congelada — v0.2.1 (2026-04-30)
+### Fundación congelada — v0.1.0 (2026-05-04)
 
 > **A fuego — no negociable.**
 
@@ -93,9 +106,11 @@ Este release es la base del proyecto. A partir de aquí el sistema solo escala h
 
 ---
 
-## Componentes disponibles (v0.10.0)
+## Componentes disponibles
 
-13 componentes certificados: alert · badge · button · checkbox · chips · link · radio-button · spinner · tabs · tag · text-field · toggle · tooltip
+**En dist (v0.1.0 — producción):** 13 componentes — alert · badge · button · checkbox · chips · link · radio-button · spinner · tabs · tag · text-field · toggle · tooltip
+
+**En staging (src/) — pendiente de próximo release:** select
 
 Specs en `docs/components/`. Referencia de tokens en `docs/tokens-map.md`.
 
