@@ -5,6 +5,96 @@ Ver proceso de contribución y versionado en [docs/governance/design-system-rule
 
 ---
 
+## [0.15.0] — 2026-06-18
+
+### Changed — Select + primitivas compartidas Menu (Figma + spec)
+
+Refactor de la familia de listas flotantes (Select aún no liberado a dist, por lo que estos cambios son MINOR). Se definió la arquitectura **base visual compartida + dos contratos semánticos** (decision record en `docs/governance/menu-select-architecture.md`).
+
+**Primitivas compartidas (antes Listbox / Select Option):**
+- `_Listbox` → **`menu/list`** · `_select/option` → **`_menu/item`**. Las consume Select (rol ARIA `listbox`/`option`) y Menu (rol `menu`/`menuitem`).
+- **Estado de opción `selected` → `active`**.
+- **Scroll** reconstruido de `false/true` a **`none · top · mid · bottom`**. Alto scrolleado **236px → 286px** (6 filas + 50% de la 7ª). Scroll se genera con 7+ opciones; `none` soporta hasta 6 (se agregó el 6º slot).
+- **Anillo de focus** tokenizado en `_menu/item` (patrón chips/button): ring `color/focus/ring/default` + gap `color/focus/ring-gap/default`, grosor `stroke/focus-ring-width`, vía padding (inset bindeado).
+- Scrollbar radius → `radius/pill`; focus gap → `space/xs` (eliminados valores crudos).
+
+**Select (trigger):**
+- Estados: `default · active · filled · error · read-only · disabled` + **nuevo `focus`** (navegación por teclado, cerrado, con anillo ring+gap). `open` → `active` (panel desplegado).
+- **`min-width: 160px`** en el trigger (constante de layout). Panel flotante `ABSOLUTE` + `STRETCH` (iguala el ancho del input; min 200px alineado a la izquierda cuando el input < 200).
+
+### Fixed — Documentación Select sincronizada con Figma
+
+- **`docs/components/select.md`** reescrito al estado final: estados `active`/`focus`, scroll `none/top/mid/bottom`, naming `menu/list`/`_menu/item`, 286px, min-width, tabla de anillo de focus, tokens, HTML/ARIA/teclado/reglas/accesibilidad (WCAG 2.4.7 / 2.4.11–2.4.13). Intro homologada al formato del resto de docs.
+- **Directivas dev añadidas:** combinatoria de estados (dato ortogonal a interacción), panel en **portal / `z-index`** alto (no quedar tapado por campos siguientes), **type-ahead** (teclado) y truncado de label a 1 línea.
+- **Doc frames Figma:** `Select Option / Matriz` → **`Menu Item / Matriz`** (estado `active`, sin columna `read-only`/`disabled` duplicada); `Listbox / Matriz` → **`Menu List / Matriz`** (scroll `none/top/mid/bottom`); `Select / Matriz` y `Select / System` con los 7 estados (`open→active`, columna `focus` poblada).
+- Ejemplo del DO "íconos en opciones" reemplazado por **"¿Qué necesitas?"** (6 trámites Isapre con íconos system distintos) — caso que sí justifica un select.
+
+### Fixed — `select.css` (staging) sincronizado con Figma
+
+Auditoría base completa en `docs/governance/audit-record-select.md`. `select.css` reescrito al estado final (pasa V4):
+- `max-height` 236→**286px**; `min-width` trigger **160** / panel **200**.
+- Anillo de focus **ring + gap** (trigger outset, opción inset) con `--color-focus-ring-default` + `--color-focus-ring-gap-default` + `--stroke-focus-ring-width`.
+- Estado de opción `--selected`→**`--active`**; scrollbar `--radius-pill`.
+- Naming unificado **`.menu-list` / `.menu-item`** (primitiva compartida; ARIA sigue `listbox`/`option`).
+- Documentation links configurados en los 3 component sets de Figma.
+
+### Auditoría
+Cobertura de tokens del Select **100%** (los 3 componentes; único crudo restante = padding de `tooltip-body`, que pertenece al componente Tooltip). Consistencia componente ↔ documentación ↔ CSS verificada end-to-end.
+
+### Changed — Text Field: estado `focus` de teclado
+
+Agregado el estado **`focus`** (navegación por teclado, anillo ring+gap tokenizado: `color/focus/ring` + `color/focus/ring-gap` + `stroke/focus-ring-width`) a **input** y **text area**:
+- input: duplicado de `active` → `focus`. text-area: su `focus` (estado de escritura, mal nombrado) renombrado a **`active`** para alinear con input + duplicado → nuevo `focus`.
+- Ambos tipos quedan simétricos: `default · active · writing · filled · error · read-only · disabled · focus`. `active` = escritura/foco; `focus` = anillo de teclado.
+- `docs/components/text-field.md` sincronizado (estado `active`, `focus` = anillo, tabla de Anillo de focus, border-width, Reglas + nota de **combinatoria de estados**, WCAG 2.4.7 / 2.4.11–2.4.13). Eliminada la fila `hover` (no existe ese estado).
+- **Tokenización (Figma):** gaps de layout fuera de escala snapeados a `space/*` (Label/prefix/suffix/helper 10→8 `space/xs`; Helper Container 5→4 `space/2xs`) y grosores de trazo a `stroke/*`. Cobertura de tokens del componente **100%** (único crudo = `tooltip-body`, del componente Tooltip).
+- **Doc frames Figma:** Matriz (8 columnas, `focus` agregado en input + text-area), System (fila `active`, `state` con `focus`, descripción de `focus` = navegación por teclado).
+
+**Pendiente para el corte v0.2.0** (al regenerar `text-field.css`, hoy solo en `dist` congelado): anillo de focus **ring + gap** (el dist actual solo tiene ring), bg de `disabled` → `--color-action-primary-disabled` (el dist tiene el valor viejo), y grosores `--stroke-xs`/`--stroke-sm`.
+
+El `dist/V.0.1.0` sigue **congelado** — el focus de Text Field entra en v0.2.0.
+
+### Added — `text-field.css` (staging) + auditoría de cobertura total de componentes
+
+Auditoría completa de componentes DS (live Figma + repo) con foco en cobertura 100%. Registros en `audit-record-select.md` / `audit-record-text-field.md`.
+
+- **`src/components/text-field.css`** creado (antes solo existía en `dist` congelado). Refleja el estado final de Figma: 8 estados, anillo de focus **ring + gap**, afijos **prefix/suffix**, `disabled` bg → `--color-action-primary-disabled`, grosores `--stroke-xs/sm` por estado. Importado en `src/components/index.css`. Pasa V4 (0 HEX, 100% tokens).
+- **`_divider`** (primitiva interna del menú, Figma `40003146:80675`) reflejado en dev: `.menu-divider` en `select.css` (`--color-border-divider-default`) + fila en `select.md`.
+- **Registry de auditoría ampliado** (`ds-audit-protocol.md`, 3 lugares): sumados 8 componentes que estaban fuera de scope (familia Select + `chips/group`, `tabs/group`, `checkbox group`, `notification`). Exclusión explícita del `→ Navegador kit` (mockups de browser-chrome). Verificado live: unregistered = 0, missing = 0.
+- **Exención C4.4 `hover`** documentada para `text fields` y `select` (inputs sin hover por diseño); script con `HOVER_EXEMPT`.
+
+---
+
+## [0.14.0] — 2026-06-17
+
+### Fixed — Text Fields .md sincronizado con Figma (auditoría)
+
+Auditoría completa de Text Fields (CS `40002482:2745`, 14 variantes) vía MCP en vivo. C1–C5 limpios (0 bindings sin resolver, 0 dangling). Ajustes en `docs/components/text-field.md` para reflejar la definición final de Figma:
+
+- **Disabled fill:** `--color-bg-fill-neutral-medium` → `--color-action-primary-disabled` (mismo valor #f7f7f7, token que usa Figma).
+- **Grosor de borde por estado:** documentado 2px (`--stroke-sm`) en focus/writing/error y 1px (`--stroke-xs`) en default/filled/read-only/disabled. Antes solo se documentaba 1px.
+- **Fila `filled`** añadida a la tabla de tokens (completitud de estados).
+- **Props faltantes:** sumadas `feedback` y `prefix-text` a la tabla de Propiedades.
+
+Pendiente para el corte de v0.2.0 del dist: `text-field.css` (disabled bg) + bindear `strokeWeight` del `input-container` en Figma a `--stroke-xs`/`--stroke-sm` (hoy valores crudos).
+
+### Changed — Gobernanza de release formalizada
+
+- `design-system-rules.md §Versionado`: añadidas reglas de **dos tracks de versión** (raíz vs dist, independientes), **inmutabilidad de releases** (duplicar sin reemplazar, sin parches in-place — con la excepción documentada del `0.1.0-patch` pre-consumo) y corte de versión decidido por el owner.
+- `ds-audit-protocol.md §7`: cadencia hacia un nuevo dist = una sola Full audit en el gate (no Triggered por componente).
+
+### Added — Text Fields: afijo `suffix` (MINOR)
+
+Nuevo afijo de texto trailing, espejo del `prefix`. Construido en Figma y documentado:
+
+- **Figma:** props nuevas `suffix` (BOOLEAN, default ON) + `suffix-text` (TEXT, default "UF") en el set; bloque `suffix` agregado a las 7 variantes input (entre `Input Field` e `icon-right`), color heredado por estado (`color/text/primary`, disabled → `color/text/disabled`). Solo input (espejo del prefix; text-area no lo lleva).
+- **Doc Figma (frame System):** fila `suffix` añadida a la tabla Propiedades; además se unificó idioma `Visible · hidden` → `Visible · oculto` en las filas de afijos/iconos/counter/tooltip.
+- **`text-field.md`:** filas `suffix` + `suffix-text` añadidas; mismo `visible · hidden → visible · oculto`.
+
+Pendiente para el corte de v0.2.0: estilo del suffix en `text-field.css`.
+
+---
+
 ## [0.13.0] — 2026-05-05
 
 ### Added — Select component (Figma + spec)

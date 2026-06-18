@@ -31,6 +31,7 @@
   gap: var(--space-xs);
   padding-block: var(--space-sm);
   padding-inline: var(--space-sm);
+  min-width: 160px; /* constante de layout (no token) */
   border: var(--stroke-xs) solid var(--color-border-default);
   border-radius: var(--radius-sm);
   background: var(--color-bg-fill-neutral-subtle);
@@ -75,16 +76,21 @@
 
 /* States */
 
-.select:focus-within .select__trigger {
-  border-color: var(--color-border-focus);
-  box-shadow: 0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-default);
+/* focus — navegación por teclado (anillo ring + gap, dos capas) */
+.select__trigger:focus-visible,
+.select--focus .select__trigger {
+  outline: none;
+  box-shadow:
+    0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-gap-default),
+    0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-default);
 }
 
-.select--open .select__trigger {
+/* active — panel desplegado */
+.select--active .select__trigger {
   border-color: var(--color-border-focus);
 }
 
-.select--open .select__chevron {
+.select--active .select__chevron {
   transform: rotate(180deg);
 }
 
@@ -104,9 +110,12 @@
   color: var(--color-text-status-danger);
 }
 
-.select--error:focus-within .select__trigger {
+.select--error .select__trigger:focus-visible,
+.select--error.select--focus .select__trigger {
   border-color: var(--color-border-danger-focus);
-  box-shadow: 0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-default);
+  box-shadow:
+    0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-gap-default),
+    0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-default);
 }
 
 .select--readonly .select__trigger {
@@ -140,13 +149,14 @@
   color: var(--color-text-disabled);
 }
 
-/* Listbox */
+/* menu/list — panel flotante (compartido con Menu) */
 
-.listbox {
+.menu-list {
   position: absolute;
   top: calc(100% + var(--space-xs));
   left: 0;
-  right: 0;
+  width: 100%;
+  min-width: 200px; /* constante de layout (no token) */
   z-index: 10;
   list-style: none;
   margin: 0;
@@ -159,58 +169,90 @@
   overflow: hidden;
 }
 
-.listbox--scroll {
-  max-height: 236px;
+/* >6 opciones → scroll, alto fijo 6 filas + 50% de la siguiente */
+.menu-list--scroll {
+  max-height: 286px;
   overflow-y: auto;
 }
 
-/* Option */
+/* scrollbar */
+.menu-list--scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.menu-list--scroll::-webkit-scrollbar-track {
+  background: var(--color-bg-fill-neutral-subtle);
+  border-radius: var(--radius-pill);
+}
+.menu-list--scroll::-webkit-scrollbar-thumb {
+  background: var(--color-bg-fill-neutral-strong);
+  border-radius: var(--radius-pill);
+}
 
-.listbox__option {
+/* _menu/item — opción (compartido con Menu) */
+
+.menu-item {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+  min-height: 44px;
   padding-block: var(--space-sm);
   padding-inline: var(--space-md);
   background: var(--color-action-tertiary-default);
   cursor: pointer;
 }
 
-.listbox__option:hover {
+.menu-item:hover {
   background: var(--color-action-tertiary-hover);
 }
 
-.listbox__option:focus-visible {
-  background: var(--color-action-tertiary-hover);
+/* focus — anillo ring + gap inset (el panel clippea, por eso inset) */
+.menu-item:focus-visible {
   outline: none;
+  box-shadow:
+    inset 0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-gap-default),
+    inset 0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-default);
 }
 
-.listbox__option--selected {
+/* active — opción seleccionada/destacada */
+.menu-item--active {
   background: var(--color-action-tertiary-active);
 }
 
-.listbox__option--disabled {
+.menu-item--disabled {
   background: var(--color-action-primary-disabled);
   cursor: not-allowed;
   pointer-events: none;
 }
 
-.listbox__option-label {
+.menu-item__label {
+  flex: 1;
   font-size: var(--type-body-lg-regular-size);
   font-weight: var(--type-body-lg-regular-weight);
   line-height: var(--type-body-lg-regular-line-height);
   color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.listbox__option--disabled .listbox__option-label {
+.menu-item--disabled .menu-item__label {
   color: var(--color-text-disabled);
 }
 
-.listbox__option-icon {
+.menu-item__icon {
   flex-shrink: 0;
   fill: var(--color-icon-system-primary);
 }
 
-.listbox__option--disabled .listbox__option-icon {
+.menu-item--disabled .menu-item__icon {
   fill: var(--color-icon-system-disabled);
+}
+
+/* _divider — separador entre grupos de opciones (primitiva compartida con Menu) */
+
+.menu-divider {
+  height: var(--stroke-xs);
+  margin: 0;
+  border: none;
+  background: var(--color-border-divider-default);
 }

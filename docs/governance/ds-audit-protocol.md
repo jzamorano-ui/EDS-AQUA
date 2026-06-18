@@ -105,6 +105,24 @@ const REGISTERED_IDS = new Set([
   '40002045:2176',  // icon/brand
   '40002037:59',    // layout/grids
   '40002038:102',   // _slot
+  // — Sub-componentes "group" (documentados en el .md del padre) —
+  '40002386:6113',  // chips/group        → chips.md
+  '40002386:6826',  // tabs/group         → tabs.md
+  '40002312:6390',  // checkbox group     → checkbox.md
+  '40002386:4322',  // notification       → badge.md
+  // — Familia Select / Menu (staging — entra en v0.2.0) —
+  '40003102:19653', // select
+  '40003102:19674', // _menu/item
+  '40003104:25695', // menu/list
+  '40003146:80675', // _divider           → primitiva interna del menú
+]);
+
+// EXCLUSIÓN DE SCOPE — página "→ Navegador kit": mockups de browser-chrome
+// (Tab Bar iOS, Address Bar iOS, Desktop-windows, _Tab Bar Android, _Address Bar android).
+// NO son componentes del DS — son utilería de documentación para frames "Use".
+// No se auditan (C1–C5) ni requieren .md. Mantener fuera de REGISTERED_IDS a propósito.
+const NAVEGADOR_KIT_EXCLUDED = new Set([
+  '40003228:198','40003228:197','40003231:602','40003231:601','40003231:605',
 ]);
 
 await figma.loadAllPagesAsync();
@@ -115,6 +133,8 @@ const missing = [];
 for (const page of figma.root.children) {
   const nodes = page.findAll(n => n.type === 'COMPONENT_SET' || n.type === 'COMPONENT');
   for (const node of nodes) {
+    if (node.type === 'COMPONENT' && node.parent?.type === 'COMPONENT_SET') continue; // variante interna
+    if (NAVEGADOR_KIT_EXCLUDED.has(node.id)) continue;                                 // utilería doc, fuera de scope
     if (!REGISTERED_IDS.has(node.id)) {
       unregistered.push({ id: node.id, name: node.name, page: page.name });
     }
@@ -239,6 +259,16 @@ Verificar que cada propiedad visual en cada ComponentSet está bindeada a una va
 | icon/brand | `40002045:2176` | 8 | Página `→ Icon` |
 | layout/grids | `40002037:59` | 6 | Página `→ Layout` |
 | _slot | `40002038:102` | 1 | **COMPONENT** — utility placeholder interno; ver nota de exclusión abajo |
+| chips/group | `40002386:6113` | 1 | **COMPONENT** — página ❖ Chips; documentado en `chips.md` |
+| tabs/group | `40002386:6826` | 1 | **COMPONENT** — página ❖ Tabs; documentado en `tabs.md` |
+| checkbox group | `40002312:6390` | 1 | **COMPONENT** — página ❖ Check box; documentado en `checkbox.md` |
+| notification | `40002386:4322` | 1 | **COMPONENT** — página ❖ Badge; documentado en `badge.md` |
+| select | `40003102:19653` | 7 | **Staging v0.2.0** — página ❖ Select; `select.md` |
+| _menu/item | `40003102:19674` | 5 | **Staging v0.2.0** — primitiva compartida; `select.md` |
+| menu/list | `40003104:25695` | 4 | **Staging v0.2.0** — primitiva compartida; `select.md` |
+| _divider | `40003146:80675` | 1 | **COMPONENT** — primitiva interna del menú; `select.md` |
+
+**Exclusión documentada — `→ Navegador kit`:** los 5 nodos de la página `→ Navegador kit` (Tab Bar iOS, Address Bar iOS, Desktop-windows, _Tab Bar Android, _Address Bar android) son mockups de browser-chrome para frames de uso/documentación — **no son componentes del DS**. No se auditan ni requieren `.md`. Excluidos a propósito vía `NAVEGADOR_KIT_EXCLUDED` en el pre-flight §2.
 
 **Exclusión documentada — `_slot`:**
 
@@ -444,10 +474,12 @@ Todo componente interactivo debe tener los 5 estados definidos en las reglas del
 | Estado | Obligatorio en |
 |---|---|
 | `default` | Todos |
-| `hover` | Todos los interactivos |
+| `hover` | Todos los interactivos **salvo campos de formulario** (ver exención) |
 | `active` | Todos los interactivos |
 | `focus` | Todos los interactivos |
 | `disabled` | Todos salvo `spinner`, `alert`, `badge`, `tag`, `tooltip` |
+
+**Exención `hover` — campos de formulario (`text fields`, `select`):** estos componentes **no tienen estado `hover`** por decisión de diseño documentada. El cursor sobre un input/trigger no cambia su apariencia; la retroalimentación se da en `active`/`writing` (escritura) y `focus` (anillo de teclado). El `REQUIRED` del script debe excluir `hover` para `text fields` y `select` — un input sin `hover` es **PASS**, no FAIL. (Nota: `_menu/item`, la opción del menú, **sí** tiene `hover` y no está exenta.)
 
 **Script de verificación:**
 
@@ -460,7 +492,10 @@ cs.children?.forEach(v => {
   if (stateVal) actualStates.add(stateVal.toLowerCase());
 });
 
-const REQUIRED = ['default', 'hover', 'active', 'focus', 'disabled'];
+// Campos de formulario exentos de `hover` (ver exención arriba)
+const HOVER_EXEMPT = new Set(['40002482:2745' /* text fields */, '40003102:19653' /* select */]);
+const REQUIRED = ['default', 'hover', 'active', 'focus', 'disabled']
+  .filter(s => !(s === 'hover' && HOVER_EXEMPT.has(csId)));
 const missing = REQUIRED.filter(s => !actualStates.has(s));
 // FAIL si missing.length > 0
 ```
@@ -630,6 +665,9 @@ Cada `.md` debe tener exactamente estas 8 secciones: `Propiedades`, `Props`, `To
 | toggle | `docs/components/toggle.md` |
 | tag | `docs/components/tag.md` |
 | tooltip | `docs/components/tooltip.md` |
+| select *(staging v0.2.0)* | `docs/components/select.md` |
+
+> **Sub-componentes documentados en el `.md` del padre** (no llevan `.md` propio): `chips/group`→`chips.md`, `tabs/group`→`tabs.md`, `checkbox group`→`checkbox.md`, `notification`→`badge.md`, `_menu/item`+`menu/list`+`_divider`→`select.md`.
 
 **PASS:** Variantes, tokens y secciones coinciden al 100% con Figma y dist.  
 **WARN:** 1–2 tokens en .md con nombre desactualizado pero valor correcto.  
@@ -733,6 +771,10 @@ grep -n "background:" dist/V.*/components/*.css src/components/*.css | grep -v "
 ---
 
 ## 7. Layer 5 — Release gate
+
+### Cadencia hacia un nuevo dist
+
+El camino a una nueva versión de `dist/` corre **una sola Full audit en el gate** — no auditoría Triggered por componente. Los cambios de cada componente se acumulan como delta (ver `design-system-rules.md §Versionado`); la validación completa L1→L6 se ejecuta una única vez, justo antes del corte. Las auditorías Triggered/Spot (§1) siguen disponibles para trabajo ad-hoc fuera del camino de release.
 
 ### Scoring unificado
 

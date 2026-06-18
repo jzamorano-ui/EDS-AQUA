@@ -1,8 +1,6 @@
 # Select
 
-Control de selección única que permite al usuario elegir una opción desde un conjunto predefinido. No admite entrada de texto.
-
-El sistema está formado por tres componentes: **Select** (trigger y contenedor), **Listbox** (panel flotante) y **Select Option** (elemento seleccionable).
+Selección única de una opción desde un conjunto predefinido; no admite entrada de texto. Para acciones usar **Menu**; para 2 opciones, **radio button**. Consume las primitivas compartidas **`menu/list`** (panel) y **`_menu/item`** (opción) — en Select toman rol ARIA `listbox`/`option`.
 
 ---
 
@@ -12,28 +10,34 @@ El sistema está formado por tres componentes: **Select** (trigger y contenedor)
 
 | Propiedad | Valores |
 |---|---|
-| `state` | default · focus · open · filled · error · read-only · disabled |
+| `state` | default · focus · active · filled · error · read-only · disabled |
 | `label` | texto visible — requerido |
 | `placeholder` | texto visible en el trigger antes de seleccionar — desaparece al interactuar |
 | `helper-text` | true · false — instrucción contextual bajo el trigger |
 | `icon-tooltip` | true · false — ícono de ayuda junto al label |
 
-### Listbox
+- **`focus`** = campo enfocado por teclado, cerrado (anillo de focus visible).
+- **`active`** = panel desplegado (`menu/list` abierto).
+
+### menu/list (panel)
 
 | Propiedad | Valores |
 |---|---|
-| `scroll` | false · true — `false` muestra hasta 5 opciones en alto automático; `true` fija el alto a 236px con scroll interno |
+| `scroll` | none · top · mid · bottom |
 
-### Select Option
+- **`none`** — hug, hasta 6 opciones, sin scrollbar.
+- **`top · mid · bottom`** — con 7+ opciones: alto fijo **286px** (6 filas + 50% de la siguiente) con scroll interno. `top/mid/bottom` representan la posición del scroll.
+
+### \_menu/item (opción)
 
 | Propiedad | Valores |
 |---|---|
-| `state` | default · hover · selected · focus · disabled |
+| `state` | default · hover · active · focus · disabled |
 | `icon` | true · false — muestra u oculta el ícono |
-| `↪ icon` | instancia del ícono — intercambiable vía instance-swap |
 | `label` | texto de la opción — requerido |
 
-Si una opción tiene ícono, todas deben tenerlo.
+- El ícono se cambia por **swap nativo** del `option-icon` (no hay prop expuesta).
+- `active` = opción seleccionada/destacada. Si una opción tiene ícono, todas deben tenerlo.
 
 ---
 
@@ -45,7 +49,7 @@ interface SelectProps {
   placeholder?: string
   helperText?: string              // texto informativo bajo el trigger
   feedbackMessage?: string         // mensaje de error — requerido si state='error'
-  state?: 'default' | 'focus' | 'open' | 'filled' | 'error' | 'read-only' | 'disabled'
+  state?: 'default' | 'focus' | 'active' | 'filled' | 'error' | 'read-only' | 'disabled'
   iconTooltip?: boolean            // default: false
   tooltipText?: string             // requerido si iconTooltip=true
   value?: string
@@ -57,7 +61,7 @@ interface SelectProps {
 interface SelectOptionProps {
   label: string                    // requerido
   value: string                    // requerido — identificador único
-  state?: 'default' | 'hover' | 'selected' | 'focus' | 'disabled'
+  state?: 'default' | 'hover' | 'active' | 'focus' | 'disabled'
   icon?: boolean                   // default: false
   iconNode?: React.ReactNode       // requerido si icon=true
 }
@@ -73,46 +77,58 @@ interface SelectOptionProps {
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| `select-container` | default · focus · open · filled · error | background | `--color-bg-fill-neutral-subtle` |
+| `select-container` | default · focus · active · filled · error | background | `--color-bg-fill-neutral-subtle` |
 | `select-container` | read-only | background | `--color-bg-fill-inverse-subtle` |
 | `select-container` | disabled | background | `--color-action-primary-disabled` |
 | `select-container` | default · filled · read-only | border | `--color-border-default` |
-| `select-container` | focus · open | border | `--color-border-focus` |
+| `select-container` | active | border | `--color-border-focus` |
 | `select-container` | error | border | `--color-border-danger-focus` |
 | `select-container` | disabled | border | `--color-border-disabled` |
-| `label` | default · focus · open · filled · read-only | color | `--color-text-primary` |
+| `select-container` | focus | border + anillo | ver **Anillo de focus** |
+| `label` | default · focus · active · filled · read-only | color | `--color-text-primary` |
 | `label` | error | color | `--color-text-status-danger` |
 | `label` | disabled | color | `--color-text-disabled` |
-| `select-value` (placeholder) | default · focus · open · error | color | `--color-text-secondary` |
-| `select-value` (valor seleccionado) | filled · read-only | color | `--color-text-primary` |
+| `select-value` (placeholder) | default · focus · active · error | color | `--color-text-secondary` |
+| `select-value` (valor) | filled · read-only | color | `--color-text-primary` |
 | `select-value` | disabled | color | `--color-text-disabled` |
-| `chevron` | default · focus · open · error · read-only | fill | `--color-icon-system-secondary` |
+| `chevron` | default · focus · active · error · read-only | fill | `--color-icon-system-secondary` |
 | `chevron` | filled | fill | `--color-icon-system-primary` |
 | `chevron` | disabled | fill | `--color-icon-system-disabled` |
-| `helper-text` | default · focus · open · filled · read-only | color | `--color-text-secondary` |
+| `helper-text` | default · focus · active · filled · read-only | color | `--color-text-secondary` |
 | `helper-text` | disabled | color | `--color-text-disabled` |
 | `feedback-message` | error | color | `--color-text-status-danger` |
 
-**Listbox**
+**Anillo de focus** (navegación por teclado — `state=focus`)
+
+| Capa | Propiedad CSS | CSS custom property |
+|---|---|---|
+| anillo externo | border (outside) | `--color-focus-ring-default` |
+| gap (separador) | border (inside del `select-container`) | `--color-focus-ring-gap-default` |
+| grosor (ambos) | border-width | `--stroke-focus-ring-width` (2px) |
+
+**menu/list (panel)**
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
-| `listbox` | — | background | `--color-bg-surface-default` |
-| `listbox` | — | border | `--color-border-default` |
-| `listbox` | — | box-shadow | `--elevation-md` |
+| `panel` | — | background | `--color-bg-surface-default` |
+| `panel` | — | border | `--color-border-default` |
+| `panel` | — | box-shadow | `--elevation-md` |
+| `scrollbar-track` | — | background | `--color-bg-fill-neutral-subtle` |
+| `scrollbar-thumb` | — | background | `--color-bg-fill-neutral-strong` |
+| `_divider` (separador entre grupos, opcional) | — | background | `--color-border-divider-default` |
 
-**Select Option**
+**\_menu/item (opción)**
 
 | Elemento | Estado | Propiedad CSS | CSS custom property |
 |---|---|---|---|
 | `option` | default | background | `--color-action-tertiary-default` |
 | `option` | hover | background | `--color-action-tertiary-hover` |
-| `option` | selected | background | `--color-action-tertiary-active` |
-| `option` | focus | background | `--color-action-tertiary-hover` |
+| `option` | active | background | `--color-action-tertiary-active` |
+| `option` | focus | background + anillo | `--color-action-tertiary-default` + **Anillo de focus** |
 | `option` | disabled | background | `--color-action-primary-disabled` |
-| `option-label` | default · hover · selected · focus | color | `--color-text-primary` |
+| `option-label` | default · hover · active · focus | color | `--color-text-primary` |
 | `option-label` | disabled | color | `--color-text-disabled` |
-| `option-icon` | default · hover · selected · focus | fill | `--color-icon-system-primary` |
+| `option-icon` | default · hover · active · focus | fill | `--color-icon-system-primary` |
 | `option-icon` | disabled | fill | `--color-icon-system-disabled` |
 
 ### Layout
@@ -127,20 +143,25 @@ interface SelectOptionProps {
 | `gap` (trigger: valor · chevron) | `--space-xs` | 8px |
 | `border-radius` (trigger) | `--radius-sm` | 8px |
 | `border-width` (trigger) | `--stroke-xs` | 1px |
+| `min-width` (trigger) | — (constante de layout) | 160px |
 
-**Listbox**
+**menu/list (panel)**
 
 | Propiedad | CSS custom property | Valor |
 |---|---|---|
 | `padding-block` | `--space-xs` | 8px |
 | `border-radius` | `--radius-sm` | 8px |
 | `border-width` | `--stroke-xs` | 1px |
-| `max-height` (scroll=true) | — | 236px |
+| `max-height` (scroll) | — | 286px (6 filas + 50%) |
+| `min-width` | — (constante de layout) | 200px |
+| `scrollbar` (ancho) | — | 4px |
+| `scrollbar` (radius) | `--radius-pill` | — |
 
-**Select Option**
+**\_menu/item (opción)**
 
 | Propiedad | CSS custom property | Valor |
 |---|---|---|
+| `height` (fila) | — | 44px |
 | `padding-block` | `--space-sm` | 12px |
 | `padding-inline` | `--space-md` | 16px |
 | `gap` (icon · label) | `--space-sm` | 12px |
@@ -159,7 +180,7 @@ interface SelectOptionProps {
 ## HTML
 
 ```html
-<!-- Select default -->
+<!-- Select default (cerrado) -->
 <div class="select">
   <div class="select__label-row">
     <label id="region-label" class="select__label">Región</label>
@@ -176,8 +197,24 @@ interface SelectOptionProps {
   <span class="select__helper">Texto de ayuda.</span>
 </div>
 
-<!-- Select open con Listbox -->
-<div class="select select--open">
+<!-- Select focus (enfocado por teclado, cerrado — anillo de focus) -->
+<div class="select select--focus">
+  <div class="select__label-row">
+    <label id="plan-label-f" class="select__label">Plan</label>
+  </div>
+  <button class="select__trigger"
+          role="combobox"
+          aria-labelledby="plan-label-f"
+          aria-expanded="false"
+          aria-haspopup="listbox"
+          aria-controls="plan-listbox-f">
+    <span class="select__value select__value--placeholder">Seleccionar</span>
+    <svg class="select__chevron" aria-hidden="true">…</svg>
+  </button>
+</div>
+
+<!-- Select active (panel desplegado) -->
+<div class="select select--active">
   <div class="select__label-row">
     <label id="plan-label" class="select__label">Plan</label>
   </div>
@@ -191,42 +228,43 @@ interface SelectOptionProps {
     <span class="select__value">Plan 2</span>
     <svg class="select__chevron" aria-hidden="true">…</svg>
   </button>
-  <ul class="listbox" id="plan-listbox" role="listbox" aria-labelledby="plan-label">
-    <li class="listbox__option" id="plan-opt-1" role="option" aria-selected="false">
-      <span class="listbox__option-label">Plan 1</span>
+  <ul class="menu-list" id="plan-listbox" role="listbox" aria-labelledby="plan-label">
+    <li class="menu-item" id="plan-opt-1" role="option" aria-selected="false">
+      <span class="menu-item__label">Plan 1</span>
     </li>
-    <li class="listbox__option listbox__option--selected" id="plan-opt-2" role="option" aria-selected="true">
-      <span class="listbox__option-label">Plan 2</span>
+    <li class="menu-item menu-item--active" id="plan-opt-2" role="option" aria-selected="true">
+      <span class="menu-item__label">Plan 2</span>
     </li>
-    <li class="listbox__option" id="plan-opt-3" role="option" aria-selected="false">
-      <span class="listbox__option-label">Plan 3</span>
+    <li class="menu-item" id="plan-opt-3" role="option" aria-selected="false">
+      <span class="menu-item__label">Plan 3</span>
     </li>
   </ul>
 </div>
 
-<!-- Select open con ícono en opciones -->
-<div class="select select--open">
+<!-- Select active con íconos en opciones (≥6 opciones distintas) -->
+<div class="select select--active">
   <div class="select__label-row">
-    <label id="canal-label" class="select__label">Canal de contacto</label>
+    <label id="tramite-label" class="select__label">¿Qué necesitas?</label>
   </div>
   <button class="select__trigger"
           role="combobox"
-          aria-labelledby="canal-label"
+          aria-labelledby="tramite-label"
           aria-expanded="true"
           aria-haspopup="listbox"
-          aria-controls="canal-listbox">
-    <span class="select__value select__value--placeholder">Seleccionar</span>
+          aria-controls="tramite-listbox">
+    <span class="select__value select__value--placeholder">Selecciona una opción</span>
     <svg class="select__chevron" aria-hidden="true">…</svg>
   </button>
-  <ul class="listbox" id="canal-listbox" role="listbox" aria-labelledby="canal-label">
-    <li class="listbox__option" role="option" aria-selected="false">
-      <svg class="listbox__option-icon" aria-hidden="true">…</svg>
-      <span class="listbox__option-label">Correo electrónico</span>
+  <ul class="menu-list" id="tramite-listbox" role="listbox" aria-labelledby="tramite-label">
+    <li class="menu-item" role="option" aria-selected="false">
+      <svg class="menu-item__icon" aria-hidden="true">…</svg>
+      <span class="menu-item__label">Reembolso</span>
     </li>
-    <li class="listbox__option" role="option" aria-selected="false">
-      <svg class="listbox__option-icon" aria-hidden="true">…</svg>
-      <span class="listbox__option-label">Llamada telefónica</span>
+    <li class="menu-item" role="option" aria-selected="false">
+      <svg class="menu-item__icon" aria-hidden="true">…</svg>
+      <span class="menu-item__label">Licencia médica</span>
     </li>
+    <!-- … Hora médica · Mi plan · Bono de atención · Soporte -->
   </ul>
 </div>
 
@@ -249,24 +287,17 @@ interface SelectOptionProps {
   <span id="region-feedback" class="select__feedback" role="alert">Selecciona una opción para avanzar.</span>
 </div>
 
-<!-- Select scroll=true con Listbox scrolleable -->
-<div class="select select--open">
-  <div class="select__label-row">
-    <label id="region-scroll-label" class="select__label">Región</label>
-  </div>
-  <button class="select__trigger"
-          role="combobox"
-          aria-labelledby="region-scroll-label"
-          aria-expanded="true"
-          aria-haspopup="listbox"
-          aria-controls="region-scroll-listbox">
+<!-- Select active con panel scrolleable (7+ opciones) -->
+<div class="select select--active">
+  <button class="select__trigger" role="combobox" aria-expanded="true"
+          aria-haspopup="listbox" aria-controls="region-scroll-listbox">
     <span class="select__value select__value--placeholder">Selecciona una región</span>
     <svg class="select__chevron" aria-hidden="true">…</svg>
   </button>
-  <ul class="listbox listbox--scroll" id="region-scroll-listbox" role="listbox" aria-labelledby="region-scroll-label">
-    <li class="listbox__option" role="option" aria-selected="false"><span class="listbox__option-label">Región 1</span></li>
-    <li class="listbox__option" role="option" aria-selected="false"><span class="listbox__option-label">Región 2</span></li>
-    <!-- … hasta Región 10 -->
+  <ul class="menu-list menu-list--scroll" id="region-scroll-listbox" role="listbox">
+    <li class="menu-item" role="option" aria-selected="false"><span class="menu-item__label">Región 1</span></li>
+    <li class="menu-item" role="option" aria-selected="false"><span class="menu-item__label">Región 2</span></li>
+    <!-- … 7+ opciones → scroll interno, 286px -->
   </ul>
 </div>
 
@@ -275,12 +306,8 @@ interface SelectOptionProps {
   <div class="select__label-row">
     <label id="region-label-dis" class="select__label">Región</label>
   </div>
-  <button class="select__trigger"
-          role="combobox"
-          aria-labelledby="region-label-dis"
-          aria-expanded="false"
-          aria-haspopup="listbox"
-          disabled>
+  <button class="select__trigger" role="combobox" aria-expanded="false"
+          aria-haspopup="listbox" disabled>
     <span class="select__value select__value--placeholder">Seleccionar</span>
     <svg class="select__chevron" aria-hidden="true">…</svg>
   </button>
@@ -294,12 +321,12 @@ interface SelectOptionProps {
 
 | Elemento | Tag · Role | Atributos requeridos |
 |---|---|---|
-| Select trigger | `<button role="combobox">` | `aria-expanded` · `aria-haspopup="listbox"` · `aria-controls="[listbox-id]"` · `aria-labelledby="[label-id]"` |
+| Select trigger | `<button role="combobox">` | `aria-expanded` · `aria-haspopup="listbox"` · `aria-controls="[panel-id]"` · `aria-labelledby="[label-id]"` |
 | Select en error | `<button role="combobox">` | `aria-invalid="true"` · `aria-describedby="[feedback-id]"` |
 | Label | `<label>` | `id` — referenciado en `aria-labelledby` del trigger |
-| Listbox | `<ul role="listbox">` | `id` · `aria-labelledby="[label-id]"` |
-| Option | `<li role="option">` | `id` · `aria-selected="true\|false"` |
-| Option deshabilitada | `<li role="option">` | `aria-disabled="true"` |
+| Panel (menu/list) | `<ul role="listbox">` | `id` · `aria-labelledby="[label-id]"` |
+| Opción (\_menu/item) | `<li role="option">` | `id` · `aria-selected="true\|false"` |
+| Opción deshabilitada | `<li role="option">` | `aria-disabled="true"` |
 | Opción activa por teclado | trigger | `aria-activedescendant="[option-id]"` |
 | Feedback de error | `<span>` | `role="alert"` · `id` referenciado en `aria-describedby` |
 | Íconos decorativos | `<svg>` | `aria-hidden="true"` |
@@ -310,34 +337,41 @@ interface SelectOptionProps {
 
 | Tecla | Acción |
 |---|---|
-| `Tab` | Mueve el foco al trigger |
+| `Tab` | Mueve el foco al trigger → `state=focus` (anillo de focus visible) |
 | `Shift + Tab` | Foco al elemento anterior |
-| `Enter` · `Space` | Abre el listbox (trigger cerrado) · Selecciona la opción activa (listbox abierto) |
-| `↓` | Abre el listbox · Mueve foco a la siguiente opción |
+| `Enter` · `Space` | Abre el panel (`state=active`) · Selecciona la opción activa (panel abierto) |
+| `↓` | Abre el panel · Mueve foco a la siguiente opción |
 | `↑` | Mueve foco a la opción anterior |
 | `Home` | Mueve foco a la primera opción |
 | `End` | Mueve foco a la última opción |
-| `Escape` | Cierra el listbox sin seleccionar |
-| `Tab` (dentro del listbox) | Cierra el listbox y mueve el foco al siguiente elemento |
+| Escribir (letras) | Type-ahead: mueve el foco a la primera opción que coincide |
+| `Escape` | Cierra el panel sin seleccionar |
+| `Tab` (dentro del panel) | Cierra el panel y mueve el foco al siguiente elemento |
 
 ---
 
 ## Reglas
 
 - `label` siempre visible — el placeholder desaparece al interactuar.
-- `scroll=false` admite hasta 5 opciones. Con 6 o más, usar `scroll=true` (alto fijo 236px con scroll interno).
+- **`focus` vs `active`:** `focus` = enfocado por teclado y cerrado (anillo de focus); `active` = panel desplegado. La navegación por teclado **siempre** muestra el anillo de focus.
+- **Combinatoria de estados:** `filled` · `error` · `read-only` (estado del dato) son **ortogonales** a `focus` · `active` (interacción) y coexisten — ej. `filled` + `focus` + `error`. `disabled` y `read-only` **anulan** la interacción.
+- **Scroll:** hasta 6 opciones → `scroll=none` (hug, sin scrollbar). Con 7 o más → `scroll` con alto fijo **286px** mostrando 50% de la siguiente opción como pista.
+- **Ancho:** el `trigger` tiene min-width **160px**. El panel iguala el ancho del input; si el input baja de 200px, el panel se mantiene en **200px alineado a la izquierda** (no se centra).
+- El panel **flota** (`position: absolute`) — nunca empuja el layout, solo se superpone. **Debe renderizarse en un portal (o con `z-index` alto)** para no quedar tapado por los campos siguientes del formulario.
+- El label de opción **trunca a 1 línea con ellipsis** — nunca hace wrap.
 - En `state=error` siempre incluir `feedbackMessage` — no depender solo del color de borde.
 - `read-only` ≠ `disabled`: read-only muestra el valor y permite leerlo; disabled excluye el campo del formulario y del orden de teclado.
-- Solo para selección — si la acción ejecuta algo usar `button` o `menu`; si hay solo 2 opciones usar `radio group`.
+- Solo para selección de valor — si la acción ejecuta algo usar **Menu**; si hay solo 2 opciones usar **radio group**.
 - Si una opción tiene ícono, todas deben tenerlo — íconos mixtos crean jerarquía falsa.
-- El Listbox siempre flota sobre el contenido (`position: absolute`) — nunca empuja el layout.
 
 ---
 
 ## Accesibilidad
 
 - **WCAG 1.3.1** — label asociado programáticamente vía `aria-labelledby` en el trigger.
-- **WCAG 4.1.2** — trigger con `role="combobox"`, `aria-expanded`, `aria-haspopup="listbox"` y `aria-controls` apuntando al listbox.
+- **WCAG 4.1.2** — trigger con `role="combobox"`, `aria-expanded`, `aria-haspopup="listbox"` y `aria-controls` apuntando al panel.
 - **WCAG 2.1.1** — teclado completo: flechas para navegar, Enter para seleccionar, Escape para cerrar.
+- **WCAG 2.4.7 (Focus Visible)** — el `state=focus` muestra siempre el anillo de focus en navegación por teclado.
+- **WCAG 2.4.11 / 2.4.13 (Focus Appearance)** — el anillo usa dos capas (ring + gap de contraste) con grosor `--stroke-focus-ring-width`, garantizando visibilidad sobre cualquier fondo.
 - **WCAG 3.3.1** — en error: `aria-invalid="true"` en el trigger + mensaje visible referenciado con `aria-describedby`.
 - **WCAG 2.4.6** — el label identifica el propósito; no usar solo placeholder.

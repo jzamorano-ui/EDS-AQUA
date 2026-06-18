@@ -208,6 +208,23 @@ Esquema **MAJOR.MINOR.PATCH** (semver):
 
 **Registrar la versión en:** `CHANGELOG.md` · Cover de OPS-Library-[Aqua] DS en Figma · Canal Teams Dev+UX.
 
+### Dos tracks de versión
+
+| Track | Archivo | Qué registra | Cuándo avanza |
+|---|---|---|---|
+| Trabajo | `CHANGELOG.md` (raíz) | Historial interno: Figma, tokens, docs en curso | Continuamente |
+| dist | `dist/CHANGELOG.md` | Solo lo entregado a dev | Solo al cortar una versión |
+
+Son **independientes**. El número del `dist` sigue su propia semver desde `0.1.0` — no se sincroniza con el track de trabajo (que puede ir muy por delante). El bump del dist lo manda el cambio de mayor impacto incluido: un dist que suma un componente nuevo **y** corrige valores es MINOR (la adición domina sobre el PATCH).
+
+### Inmutabilidad de releases del dist
+
+- Una versión de `dist/V.x.x.x/` entregada a dev es **inmutable**: no se vuelve a editar.
+- El dist se re-versiona **duplicando, no reemplazando** — la carpeta anterior queda congelada como registro histórico (no se elimina) y la nueva (`dist/V.x.y.z/`) trae los ajustes + componentes nuevos. Las versiones conviven.
+- **Sin parches in-place.** Toda corrección sobre algo ya liberado se publica en la siguiente versión y se documenta en `dist/CHANGELOG.md` — nunca editando la carpeta ya entregada.
+  > Excepción histórica: `dist [0.1.0-patch]` (2026-05-29) editó archivos de v0.1.0 in-place. Fue admisible **solo** porque dev aún no había consumido los componentes. No sienta precedente: con dev consumiendo, la inmutabilidad aplica sin excepción.
+- El corte de versión lo decide el **owner** de forma explícita. El trabajo se acumula entre releases; liberar es un acto deliberado, nunca automático.
+
 ### Cómo añadir una entrada al CHANGELOG
 
 Añadir sección `## [X.Y.Z] — YYYY-MM-DD` encima de la versión anterior:
