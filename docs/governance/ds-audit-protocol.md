@@ -38,7 +38,7 @@ dist            ←  output de Style Dictionary; reflejo exacto de JSON
 
 | Tipo | Cuándo usar | Layers obligatorios |
 |---|---|---|
-| **Full** | Antes de release o publicación de librería | L1 → L2 → L3 → L4 → L5 → L6 |
+| **Full** | Antes de release o publicación de librería | L1 → L2 → L3 → L4 → L6 → L7 → L5 |
 | **Triggered** | Al crear/modificar token, componente o docs | Ver tabla de triggers §1.1 |
 | **Spot** | Corrección de hallazgo puntual | Layer afectado + L4 parcial + L5 |
 | **Post-fix** | Después de resolver un BLOCKER | Layer afectado + L4-V1/V2/V3 |
@@ -48,7 +48,7 @@ dist            ←  output de Style Dictionary; reflejo exacto de JSON
 | Trigger | Layers obligatorios |
 |---|---|
 | Nuevo token primitivo o semántico | L1 + L4-V1 + L4-V2 |
-| Nuevo componente DS | L3 + L4-V3 + L4-V4 |
+| Nuevo componente DS | L3 + L4-V3 + L4-V4 + **L7** (frames doc) |
 | Cambio en token existente | L1 + L3-C1 + L4 completo |
 | Publicación librería Tokens | L1 + L4-V1 + L4-V2 |
 | Publicación librería Icons | L2 + L3-C2 |
@@ -776,6 +776,55 @@ grep -n "background:" dist/V.*/components/*.css src/components/*.css | grep -v "
 
 ---
 
+## 6.6 Layer 7 — Frames de documentación
+
+**Archivo:** `9FoTERLTyDXz3gmPLjjJ09` — frames `*/ System · Use · Matriz · Component - inspection`
+**Referencia:** [`doc-style-guide.md`](doc-style-guide.md) — convenciones canónicas.
+
+Valida que los frames de documentación sean **consistentes en idioma, tono, estructura y forma**. Gran parte es **scriptable** (vía plugin) — los scripts viven aquí.
+
+### Dominios
+
+| Dominio | Peso | Qué verifica | Script |
+|---|---|---|---|
+| **D1 — Idioma** | Crítico | 0 voseo en todos los frames doc (español neutro) | ✅ |
+| **D2 — Labels de sección** | Crítico | El label del header = categoría de página (Actions/Selection/Input/Navigation/Feedback/Data display) | ✅ |
+| **D3 — Estructura** | Medio | Cada componente tiene System/Use/Matriz/(Inspection) con las secciones esperadas | parcial |
+| **D4 — Tipografía** | Medio | Encabezados de sección 32px · headers de tabla 13px Bold | ✅ |
+| **D5 — Tablas** | Medio | Sin headers de tabla con fondo de color (estándar = blanco) | ✅ |
+| **D6 — Tono** | Bajo | Cálido, con el "porqué"; estados en minúscula | manual |
+
+### Scripts (plugin — `figma_execute`)
+
+```javascript
+// D1 — Voseo (debe devolver [])
+await figma.loadAllPagesAsync();
+const voseo=/\b(usá|separá|elegí|activá|seleccioná|ingresá|completá|agregá|mové|mantené|evitá|fijate|asegurate|revisá|cambiá|ponés|tenés|querés|podés|hacés|componés|enganchás|dejá|sumá|mostrá|ocultá|escribí|eliminá|guardá|confirmá|cerrá|abrí|hacelo|usalo|dale|avisá|mirá)\b/i;
+const hits=[];
+for (const p of figma.root.children){ if(!/❖/.test(p.name)) continue;
+  for (const fr of p.children){ if(fr.type!=='FRAME'||!/\/\s*(System|Use|Matriz|Component - inspection)/i.test(fr.name)) continue;
+    for (const t of fr.findAll(n=>n.type==='TEXT')) if(voseo.test(t.characters)) hits.push(fr.name+': '+t.characters.slice(0,40)); } }
+return hits; // PASS si []
+
+// D2 — Labels de sección (debe devolver {fixed:[]})
+const cat=p=>/❖ Button|❖ Menu/.test(p)?'Actions':/Chips|Check box|Radio button|❖ Toggle/.test(p)?'Selection':/Text Field|❖ Select|❖ Combobox/.test(p)?'Input':/❖ Link|❖ Tabs/.test(p)?'Navigation':/Alert|Spinner|Tooltip/.test(p)?'Feedback':/Badge|❖ Tag/.test(p)?'Data display':null;
+const wrong=[];
+for (const p of figma.root.children){ const c=cat(p.name); if(!c) continue;
+  for (const fr of p.children){ if(fr.type!=='FRAME'||!/\/\s*(System|Use|Matriz|Component - inspection)/i.test(fr.name)) continue;
+    const lb=fr.findOne(n=>n.name==='Label base'); const t=lb&&lb.findOne(x=>x.type==='TEXT');
+    if(t && t.characters.trim()!==c) wrong.push(fr.name+': "'+t.characters.trim()+'" ≠ "'+c+'"'); } }
+return wrong; // PASS si []
+
+// D4 — Encabezados de sección ≠ 32px (debe devolver [])
+// D5 — Headers de tabla con fill de color (debe devolver [])
+// (ver sesión 2026-06-19 para los scripts completos de D4/D5)
+```
+
+**Score L7:** X/6 dominios en PASS
+**Gate:** D1 y D2 (Críticos) deben ser PASS para release. Al agregar un componente, correr L7 sobre sus frames nuevos.
+
+---
+
 ## 7. Layer 5 — Release gate
 
 ### Cadencia hacia un nuevo dist
@@ -796,6 +845,8 @@ Score sistema = suma ponderada:
 Score por layer = (dominios/checks en PASS) / (total dominios/checks) × 10
 Score sistema   = L1×0.30 + L2×0.15 + L3×0.28 + L4×0.20 + L6×0.07
 ```
+
+**L7 — Frames de documentación** es un **gate de pasa/no pasa** (no ponderado): sus dominios Críticos **D1 (idioma) y D2 (labels de sección)** deben ser PASS para release. No suma al score numérico, pero un FAIL en D1/D2 bloquea igual que un BLOCKER.
 
 ### Pre-condición de release — CI gate
 

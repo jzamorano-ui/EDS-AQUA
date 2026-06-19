@@ -5,6 +5,25 @@ Ver proceso de contribución y versionado en [docs/governance/design-system-rule
 
 ---
 
+## [0.18.0] — 2026-06-19
+
+### Added — Sistema de prevención de inconsistencias en documentación
+
+Tras una auditoría de los frames doc de Figma (System/Use/Matriz/Inspection) que encontró **42 labels de sección erróneos**, voseo, tipografía y tablas inconsistentes (causados por clonar componentes entre sí sin un template maestro), se agregó la infraestructura para prevenirlo al escalar:
+
+- **`docs/governance/doc-style-guide.md`** (nuevo) — guía canónica de estilo de documentación: español neutro (sin voseo), tono, estructura de los 4 frames, tipografía (encabezado 32px · header tabla 13px Bold), estilo de tabla (header blanco), mapa de labels de sección (página→categoría), bloque de comparación Badge/Tag/Chips, y checklist al agregar componente.
+- **`ds-audit-protocol.md` — capa `L7 — Frames de documentación`** (nueva): valida idioma (D1, voseo), labels de sección (D2), estructura (D3), tipografía (D4), tablas (D5) y tono (D6). D1/D2 son gate de pasa/no-pasa. Incluye scripts reutilizables. Integrada en la secuencia Full, el trigger de "nuevo componente DS" y el release gate.
+- **Figma — templates maestros** (página `🧩 _Templates`): `_Template / System · Use · Matriz · Inspection`, genéricos con placeholders. Regla: clonar del template, nunca de otro componente.
+
+### Fixed — Consistencia de frames de documentación (Figma, sin publicar)
+
+- **42 labels de sección** corregidos en todos los frames (Actions/Selection/Input/Navigation/Feedback/Data display).
+- **Voseo → español neutro** en Menu y Combobox.
+- **Badge/Tag/Chips:** bloque de comparación homologado (cada doc lidera con su propio componente, destacado).
+- **Chips/Use:** estructura homologada (intro, sin numeración, sin "Do/Don't" headers), tablas header blanco (era violeta), encabezados 32px (eran 22px).
+
+---
+
 ## [0.17.0] — 2026-06-19
 
 ### Changed — `menu/list` formalizado como primitiva pública (dueño del menú)
