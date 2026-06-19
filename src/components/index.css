@@ -2,6 +2,7 @@
    CSS listo, pendiente de incorporar al próximo dist release.
    Requiere: dist/V.0.1.0/tokens.css cargado primero. */
 
+@import './menu.css';
 @import './select.css';
 @import './combobox.css';
 @import './text-field.css';

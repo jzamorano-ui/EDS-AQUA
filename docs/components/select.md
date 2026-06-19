@@ -1,6 +1,6 @@
 # Select
 
-Selección única de una opción desde un conjunto predefinido; no admite entrada de texto. Para acciones usar **Menu**; para 2 opciones, **radio button**. Consume las primitivas compartidas **`menu/list`** (panel) y **`_menu/item`** (opción) — en Select toman rol ARIA `listbox`/`option`.
+Selección única de una opción desde un conjunto predefinido; no admite entrada de texto. Para acciones usar **Menu**; para 2 opciones, **radio button**. Consume las primitivas compartidas **`menu/list`** (panel) y **`_menu/item`** (opción) — documentadas en [`menu.md`](menu.md); en Select toman rol ARIA `listbox`/`option`.
 
 ---
 
@@ -19,25 +19,9 @@ Selección única de una opción desde un conjunto predefinido; no admite entrad
 - **`focus`** = campo enfocado por teclado, cerrado (anillo de focus visible).
 - **`active`** = panel desplegado (`menu/list` abierto).
 
-### menu/list (panel)
+### menu/list (panel) · \_menu/item (opción)
 
-| Propiedad | Valores |
-|---|---|
-| `scroll` | none · top · mid · bottom |
-
-- **`none`** — hug, hasta 6 opciones, sin scrollbar.
-- **`top · mid · bottom`** — con 7+ opciones: alto fijo **286px** (6 filas + 50% de la siguiente) con scroll interno. `top/mid/bottom` representan la posición del scroll.
-
-### \_menu/item (opción)
-
-| Propiedad | Valores |
-|---|---|
-| `state` | default · hover · active · focus · disabled |
-| `icon` | true · false — muestra u oculta el ícono |
-| `label` | texto de la opción — requerido |
-
-- El ícono se cambia por **swap nativo** del `option-icon` (no hay prop expuesta).
-- `active` = opción seleccionada/destacada. Si una opción tiene ícono, todas deben tenerlo.
+Propiedades, estados y comportamiento (scroll, divisor, ícono de opción) → **[`menu.md`](menu.md)**. En Select toman rol ARIA `listbox`/`option`.
 
 ---
 
@@ -106,30 +90,7 @@ interface SelectOptionProps {
 | gap (separador) | border (inside del `select-container`) | `--color-focus-ring-gap-default` |
 | grosor (ambos) | border-width | `--stroke-focus-ring-width` (2px) |
 
-**menu/list (panel)**
-
-| Elemento | Estado | Propiedad CSS | CSS custom property |
-|---|---|---|---|
-| `panel` | — | background | `--color-bg-surface-default` |
-| `panel` | — | border | `--color-border-default` |
-| `panel` | — | box-shadow | `--elevation-md` |
-| `scrollbar-track` | — | background | `--color-bg-fill-neutral-subtle` |
-| `scrollbar-thumb` | — | background | `--color-bg-fill-neutral-strong` |
-| `_divider` (separador entre grupos, opcional) | — | background | `--color-border-divider-default` |
-
-**\_menu/item (opción)**
-
-| Elemento | Estado | Propiedad CSS | CSS custom property |
-|---|---|---|---|
-| `option` | default | background | `--color-action-tertiary-default` |
-| `option` | hover | background | `--color-action-tertiary-hover` |
-| `option` | active | background | `--color-action-tertiary-active` |
-| `option` | focus | background + anillo | `--color-action-tertiary-default` + **Anillo de focus** |
-| `option` | disabled | background | `--color-action-primary-disabled` |
-| `option-label` | default · hover · active · focus | color | `--color-text-primary` |
-| `option-label` | disabled | color | `--color-text-disabled` |
-| `option-icon` | default · hover · active · focus | fill | `--color-icon-system-primary` |
-| `option-icon` | disabled | fill | `--color-icon-system-disabled` |
+**Panel y opciones** (`menu/list` + `_menu/item`) → tokens de color en **[`menu.md`](menu.md)**.
 
 ### Layout
 
@@ -145,26 +106,7 @@ interface SelectOptionProps {
 | `border-width` (trigger) | `--stroke-xs` | 1px |
 | `min-width` (trigger) | — (constante de layout) | 160px |
 
-**menu/list (panel)**
-
-| Propiedad | CSS custom property | Valor |
-|---|---|---|
-| `padding-block` | `--space-xs` | 8px |
-| `border-radius` | `--radius-sm` | 8px |
-| `border-width` | `--stroke-xs` | 1px |
-| `max-height` (scroll) | — | 286px (6 filas + 50%) |
-| `min-width` | — (constante de layout) | 200px |
-| `scrollbar` (ancho) | — | 4px |
-| `scrollbar` (radius) | `--radius-pill` | — |
-
-**\_menu/item (opción)**
-
-| Propiedad | CSS custom property | Valor |
-|---|---|---|
-| `height` (fila) | — | 44px |
-| `padding-block` | `--space-sm` | 12px |
-| `padding-inline` | `--space-md` | 16px |
-| `gap` (icon · label) | `--space-sm` | 12px |
+**Panel y opciones** (`menu/list` + `_menu/item`) → layout en **[`menu.md`](menu.md)**.
 
 ### Tipografía
 

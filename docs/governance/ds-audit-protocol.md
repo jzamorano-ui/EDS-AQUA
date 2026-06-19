@@ -265,9 +265,9 @@ Verificar que cada propiedad visual en cada ComponentSet está bindeada a una va
 | checkbox group | `40002312:6390` | 1 | **COMPONENT** — página ❖ Check box; documentado en `checkbox.md` |
 | notification | `40002386:4322` | 1 | **COMPONENT** — página ❖ Badge; documentado en `badge.md` |
 | select | `40003102:19653` | 7 | **Staging v0.2.0** — página ❖ Select; `select.md` |
-| _menu/item | `40003102:19674` | 5 | **Staging v0.2.0** — primitiva compartida; `select.md` |
-| menu/list | `40003104:25695` | 4 | **Staging v0.2.0** — primitiva compartida; `select.md` |
-| _divider | `40003146:80675` | 1 | **COMPONENT** — primitiva interna del menú; `select.md` |
+| menu/list | `40003104:25695` | 4 | **Staging v0.2.0** — **público**; página ❖ Menu; `menu.md` |
+| _menu/item | `40003102:19674` | 5 | **Staging v0.2.0** — primitiva interna; página ❖ Menu; `menu.md` |
+| _divider | `40003146:80675` | 1 | **COMPONENT** — primitiva interna del menú; página ❖ Menu; `menu.md` |
 | combobox | `40003354:14160` | 9 | **Staging v0.2.0** — página ❖ Combobox; `combobox.md`; reusa `menu/list` + `_menu/item` |
 
 **Exclusión documentada — `→ Navegador kit`:** los 5 nodos de la página `→ Navegador kit` (Tab Bar iOS, Address Bar iOS, Desktop-windows, _Tab Bar Android, _Address Bar android) son mockups de browser-chrome para frames de uso/documentación — **no son componentes del DS**. No se auditan ni requieren `.md`. Excluidos a propósito vía `NAVEGADOR_KIT_EXCLUDED` en el pre-flight §2.
@@ -669,8 +669,9 @@ Cada `.md` debe tener exactamente estas 8 secciones: `Propiedades`, `Props`, `To
 | tooltip | `docs/components/tooltip.md` |
 | select *(staging v0.2.0)* | `docs/components/select.md` |
 | combobox *(staging v0.2.0)* | `docs/components/combobox.md` |
+| menu *(staging v0.2.0)* | `docs/components/menu.md` |
 
-> **Sub-componentes documentados en el `.md` del padre** (no llevan `.md` propio): `chips/group`→`chips.md`, `tabs/group`→`tabs.md`, `checkbox group`→`checkbox.md`, `notification`→`badge.md`, `_menu/item`+`menu/list`+`_divider`→`select.md`. El `combobox` reusa `menu/list`+`_menu/item` (documentados en `select.md`) y documenta su propio campo editable en `combobox.md`.
+> **Sub-componentes documentados en el `.md` del padre** (no llevan `.md` propio): `chips/group`→`chips.md`, `tabs/group`→`tabs.md`, `checkbox group`→`checkbox.md`, `notification`→`badge.md`. **`menu/list` es público** (`menu.md`); `_menu/item`+`_divider` son sus internas, también documentadas en `menu.md`. **Select** y **Combobox** consumen `menu/list`+`_menu/item` (documentados en `menu.md`) y documentan su propio trigger/campo en `select.md`/`combobox.md`.
 
 **PASS:** Variantes, tokens y secciones coinciden al 100% con Figma y dist.  
 **WARN:** 1–2 tokens en .md con nombre desactualizado pero valor correcto.  
@@ -746,8 +747,9 @@ grep -n "background:" dist/V.*/components/*.css src/components/*.css | grep -v "
 | `text-field.css` | `.field` |
 | `toggle.css` | `.toggle-field` |
 | `tooltip.css` | `.tooltip` |
-| `select.css` (staging) | `.select` · `.menu-list` · `.menu-item` |
-| `combobox.css` (staging) | `.combobox` · `.menu-list__empty` (reusa `.menu-list`/`.menu-item`) |
+| `menu.css` (staging) | `.menu-list` · `.menu-item` · `.menu-divider` (primitivas públicas/internas) |
+| `select.css` (staging) | `.select` (consume `.menu-list`/`.menu-item` de menu.css) |
+| `combobox.css` (staging) | `.combobox` · `.menu-list__empty` (consume `.menu-list`/`.menu-item` de menu.css) |
 
 **PASS:** Toda propiedad visual con valor no-transparente en CSS tiene respaldo de binding en Figma; toda propiedad bindeada en Figma está reflejada en CSS.  
 **WARN:** Propiedad extra en CSS con valor visible pero sin stroke/fill en Figma, en un nodo no visible al usuario.  

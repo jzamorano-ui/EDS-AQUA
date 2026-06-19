@@ -5,6 +5,24 @@ Ver proceso de contribución y versionado en [docs/governance/design-system-rule
 
 ---
 
+## [0.17.0] — 2026-06-19
+
+### Changed — `menu/list` formalizado como primitiva pública (dueño del menú)
+
+Las primitivas de lista flotante (`menu/list` + `_menu/item` + `_divider`) dejan de "vivir" bajo Select y pasan a ser de **Menu**, su dueño semántico (rol nativo ARIA `menu`/`menuitem`; Select/Combobox son consumidores con rol adaptado `listbox`/`option`). Corrige la dependencia invertida: el consumidor (Select) documentaba primitivas que solo usa.
+
+**Decisión:** no se crea un componente `menu` que bundlee un trigger fijo (acoplaría el caso). Se expone **`menu/list`** como componente **público** componible con cualquier trigger (button, icon-button, avatar, card…). `_menu/item` y `_divider` son sus building blocks internos.
+
+- **Figma:** nueva página `❖ Menu` (sección ↓ Actions, tras Button). `menu/list` + `_menu/item` + `_divider` movidos ahí desde `❖ Select` (instancias referencian por ID → Select/Combobox **intactos**, sin re-auditoría de la primitiva).
+- **`docs/components/menu.md`** (nuevo) — spec canónica de `menu/list` (público) + `_menu/item`/`_divider` (internos): props, tokens, layout, ARIA **dual-role** (`menu`/`menuitem` nativo · `listbox`/`option` adaptado), teclado, reglas. 8 secciones.
+- **`src/components/menu.css`** (nuevo) — `.menu-list` · `.menu-item` · `.menu-divider` **movidas desde `select.css`**. Importado en `index.css` **antes** de select/combobox. `select.css` y `combobox.css` ahora las consumen (sin redefinir).
+- **Referencias actualizadas:** `select.md`/`combobox.md` apuntan a `menu.md`; registro en `ds-audit-protocol.md` (§3-L3, V3, V4, nota de sub-componentes).
+- **Patrones de uso del menú de acciones** (action menu, menú de usuario, agrupación destructiva bajo divisor, DO/DON'T) — pendientes, se documentan aparte.
+
+0 tokens nuevos · 0 cambios estructurales en las primitivas → cero impacto en Select/Combobox.
+
+---
+
 ## [0.16.0] — 2026-06-19
 
 ### Added — Combobox component (Figma + spec + CSS staging)
