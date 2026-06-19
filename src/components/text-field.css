@@ -77,9 +77,12 @@
   border-color: var(--color-border-focus);
 }
 
-/* focus — navegación por teclado: anillo ring + gap (dos capas) */
-.field--focus .field__input-wrapper,
-.field__input-wrapper:has(.field__input:focus-visible) {
+/* focus — anillo ring + gap (dos capas), EXCLUSIVO de teclado (a11y).
+   Gobernado por la clase `.field--focus`, NO por `:focus-visible`: en un <input>
+   de texto `:focus-visible` también dispara con mouse y rompería el "solo teclado".
+   CONTRATO: el consumidor enciende `.field--focus` detectando la modalidad de input
+   (keydown → teclado · pointerdown → puntero). Con mouse mandan los estados active/writing. */
+.field--focus .field__input-wrapper {
   border-width: var(--stroke-sm);
   border-color: var(--color-border-focus);
   box-shadow:
@@ -99,8 +102,7 @@
   border-color: var(--color-border-danger-focus);
 }
 
-.field--error.field--focus .field__input-wrapper,
-.field--error .field__input-wrapper:has(.field__input:focus-visible) {
+.field--error.field--focus .field__input-wrapper {
   box-shadow:
     0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-gap-default),
     0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-default);

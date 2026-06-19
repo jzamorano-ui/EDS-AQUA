@@ -5,6 +5,38 @@ Ver proceso de contribución y versionado en [docs/governance/design-system-rule
 
 ---
 
+## [0.19.0] — 2026-06-19
+
+### Fixed — Combobox + Text Field: anillo de focus exclusivo de teclado (a11y)
+
+El anillo de focus se gobernaba con `:has(...:focus-visible)`, que en un `<input>` de texto **también dispara con mouse** — rompía el "solo teclado". Ahora el anillo se rige **solo por la clase de estado** (`.combobox--focus` · `.field--focus`), y queda como **contrato**: el consumidor la enciende detectando la modalidad de entrada (`keydown` → teclado · `pointerdown` → puntero). Con mouse mandan los estados `active`/`writing`/`filled`.
+
+Mismo defecto en los dos únicos componentes con `<input>` de texto. `select` y `menu` usan `:focus-visible` correctamente (sus elementos no son inputs de texto) y no se tocaron.
+
+- **`src/components/combobox.css`** — removida la rama `:focus-visible` de las dos reglas de foco (normal y `error`); comentario con el contrato.
+- **`src/components/text-field.css`** — mismo fix en las dos reglas de foco (normal y `error`).
+- **`docs/components/combobox.md`** · **`docs/components/text-field.md`** — regla "anillo = exclusivo de teclado" + contrato de implementación en Accesibilidad (WCAG 2.4.7).
+
+### Docs — `writing` aclarado como estado ilustrativo (no de dev)
+
+`writing` es **visualmente idéntico a `active`** en el campo (mismo borde) tanto en Text Field como en Combobox — existe para ejemplificar "el usuario escribiendo" en diseño, pero el consumidor **no implementa una clase aparte**: la lista filtrada / el valor surgen solos del input. Nota agregada en Reglas de `text-field.md` y `combobox.md`. Se mantiene en Figma como estado ilustrativo; no se remueve (en Text Field es contrato v0.1.0).
+
+### Fixed — Corrupción en CSS de staging
+
+`src/components/menu.css` y `combobox.css` tenían un `</content>` pegado al final (artefacto de escritura) que rompía el build de un consumidor. Removido.
+
+- **`.github/workflows/audit.yml`** — sumados checks **V4b**: detección de artefactos tipo tag en CSS (despojando comentarios `/* */` para no marcar prosa con `<input>`) + balance de llaves `{`/`}`. Cierra el gap por el que el `</content>` pasó la CI.
+
+### Verified — Auditoría Figma full pre-corte v0.2.0
+
+Ensayo de corte y auditoría de los 5 layers contra Figma (vía MCP), sin gaps:
+- **L1 Tokens** — 149 semánticos, arquitectura congelada intacta, alias-chain 149/149→primitivo, codeSyntax WEB completo, sync con dist OK.
+- **L2 Icons** — set `source/system/*` 221/221 vectores en `context-color`; glifos consumidos (chevron, error) OK.
+- **L3 DS** — 0 dangling en 1324 nodos, paridad Figma↔CSS verde. **Fix:** `tooltip-body` rebindeado de primitivo `shape/borderRadius` → semántico `radius/xs` (mismo 4px, sin cambio visual; pendiente publicar librería).
+- **L7 Doc frames** — combobox+menu consistentes con `doc-style-guide.md` (sin voseo, tipografía 54/32/13).
+
+---
+
 ## [0.18.0] — 2026-06-19
 
 ### Added — Sistema de prevención de inconsistencias en documentación

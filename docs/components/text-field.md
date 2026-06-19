@@ -178,6 +178,8 @@ interface TextAreaProps {
 
 - `label` siempre visible — el placeholder no lo reemplaza.
 - **`active` vs `focus`:** al seleccionar el campo se activa para escribir (`active`, borde focus 2px); la **navegación por teclado** muestra además el **anillo de focus** (`focus`, ring+gap). `writing` = escritura en curso. A diferencia de `select`, el input no requiere abrir nada.
+- **Anillo = exclusivo de teclado.** El anillo de focus aparece **solo** cuando el foco llega por teclado (`Tab`) — **con mouse no se muestra** (ahí comunica el borde `active` 2px). No depender de `:focus-visible` para esto: en un `<input>` de texto también dispara con mouse (ver Accesibilidad).
+- **`writing` es ilustrativo, no un estado de dev.** Es **visualmente idéntico a `active`** (mismo borde focus 2px) — existe para ejemplificar en diseño "el usuario está escribiendo". El consumidor **no implementa una clase aparte**: surge solo del valor que se ingresa en el input.
 - **Combinatoria de estados:** `filled` (dato ingresado) es **ortogonal** a la interacción (`active`/`focus`/`writing`) y a `error` — coexisten (ej. `filled` + `focus`, `error` + `focus`). `disabled` y `read-only` **anulan** la interacción.
 - `read-only` ≠ `disabled`: read-only permite leer y copiar; disabled excluye el campo del formulario.
 - En `state=error` siempre incluir mensaje de texto — no depender solo del color de borde.
@@ -190,7 +192,7 @@ interface TextAreaProps {
 
 - **WCAG 1.3.1** — label asociado programáticamente vía `<label for>` o `aria-labelledby`.
 - **WCAG 2.4.6** — el texto del label identifica el propósito; no usar solo placeholder.
-- **WCAG 2.4.7 (Focus Visible)** — `state=focus` muestra el anillo de focus en navegación por teclado.
+- **WCAG 2.4.7 (Focus Visible)** — `state=focus` muestra el anillo de focus en navegación por teclado, y **solo** ahí. **Contrato de implementación:** el anillo se gobierna por la clase `.field--focus`, **no** por `:focus-visible` — en un `<input>` de texto `:focus-visible` también se activa con mouse y rompería el "solo teclado". El consumidor enciende `.field--focus` detectando la modalidad de entrada (`keydown` → teclado · `pointerdown` → puntero).
 - **WCAG 2.4.11 / 2.4.13 (Focus Appearance)** — el anillo usa dos capas (ring + gap de contraste) con grosor `--stroke-focus-ring-width`, visible sobre cualquier fondo.
 - **WCAG 3.3.1** — en error: `aria-invalid="true"` + mensaje visible referenciado con `aria-describedby`.
 - **WCAG 3.3.2** — labels o instrucciones visibles siempre que se requieran datos del usuario.

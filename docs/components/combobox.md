@@ -302,6 +302,8 @@ interface ComboboxOption {
 
 - `label` siempre visible — el placeholder desaparece al interactuar.
 - **`focus` vs `active` vs `writing`:** `focus` = enfocado por teclado y cerrado (anillo de focus); `active` = panel desplegado sin filtrar; `writing` = escribiendo → lista filtrada. La navegación por teclado **siempre** muestra el anillo de focus.
+- **`writing` es ilustrativo, no un estado de dev.** En el `field` es **visualmente idéntico a `active`** (mismo borde) — existe para ejemplificar en diseño "el usuario está escribiendo". El consumidor **no implementa una clase aparte**: la lista filtrada surge sola del valor del input + el filtrado.
+- **Anillo = exclusivo de teclado.** El anillo de focus aparece **solo** cuando el foco llega por teclado (`Tab`) o se navega con teclado (flechas). **Con mouse no se muestra** — ahí comunican los estados `active`/`writing`/`filled`. No depender de `:focus-visible` para esto: en un `<input>` de texto también dispara con mouse (ver Accesibilidad).
 - **Combinatoria de estados:** `filled` · `error` · `read-only` (estado del dato) son **ortogonales** a `focus` · `active` · `writing` (interacción) y coexisten. `disabled` y `read-only` **anulan** la interacción.
 - **Filtrado:** coincidencia *contains* sobre el label de la opción. **Lista cerrada y estricta** — no acepta valores fuera de las opciones (v1). Si no hay coincidencias, mostrar siempre `no-results` con mensaje — **nunca** un panel vacío en silencio.
 - **Scroll:** hasta 6 opciones → `scroll=none` (hug, sin scrollbar). Con 7 o más → `scroll` con alto fijo **286px** mostrando 50% de la siguiente opción como pista.
@@ -320,7 +322,7 @@ interface ComboboxOption {
 - **WCAG 1.3.1** — label asociado programáticamente vía `aria-labelledby` en el input.
 - **WCAG 4.1.2** — input con `role="combobox"`, `aria-expanded`, `aria-autocomplete="list"` y `aria-controls` apuntando al panel; opción destacada vía `aria-activedescendant`.
 - **WCAG 2.1.1** — teclado completo: escribir para filtrar, flechas para navegar, Enter para seleccionar, Escape para cerrar/limpiar.
-- **WCAG 2.4.7 (Focus Visible)** — el `state=focus` muestra siempre el anillo de focus en navegación por teclado.
+- **WCAG 2.4.7 (Focus Visible)** — el `state=focus` muestra siempre el anillo de focus en navegación por teclado, y **solo** ahí. **Contrato de implementación:** el anillo se gobierna por la clase `.combobox--focus`, **no** por `:focus-visible` — en un `<input>` de texto `:focus-visible` también se activa con mouse y rompería el "solo teclado". El consumidor enciende `.combobox--focus` detectando la modalidad de entrada (`keydown` → teclado · `pointerdown` → puntero).
 - **WCAG 2.4.11 / 2.4.13 (Focus Appearance)** — el anillo usa dos capas (ring + gap de contraste) con grosor `--stroke-focus-ring-width`, garantizando visibilidad sobre cualquier fondo.
 - **WCAG 3.3.1** — en error: `aria-invalid="true"` en el input + mensaje visible referenciado con `aria-describedby`.
 - **WCAG 2.4.6** — el label identifica el propósito; no usar solo placeholder.

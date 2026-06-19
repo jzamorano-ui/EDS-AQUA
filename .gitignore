@@ -19,3 +19,6 @@ package-lock.json
 sd.config.mjs
 VERSION
 .claude/
+
+# Ejercicio local — no es parte del DS
+exploration/

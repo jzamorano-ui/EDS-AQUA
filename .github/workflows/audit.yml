@@ -55,6 +55,39 @@ jobs:
           fi
           echo "✅ CSS components — 0 HEX hardcodeados"
 
+      # ── V4b — CSS components — sanidad (sin artefactos ni llaves rotas) ──────
+
+      - name: V4b · CSS components — sin artefactos de escritura
+        run: |
+          # Detecta tags HTML/XML pegados en CSS (ej. el `</content>` que rompió un build).
+          # Despoja comentarios /* */ primero — las prosas con `<input>` son legítimas ahí.
+          FAIL=0
+          for css in $(find dist/V.0.1.0/components/ src/components/ -name "*.css"); do
+            HITS=$(perl -0777 -pe 's{/\*.*?\*/}{}gs' "$css" | grep -nE '</?[a-zA-Z][^>]*>' || true)
+            if [ -n "$HITS" ]; then
+              echo "❌ $css — artefacto tipo tag (fuera de comentario):"
+              echo "$HITS"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "✅ CSS components — sin artefactos de escritura"
+
+      - name: V4b · CSS components — llaves balanceadas
+        run: |
+          FAIL=0
+          for css in $(find dist/V.0.1.0/components/ src/components/ -name "*.css"); do
+            STRIPPED=$(perl -0777 -pe 's{/\*.*?\*/}{}gs' "$css")
+            OPEN=$(printf '%s' "$STRIPPED" | tr -cd '{' | wc -c | tr -d ' ')
+            CLOSE=$(printf '%s' "$STRIPPED" | tr -cd '}' | wc -c | tr -d ' ')
+            if [ "$OPEN" != "$CLOSE" ]; then
+              echo "❌ $css — llaves desbalanceadas ({ = $OPEN, } = $CLOSE)"
+              FAIL=1
+            fi
+          done
+          if [ "$FAIL" -eq 1 ]; then exit 1; fi
+          echo "✅ CSS components — llaves balanceadas"
+
       # ── V3 — .md tienen las 8 secciones requeridas ──────────────────────────
 
       - name: V3 · .md — 8 secciones obligatorias

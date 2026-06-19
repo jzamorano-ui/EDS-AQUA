@@ -115,9 +115,12 @@
   transform: rotate(180deg);
 }
 
-/* focus — navegación por teclado: anillo ring + gap (dos capas) */
-.combobox--focus .combobox__field,
-.combobox__field:has(.combobox__input:focus-visible) {
+/* focus — anillo ring + gap (dos capas), EXCLUSIVO de teclado (a11y).
+   Gobernado por la clase `.combobox--focus`, NO por `:focus-visible`: en un <input>
+   de texto `:focus-visible` también dispara con mouse y rompería el "solo teclado".
+   CONTRATO: el consumidor enciende `.combobox--focus` detectando la modalidad de input
+   (keydown → teclado · pointerdown → puntero). Con mouse mandan los estados active/writing. */
+.combobox--focus .combobox__field {
   outline: none;
   box-shadow:
     0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-gap-default),
@@ -140,8 +143,7 @@
   border-color: var(--color-border-danger-focus);
 }
 
-.combobox--error.combobox--focus .combobox__field,
-.combobox--error .combobox__field:has(.combobox__input:focus-visible) {
+.combobox--error.combobox--focus .combobox__field {
   box-shadow:
     0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-gap-default),
     0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-default);
@@ -195,4 +197,3 @@
   color: var(--color-text-secondary);
   list-style: none;
 }
-</content>
