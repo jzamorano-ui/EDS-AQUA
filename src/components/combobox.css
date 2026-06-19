@@ -1,0 +1,198 @@
+/* combobox.css — Aqua DS — staging (pendiente de release v0.2.0)
+   Refleja el estado final de Figma (CS combobox 40003354:14160):
+   9 estados (default · active · writing · no-results · filled · error · read-only · disabled · focus),
+   input editable + filtrado, ícono ⊗ de limpiar, anillo de focus ring+gap, grosores por estado.
+   Reutiliza las primitivas compartidas `.menu-list` / `.menu-item` (definidas en select.css).
+   Requiere: dist tokens.css + select.css cargados primero. */
+
+.combobox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  position: relative;
+  width: 100%;
+}
+
+/* Label */
+
+.combobox__label-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+}
+
+.combobox__label {
+  font-size: var(--type-body-lg-medium-size);
+  font-weight: var(--type-body-lg-medium-weight);
+  line-height: var(--type-body-lg-medium-line-height);
+  color: var(--color-text-primary);
+}
+
+/* Field — input editable */
+
+.combobox__field {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding-block: var(--space-sm);
+  padding-inline: var(--space-sm);
+  min-width: 160px; /* constante de layout (no token) */
+  border: var(--stroke-xs) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-fill-neutral-subtle);
+  width: 100%;
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+
+.combobox__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: var(--type-body-lg-regular-size);
+  font-weight: var(--type-body-lg-regular-weight);
+  line-height: var(--type-body-lg-regular-line-height);
+  color: var(--color-text-primary);
+  outline: none;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.combobox__input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.combobox__icon {
+  flex-shrink: 0;
+  fill: var(--color-icon-system-secondary);
+}
+
+/* Botón limpiar (⊗) — funcional, requiere aria-label */
+.combobox__clear {
+  flex-shrink: 0;
+  display: inline-flex;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.combobox__clear svg {
+  fill: var(--color-icon-system-secondary);
+}
+
+.combobox__chevron {
+  flex-shrink: 0;
+  fill: var(--color-icon-system-secondary);
+  transition: transform 150ms ease;
+}
+
+/* Helper & feedback */
+
+.combobox__helper,
+.combobox__feedback {
+  font-size: var(--type-body-md-regular-size);
+  font-weight: var(--type-body-md-regular-weight);
+  line-height: var(--type-body-md-regular-line-height);
+}
+
+.combobox__helper   { color: var(--color-text-secondary); }
+.combobox__feedback { color: var(--color-text-status-danger); }
+
+/* States */
+
+/* active · writing · no-results — panel abierto: borde focus 2px + chevron rotado */
+.combobox--active .combobox__field,
+.combobox--writing .combobox__field,
+.combobox--no-results .combobox__field {
+  border-width: var(--stroke-sm);
+  border-color: var(--color-border-focus);
+}
+
+.combobox--active .combobox__chevron,
+.combobox--writing .combobox__chevron,
+.combobox--no-results .combobox__chevron {
+  transform: rotate(180deg);
+}
+
+/* focus — navegación por teclado: anillo ring + gap (dos capas) */
+.combobox--focus .combobox__field,
+.combobox__field:has(.combobox__input:focus-visible) {
+  outline: none;
+  box-shadow:
+    0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-gap-default),
+    0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-default);
+}
+
+/* filled — valor seleccionado: borde default 1px, chevron primario */
+.combobox--filled .combobox__field {
+  border-width: var(--stroke-xs);
+  border-color: var(--color-border-default);
+}
+
+.combobox--filled .combobox__chevron {
+  fill: var(--color-icon-system-primary);
+}
+
+/* error — borde danger 2px (coexiste con focus → conserva el anillo) */
+.combobox--error .combobox__field {
+  border-width: var(--stroke-sm);
+  border-color: var(--color-border-danger-focus);
+}
+
+.combobox--error.combobox--focus .combobox__field,
+.combobox--error .combobox__field:has(.combobox__input:focus-visible) {
+  box-shadow:
+    0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-gap-default),
+    0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-default);
+}
+
+.combobox--error .combobox__label {
+  color: var(--color-text-status-danger);
+}
+
+/* read-only — fondo invertido, borde default 1px */
+.combobox--readonly .combobox__field {
+  background: var(--color-bg-fill-inverse-subtle);
+  border-color: var(--color-border-default);
+  pointer-events: none;
+}
+
+.combobox--readonly .combobox__input {
+  cursor: default;
+}
+
+/* disabled — fondo disabled, borde disabled 1px */
+.combobox--disabled .combobox__field {
+  background: var(--color-action-primary-disabled);
+  border-color: var(--color-border-disabled);
+  pointer-events: none;
+}
+
+.combobox--disabled .combobox__label,
+.combobox--disabled .combobox__input,
+.combobox--disabled .combobox__helper {
+  color: var(--color-text-disabled);
+}
+
+.combobox--disabled .combobox__icon,
+.combobox--disabled .combobox__clear svg,
+.combobox--disabled .combobox__chevron {
+  fill: var(--color-icon-system-disabled);
+}
+
+/* no-results — mensaje de vacío explícito en el panel (menu/list) */
+
+.menu-list__empty {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding-block: var(--space-sm);
+  padding-inline: var(--space-md);
+  font-size: var(--type-body-lg-regular-size);
+  font-weight: var(--type-body-lg-regular-weight);
+  line-height: var(--type-body-lg-regular-line-height);
+  color: var(--color-text-secondary);
+  list-style: none;
+}
+</content>

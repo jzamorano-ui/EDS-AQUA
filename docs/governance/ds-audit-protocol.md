@@ -115,6 +115,7 @@ const REGISTERED_IDS = new Set([
   '40003102:19674', // _menu/item
   '40003104:25695', // menu/list
   '40003146:80675', // _divider           → primitiva interna del menú
+  '40003354:14160', // combobox           → reusa menu/list + _menu/item
 ]);
 
 // EXCLUSIÓN DE SCOPE — página "→ Navegador kit": mockups de browser-chrome
@@ -267,6 +268,7 @@ Verificar que cada propiedad visual en cada ComponentSet está bindeada a una va
 | _menu/item | `40003102:19674` | 5 | **Staging v0.2.0** — primitiva compartida; `select.md` |
 | menu/list | `40003104:25695` | 4 | **Staging v0.2.0** — primitiva compartida; `select.md` |
 | _divider | `40003146:80675` | 1 | **COMPONENT** — primitiva interna del menú; `select.md` |
+| combobox | `40003354:14160` | 9 | **Staging v0.2.0** — página ❖ Combobox; `combobox.md`; reusa `menu/list` + `_menu/item` |
 
 **Exclusión documentada — `→ Navegador kit`:** los 5 nodos de la página `→ Navegador kit` (Tab Bar iOS, Address Bar iOS, Desktop-windows, _Tab Bar Android, _Address Bar android) son mockups de browser-chrome para frames de uso/documentación — **no son componentes del DS**. No se auditan ni requieren `.md`. Excluidos a propósito vía `NAVEGADOR_KIT_EXCLUDED` en el pre-flight §2.
 
@@ -431,7 +433,7 @@ Todo componente interactivo debe tener un `state=Focus` con:
 - Gap bindeado a `color/focus/ring-gap-*` de Tokens
 - `stroke-width` bindeado a `stroke/focus-ring-width` de Tokens
 
-Componentes con estado Focus obligatorio: `button`, `button/icon`, `checkbox`, `radio button`, `toggle`, `link`, `tabs`, `text fields`, `chips`.
+Componentes con estado Focus obligatorio: `button`, `button/icon`, `checkbox`, `radio button`, `toggle`, `link`, `tabs`, `text fields`, `chips`, `select`, `combobox`.
 
 **C4.2 — ARIA y teclado en .md**
 
@@ -479,7 +481,7 @@ Todo componente interactivo debe tener los 5 estados definidos en las reglas del
 | `focus` | Todos los interactivos |
 | `disabled` | Todos salvo `spinner`, `alert`, `badge`, `tag`, `tooltip` |
 
-**Exención `hover` — campos de formulario (`text fields`, `select`):** estos componentes **no tienen estado `hover`** por decisión de diseño documentada. El cursor sobre un input/trigger no cambia su apariencia; la retroalimentación se da en `active`/`writing` (escritura) y `focus` (anillo de teclado). El `REQUIRED` del script debe excluir `hover` para `text fields` y `select` — un input sin `hover` es **PASS**, no FAIL. (Nota: `_menu/item`, la opción del menú, **sí** tiene `hover` y no está exenta.)
+**Exención `hover` — campos de formulario (`text fields`, `select`, `combobox`):** estos componentes **no tienen estado `hover`** por decisión de diseño documentada. El cursor sobre un input/trigger no cambia su apariencia; la retroalimentación se da en `active`/`writing` (escritura) y `focus` (anillo de teclado). El `REQUIRED` del script debe excluir `hover` para `text fields`, `select` y `combobox` — un input sin `hover` es **PASS**, no FAIL. (Nota: `_menu/item`, la opción del menú, **sí** tiene `hover` y no está exenta.)
 
 **Script de verificación:**
 
@@ -493,7 +495,7 @@ cs.children?.forEach(v => {
 });
 
 // Campos de formulario exentos de `hover` (ver exención arriba)
-const HOVER_EXEMPT = new Set(['40002482:2745' /* text fields */, '40003102:19653' /* select */]);
+const HOVER_EXEMPT = new Set(['40002482:2745' /* text fields */, '40003102:19653' /* select */, '40003354:14160' /* combobox */]);
 const REQUIRED = ['default', 'hover', 'active', 'focus', 'disabled']
   .filter(s => !(s === 'hover' && HOVER_EXEMPT.has(csId)));
 const missing = REQUIRED.filter(s => !actualStates.has(s));
@@ -666,8 +668,9 @@ Cada `.md` debe tener exactamente estas 8 secciones: `Propiedades`, `Props`, `To
 | tag | `docs/components/tag.md` |
 | tooltip | `docs/components/tooltip.md` |
 | select *(staging v0.2.0)* | `docs/components/select.md` |
+| combobox *(staging v0.2.0)* | `docs/components/combobox.md` |
 
-> **Sub-componentes documentados en el `.md` del padre** (no llevan `.md` propio): `chips/group`→`chips.md`, `tabs/group`→`tabs.md`, `checkbox group`→`checkbox.md`, `notification`→`badge.md`, `_menu/item`+`menu/list`+`_divider`→`select.md`.
+> **Sub-componentes documentados en el `.md` del padre** (no llevan `.md` propio): `chips/group`→`chips.md`, `tabs/group`→`tabs.md`, `checkbox group`→`checkbox.md`, `notification`→`badge.md`, `_menu/item`+`menu/list`+`_divider`→`select.md`. El `combobox` reusa `menu/list`+`_menu/item` (documentados en `select.md`) y documenta su propio campo editable en `combobox.md`.
 
 **PASS:** Variantes, tokens y secciones coinciden al 100% con Figma y dist.  
 **WARN:** 1–2 tokens en .md con nombre desactualizado pero valor correcto.  
@@ -743,7 +746,8 @@ grep -n "background:" dist/V.*/components/*.css src/components/*.css | grep -v "
 | `text-field.css` | `.field` |
 | `toggle.css` | `.toggle-field` |
 | `tooltip.css` | `.tooltip` |
-| `select.css` (staging) | `.select` · `.listbox` |
+| `select.css` (staging) | `.select` · `.menu-list` · `.menu-item` |
+| `combobox.css` (staging) | `.combobox` · `.menu-list__empty` (reusa `.menu-list`/`.menu-item`) |
 
 **PASS:** Toda propiedad visual con valor no-transparente en CSS tiene respaldo de binding en Figma; toda propiedad bindeada en Figma está reflejada en CSS.  
 **WARN:** Propiedad extra en CSS con valor visible pero sin stroke/fill en Figma, en un nodo no visible al usuario.  

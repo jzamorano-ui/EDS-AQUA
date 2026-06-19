@@ -5,6 +5,30 @@ Ver proceso de contribución y versionado en [docs/governance/design-system-rule
 
 ---
 
+## [0.16.0] — 2026-06-19
+
+### Added — Combobox component (Figma + spec + CSS staging)
+
+Nuevo selector de opción única **filtrable por texto** (search/autocomplete). Lista cerrada y estricta (no acepta valores fuera de las opciones, v1). Página `❖ Combobox`. CS `combobox` (`40003354:14160`), **9 estados** (`default · active · writing · no-results · filled · error · read-only · disabled · focus`). 0 tokens nuevos — reutiliza las primitivas compartidas **`menu/list`** + **`_menu/item`** (rol ARIA `listbox`/`option`), el patrón de input editable del Text Field y el chevron/panel del Select.
+
+**Entregables:**
+- **`docs/components/combobox.md`** — spec completa (8 secciones): propiedades, props TypeScript, tokens color/layout/tipografía (verificados contra Figma), HTML (patrón combobox editable), ARIA, teclado, reglas y accesibilidad (WCAG 1.3.1 / 4.1.2 / 2.1.1 / 2.4.6 / 2.4.7 / 2.4.11–2.4.13 / 3.3.1).
+- **`src/components/combobox.css`** (staging) — clase raíz `.combobox`; reusa `.menu-list`/`.menu-item` de `select.css` y aporta `.menu-list__empty` (estado `no-results`). Anillo de focus ring+gap, grosores 1/2px por estado, ⊗ limpiar. Importado en `src/components/index.css`. Pasa V4 (0 HEX, 100% tokens).
+- **Registro de auditoría** (`ds-audit-protocol.md`, 5 lugares): `REGISTERED_IDS`, tabla §3-L3, lista Focus obligatorio, exención `hover` + `HOVER_EXEMPT`, registros V3 (.md) y V4 (CSS).
+
+**Figma (OPS-Library-Aqua DS MVP):**
+- Doc frames: `Combobox / System` · `Combobox / Matriz` (9 estados) · `Combobox / Use` (3 DO + 2 DON'T **con ejemplo visual**: "no para pocas opciones" y "no para valores libres → Text Field").
+- `Combobox / Component - inspection` — **prototipo guionado en loop** (formulario realista con campo Comuna): `cerrado → abrir → tipear (filtra) → seleccionar → ⊗ limpiar → cerrado`.
+- Glifo `icon-right` cambiado de `source/system/estrella` a **`source/system/error`** (⊗ limpiar) en los 9 estados.
+
+### Fixed — Combobox: wiring de propiedades en `focus` y `writing` (auditoría)
+
+Auditoría completa del CS (C1–C5): tokens **0 unbound** en los 9 estados, íconos como instancias, doc-link y frames System/Matriz consistentes. Corregido el único hallazgo: las variantes **`focus`** (faltaban `label`, `icon-tooltip`, `helper-text`, `↪ tooltip`) y **`writing`** (faltaba `helper-text`) no tenían bindeadas esas referencias de propiedad — re-bindeadas copiando del estado `active`. Resultado: **9/9 estados × 7/7 props**. Consistencia del componente **10/10**.
+
+Pendiente para el corte v0.2.0: incorporar `combobox.css` al `dist` (hoy en staging).
+
+---
+
 ## [0.15.0] — 2026-06-18
 
 ### Changed — Select + primitivas compartidas Menu (Figma + spec)
