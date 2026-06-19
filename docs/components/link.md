@@ -11,7 +11,7 @@ Navega a una URL, ruta o ancla. Para ejecutar acciones usar `button`; si visualm
 | `size` | xs (12px) · sm (14px) · md (16px) · lg (18px) |
 | `underline` | True · False |
 | `touch area` | False (inline) · True (standalone) |
-| `state` | Default · Hover · Active · Focus · Disabled |
+| `state` | default · hover · active · focus · disabled |
 
 `size` debe coincidir con el tipo de texto circundante.
 
@@ -39,11 +39,11 @@ interface LinkProps {
 
 | Estado | Propiedad CSS (label + underline) | CSS custom property |
 |---|---|---|
-| Default · Focus | color | `--color-text-link-default` |
-| Hover | color | `--color-text-link-hover` |
-| Active | color | `--color-text-link-active` |
-| Disabled | color | `--color-text-disabled` |
-| Focus | outline | `--color-focus-ring-default` · `--stroke-focus-ring-width` |
+| default · focus | color | `--color-text-link-default` |
+| hover | color | `--color-text-link-hover` |
+| active | color | `--color-text-link-active` |
+| disabled | color | `--color-text-disabled` |
+| focus | outline | `--color-focus-ring-default` · `--stroke-focus-ring-width` |
 
 El `underline` es un RECT de 1px — implementar con `border-bottom: 1px solid var(--color-text-link-default)`. No usar `text-decoration: underline`.
 

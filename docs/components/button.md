@@ -12,7 +12,7 @@ Ejecuta acciones. Para navegar usar `link`; para opciones on/off usar `toggle`.
 | `variant` | Primary · Secondary · Tertiary |
 | `surface` | Default · Inverse |
 | `size` | Large · Medium · Small · _(Brand: solo Large)_ |
-| `state` | Default · Hover · Active · Focus · Disabled · Loading |
+| `state` | default · hover · active · focus · disabled · loading |
 
 **Combos válidos:** System/Primary/Default · System/Primary/Inverse · System/Secondary/Default · System/Secondary/Inverse · System/Tertiary/Default · System/Tertiary/Inverse · Brand/Primary/Default (solo surface=Default) · Disabled (todos) · Loading (System — solo `button`) · Focus (todos).
 
