@@ -105,8 +105,9 @@ Sale en `icon-system-primary`. Cambiás el color con `color` o un modifier (`.ic
 ```html
 <svg class="icon icon--md"><use href="/icons/icons.svg#semantic-danger"/></svg>
 ```
-El fill va en `style="fill:var(--color-icon-status-danger, #9B1020)"` — **sale rojo solo**, sin clase, y
-themeable (el token manda; el hex es fallback). El glifo interno es un knockout blanco.
+El círculo va en `style="fill:var(--color-icon-status-danger, #9B1020)"` — **sale rojo solo**, sin clase,
+themeable (el token manda; el hex es fallback). El glifo interno (knockout) usa
+`--color-icon-system-inverse`. **0 colores literales** en todo el set.
 
 ### brand (multicolor de marca)
 ```html

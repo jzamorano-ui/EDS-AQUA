@@ -61,8 +61,11 @@ function colorize(inner, family, name) {
     return inner.replace(/(fill|stroke)="#[0-9a-fA-F]{3,8}"/g, '$1="currentColor"');
   if (family === 'semantic') {
     const tok = SEM_TOKEN[name] || 'danger';
-    return inner.replace(/fill="(#[0-9a-fA-F]{3,8})"/g,
-      (_, hex) => `style="fill:var(--color-icon-status-${tok}, ${hex})"`);
+    return inner
+      // knockout blanco (named o hex) → token inverse — primero, para no confundirlo con el color de estado
+      .replace(/fill="(white|#fff|#ffffff)"/gi, 'style="fill:var(--color-icon-system-inverse, #fff)"')
+      // color de estado (hex restante) → token de status
+      .replace(/fill="(#[0-9a-fA-F]{3,8})"/g, (_, hex) => `style="fill:var(--color-icon-status-${tok}, ${hex})"`);
   }
   // brand: colores de marca → tokens icon/brand (themeable). Acepta hex y `white`. Desconocido se mantiene.
   return inner.replace(/fill="(#[0-9A-Fa-f]{3,8}|white)"/gi, (m, val) => {
@@ -190,7 +193,7 @@ const main = async () => {
   await writeFile(
     resolve(OUT, '_demo.html'),
     `<!doctype html><meta charset="utf-8"><title>Aqua DS — Iconos</title>
-<style>:root{--color-icon-system-primary:#0F202B;--color-icon-status-danger:#9B1020;--color-icon-status-warning:#BF7900;--color-icon-status-success:#006B27;--color-icon-status-info:#0036AF;--color-icon-brand-primary:#FF585C;--color-icon-brand-secondary:#FFC7C3;--color-icon-brand-contrast:#FFFFFF}
+<style>:root{--color-icon-system-primary:#0F202B;--color-icon-status-danger:#9B1020;--color-icon-status-warning:#BF7900;--color-icon-status-success:#006B27;--color-icon-status-info:#0036AF;--color-icon-system-inverse:#FFFFFF;--color-icon-brand-primary:#FF585C;--color-icon-brand-secondary:#FFC7C3;--color-icon-brand-contrast:#FFFFFF}
 body{font:13px system-ui;padding:32px;color:#0F202B}
 h3{margin-top:32px}small{color:#6B7A85;font-weight:normal}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px}

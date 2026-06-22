@@ -610,27 +610,27 @@
     "alert": {
       "viewBox": "0 0 24 24",
       "color": "token",
-      "hash": "17730892"
+      "hash": "506573c6"
     },
     "danger": {
       "viewBox": "0 0 24 24",
       "color": "token",
-      "hash": "975fcdf7"
+      "hash": "630f6e37"
     },
     "info": {
       "viewBox": "0 0 24 24",
       "color": "token",
-      "hash": "27022293"
+      "hash": "cc1ac147"
     },
     "success": {
       "viewBox": "0 0 24 24",
       "color": "token",
-      "hash": "b0ecf65b"
+      "hash": "f79b3d94"
     },
     "warning": {
       "viewBox": "0 0 24 24",
       "color": "token",
-      "hash": "62ec4e28"
+      "hash": "e2687b3e"
     }
   },
   "brand": {
