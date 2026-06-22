@@ -26,7 +26,8 @@ import { fileURLToPath } from 'node:url';
 
 const ICONS_FILE_KEY = 'zIbuWAvLhwTlwnVwbDgY5n'; // OPS-Library-Aqua Icons
 const FAMILIES = ['system', 'semantic', 'brand'];
-const MONO = new Set(['system', 'semantic']); // estas van a currentColor; brand mantiene color
+// system → currentColor · semantic → token de estado bindeado · brand → color propio
+const SEM_TOKEN = { danger: 'danger', alert: 'danger', warning: 'warning', success: 'success', info: 'info' };
 const OUT = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'icons');
 
 const TOKEN = process.env.FIGMA_TOKEN;
@@ -42,14 +43,22 @@ const api = (path) =>
       return r.json();
     });
 
-/** Extrae viewBox + inner; si mono, color horneado → currentColor; si no, mantiene colores. */
-function normalize(svg, mono) {
+/** Aplica el color según familia. Sin hex horneado salvo brand (multicolor propio). */
+function colorize(inner, family, name) {
+  if (family === 'system')
+    return inner.replace(/(fill|stroke)="#[0-9a-fA-F]{3,8}"/g, '$1="currentColor"');
+  if (family === 'semantic') {
+    const tok = SEM_TOKEN[name] || 'danger';
+    return inner.replace(/(fill|stroke)="#[0-9a-fA-F]{3,8}"/g, `$1="var(--color-icon-status-${tok})"`);
+  }
+  return inner; // brand: multicolor, se mantiene tal cual
+}
+
+/** Extrae viewBox + inner y aplica el color de la familia. */
+function normalize(svg, family, name) {
   const viewBox = (svg.match(/viewBox="([^"]+)"/) || [])[1] || '0 0 24 24';
-  let inner = svg
-    .replace(/^[\s\S]*?<svg[^>]*>/, '')
-    .replace(/<\/svg>\s*$/, '');
-  if (mono) inner = inner.replace(/(fill|stroke)="#[0-9a-fA-F]{3,8}"/g, '$1="currentColor"');
-  inner = inner.replace(/\s+/g, ' ').trim();
+  let inner = svg.replace(/^[\s\S]*?<svg[^>]*>/, '').replace(/<\/svg>\s*$/, '');
+  inner = colorize(inner, family, name).replace(/\s+/g, ' ').trim();
   return { viewBox, inner };
 }
 
@@ -83,9 +92,10 @@ const main = async () => {
     const url = images[ic.nodeId];
     if (!url) { console.warn(`  ⚠ sin export: ${ic.family}/${ic.name}`); continue; }
     const raw = await fetch(url).then((r) => r.text());
-    const mono = MONO.has(ic.family);
-    const { viewBox, inner } = normalize(raw, mono);
-    built.push({ ...ic, mono, viewBox, inner });
+    const { viewBox, inner } = normalize(raw, ic.family, ic.name);
+    const color = ic.family === 'system' ? 'currentColor'
+      : ic.family === 'semantic' ? 'token' : 'multicolor';
+    built.push({ ...ic, color, viewBox, inner });
   }
 
   // limpiar y reescribir
@@ -109,9 +119,32 @@ const main = async () => {
   const manifest = {};
   for (const f of FAMILIES) {
     manifest[f] = {};
-    for (const b of built.filter((x) => x.family === f)) manifest[f][b.name] = { viewBox: b.viewBox, mono: b.mono };
+    for (const b of built.filter((x) => x.family === f)) manifest[f][b.name] = { viewBox: b.viewBox, color: b.color };
   }
   await writeFile(resolve(OUT, 'index.json'), JSON.stringify(manifest, null, 2) + '\n');
+
+  // hoja de estilos del set: tamaños + color por defecto (themeable, sin hex)
+  await writeFile(resolve(OUT, 'icons.css'), `/* Aqua DS — iconos
+   Requiere dist/tokens.css cargado primero (define los --icon-size-* y --color-icon-*).
+
+   system   → el SVG usa currentColor; el color por defecto lo da .icon (abajo).
+   semantic → el SVG ya trae su color bindeado al token de estado (var(--color-icon-status-*)).
+              No requiere clase: ya sale con su color y es themeable.
+   brand    → multicolor propio; color/currentColor no aplica, solo tamaño. */
+
+.icon { display: inline-flex; flex-shrink: 0; width: var(--icon-size-md); height: var(--icon-size-md); }
+.icon--xs { width: var(--icon-size-xs); height: var(--icon-size-xs); }
+.icon--sm { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+.icon--md { width: var(--icon-size-md); height: var(--icon-size-md); }
+.icon--lg { width: var(--icon-size-lg); height: var(--icon-size-lg); }
+.icon--xl { width: var(--icon-size-xl); height: var(--icon-size-xl); }
+
+/* system: color por defecto (currentColor toma este valor) */
+.icon { color: var(--color-icon-system-primary); }
+.icon--secondary { color: var(--color-icon-system-secondary); }
+.icon--disabled  { color: var(--color-icon-system-disabled); }
+.icon--inverse   { color: var(--color-icon-system-inverse); }
+`);
 
   // demo agrupado por familia
   const section = (f, label, hint) => {
@@ -123,23 +156,24 @@ const main = async () => {
   await writeFile(
     resolve(OUT, '_demo.html'),
     `<!doctype html><meta charset="utf-8"><title>Aqua DS — Iconos</title>
-<style>body{font:13px system-ui;padding:32px;color:#0F202B}
+<style>:root{--color-icon-system-primary:#0F202B;--color-icon-status-danger:#9B1020;--color-icon-status-warning:#BF7900;--color-icon-status-success:#006B27;--color-icon-status-info:#0036AF}
+body{font:13px system-ui;padding:32px;color:#0F202B}
 h3{margin-top:32px}small{color:#6B7A85;font-weight:normal}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px}
 figure{margin:0;display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px;border:1px solid #eee;border-radius:8px}
-.i{width:24px;height:24px;color:#0F202B}figcaption{color:#6B7A85;font-size:11px;text-align:center}
-.sem .i{color:#9B1020}</style>
+.i{width:24px;height:24px;color:var(--color-icon-system-primary)}figcaption{color:#6B7A85;font-size:11px;text-align:center}</style>
 <h2>Aqua DS — ${built.length} iconos</h2>
+<p style="color:#6B7A85">Preview con tokens inline. system = currentColor · semantic = token de estado bindeado · brand = color propio.</p>
 <svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs>
 ${symbols}
 </defs></svg>
-${section('system', 'System', 'currentColor — color via CSS')}
-<div class="sem">${section('semantic', 'Semantic', 'currentColor — pintar con el token de estado')}</div>
+${section('system', 'System', 'currentColor — por defecto icon-system-primary (.icon)')}
+${section('semantic', 'Semantic', 'color bindeado al token de estado — automático')}
 ${section('brand', 'Brand', 'multicolor — color propio')}\n`
   );
 
   console.log(`✅ ${built.length} íconos → ${OUT}`);
-  console.log(`   svg/{${FAMILIES.join(',')}}/ · icons.svg · index.json · _demo.html`);
+  console.log(`   svg/{${FAMILIES.join(',')}}/ · icons.svg · icons.css · index.json · _demo.html`);
 };
 
 main().catch((e) => { console.error('❌', e.message); process.exit(1); });
