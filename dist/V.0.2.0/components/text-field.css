@@ -1,0 +1,174 @@
+/* text-field.css — Aqua DS — staging (pendiente de release v0.2.0)
+   Refleja el estado final de Figma (CS text fields 40002482:2745):
+   8 estados (default · active · focus · writing · filled · error · read-only · disabled),
+   afijos prefix/suffix, anillo de focus ring+gap, grosores por estado.
+   Requiere: dist tokens.css cargado primero. */
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xs);
+  width: 100%;
+}
+
+.field__label {
+  font-size: var(--type-body-md-medium-size);
+  font-weight: var(--type-body-md-medium-weight);
+  line-height: var(--type-body-md-medium-line-height);
+  color: var(--color-text-primary);
+}
+
+.field__label--required::after {
+  content: ' *';
+  color: var(--color-text-status-danger);
+}
+
+.field__input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-xs);
+  border: var(--stroke-xs) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-fill-neutral-subtle);
+  transition: border-color 100ms ease, box-shadow 100ms ease;
+}
+
+.field__input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: var(--type-body-md-regular-size);
+  font-weight: var(--type-body-md-regular-weight);
+  line-height: var(--type-body-md-regular-line-height);
+  color: var(--color-text-primary);
+  outline: none;
+  min-width: 0;
+}
+
+.field__input::placeholder {
+  color: var(--color-text-secondary);
+}
+
+.field__icon {
+  fill: var(--color-icon-system-primary);
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+  flex-shrink: 0;
+}
+
+/* Afijos de texto fijo — prefix (leading) · suffix (trailing) */
+.field__prefix,
+.field__suffix {
+  flex-shrink: 0;
+  font-size: var(--type-body-md-regular-size);
+  font-weight: var(--type-body-md-regular-weight);
+  line-height: var(--type-body-md-regular-line-height);
+  color: var(--color-text-primary);
+}
+
+/* States */
+
+/* active / writing — interacción de escritura: borde focus 2px */
+.field--active .field__input-wrapper,
+.field--writing .field__input-wrapper {
+  border-width: var(--stroke-sm);
+  border-color: var(--color-border-focus);
+}
+
+/* focus — anillo ring + gap (dos capas), EXCLUSIVO de teclado (a11y).
+   Gobernado por la clase `.field--focus`, NO por `:focus-visible`: en un <input>
+   de texto `:focus-visible` también dispara con mouse y rompería el "solo teclado".
+   CONTRATO: el consumidor enciende `.field--focus` detectando la modalidad de input
+   (keydown → teclado · pointerdown → puntero). Con mouse mandan los estados active/writing. */
+.field--focus .field__input-wrapper {
+  border-width: var(--stroke-sm);
+  border-color: var(--color-border-focus);
+  box-shadow:
+    0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-gap-default),
+    0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-default);
+}
+
+/* filled — dato ingresado: borde default 1px (ortogonal a la interacción) */
+.field--filled .field__input-wrapper {
+  border-width: var(--stroke-xs);
+  border-color: var(--color-border-default);
+}
+
+/* error — borde danger 2px (coexiste con focus → conserva el anillo) */
+.field--error .field__input-wrapper {
+  border-width: var(--stroke-sm);
+  border-color: var(--color-border-danger-focus);
+}
+
+.field--error.field--focus .field__input-wrapper {
+  box-shadow:
+    0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-gap-default),
+    0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-default);
+}
+
+.field--error .field__label,
+.field--error .field__helper {
+  color: var(--color-text-status-danger);
+}
+
+/* read-only — fondo invertido, borde default 1px */
+.field--readonly .field__input-wrapper {
+  background: var(--color-bg-fill-inverse-subtle);
+  border-width: var(--stroke-xs);
+  border-color: var(--color-border-default);
+}
+
+.field--readonly .field__input {
+  color: var(--color-text-secondary);
+  cursor: default;
+}
+
+/* disabled — fondo disabled, borde disabled 1px */
+.field--disabled .field__input-wrapper {
+  background: var(--color-action-primary-disabled);
+  border-width: var(--stroke-xs);
+  border-color: var(--color-border-disabled);
+  pointer-events: none;
+}
+
+.field--disabled .field__label,
+.field--disabled .field__input,
+.field--disabled .field__prefix,
+.field--disabled .field__suffix,
+.field--disabled .field__helper {
+  color: var(--color-text-disabled);
+}
+
+.field--disabled .field__icon {
+  fill: var(--color-icon-system-disabled);
+}
+
+/* Helper text & counter */
+.field__footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-xs);
+}
+
+.field__helper {
+  font-size: var(--type-caption-sm-regular-size);
+  font-weight: var(--type-caption-sm-regular-weight);
+  line-height: var(--type-caption-sm-regular-line-height);
+  color: var(--color-text-secondary);
+}
+
+.field__counter {
+  font-size: var(--type-caption-sm-regular-size);
+  font-weight: var(--type-caption-sm-regular-weight);
+  line-height: var(--type-caption-sm-regular-line-height);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.field--error .field__counter {
+  color: var(--color-text-status-danger);
+}

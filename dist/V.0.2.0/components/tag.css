@@ -1,0 +1,25 @@
+/* tag.css — Aqua DS v0.1.0 */
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2xs);
+  padding-inline: var(--space-xs);
+  padding-block: var(--space-2xs);
+  background: var(--color-bg-fill-neutral-medium);
+  border: var(--stroke-xs) solid var(--color-border-default);
+  border-radius: var(--radius-xs);
+  font-size: var(--type-caption-sm-medium-size);
+  font-weight: var(--type-caption-sm-medium-weight);
+  line-height: var(--type-caption-sm-medium-line-height);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.tag svg,
+.tag [aria-hidden="true"] {
+  flex-shrink: 0;
+  fill: var(--color-icon-system-secondary);
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+}

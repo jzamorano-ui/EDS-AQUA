@@ -1,0 +1,67 @@
+/* chips.css — Aqua DS v0.1.0 */
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-xs);
+  border-radius: var(--radius-pill);
+  border: var(--stroke-xs) solid var(--color-border-default);
+  background: var(--color-bg-fill-neutral-subtle);
+  font-size: var(--type-body-md-medium-size);
+  font-weight: var(--type-body-md-medium-weight);
+  line-height: var(--type-body-md-medium-line-height);
+  color: var(--color-text-primary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 100ms ease, border-color 100ms ease, color 100ms ease;
+}
+
+.chip svg,
+.chip [aria-hidden="true"] {
+  fill: var(--color-icon-system-secondary);
+  width: var(--icon-size-xs);
+  height: var(--icon-size-xs);
+  flex-shrink: 0;
+}
+
+/* Hover */
+.chip:hover:not([disabled]):not(.chip--disabled):not([aria-pressed="true"]):not(.chip--selected) {
+  background: var(--color-bg-fill-inverse-subtle);
+  border-color: var(--color-border-default);
+}
+
+/* Selected state */
+.chip[aria-pressed="true"],
+.chip--selected {
+  background: var(--color-bg-fill-inverse-medium);
+  border-color: var(--color-bg-fill-inverse-medium);
+  color: var(--color-text-inverse);
+}
+
+.chip[aria-pressed="true"] svg,
+.chip--selected svg {
+  fill: var(--color-icon-system-inverse);
+}
+
+/* Focus */
+.chip:focus-visible {
+  outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
+  outline-offset: 0.125rem;
+}
+
+/* Disabled */
+.chip[disabled],
+.chip--disabled {
+  background: var(--color-bg-fill-neutral-medium);
+  border-color: var(--color-border-disabled);
+  color: var(--color-text-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.chip[disabled] svg,
+.chip--disabled svg {
+  fill: var(--color-icon-system-disabled);
+}

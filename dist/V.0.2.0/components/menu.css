@@ -1,0 +1,113 @@
+/* menu.css — Aqua DS — staging (pendiente de release v0.2.0)
+   Primitivas compartidas de lista flotante (CS menu/list 40003104:25695 + _menu/item 40003102:19674 + _divider).
+   `.menu-list` es público; `.menu-item` / `.menu-divider` son building blocks internos.
+   Las consumen Select, Combobox (rol listbox/option) y los menús de acciones (rol menu/menuitem).
+   Requiere: dist tokens.css cargado primero. Debe cargarse ANTES de select.css / combobox.css. */
+
+/* menu/list — panel flotante (público) */
+
+.menu-list {
+  position: absolute;
+  top: calc(100% + var(--space-xs));
+  left: 0;
+  width: 100%;
+  min-width: 200px; /* constante de layout (no token) */
+  z-index: 10;
+  list-style: none;
+  margin: 0;
+  padding-block: var(--space-xs);
+  padding-inline: 0;
+  background: var(--color-bg-surface-default);
+  border: var(--stroke-xs) solid var(--color-border-default);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--elevation-md);
+  overflow: hidden;
+}
+
+/* >6 opciones → scroll, alto fijo 6 filas + 50% de la siguiente */
+.menu-list--scroll {
+  max-height: 286px;
+  overflow-y: auto;
+}
+
+/* scrollbar */
+.menu-list--scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.menu-list--scroll::-webkit-scrollbar-track {
+  background: var(--color-bg-fill-neutral-subtle);
+  border-radius: var(--radius-pill);
+}
+.menu-list--scroll::-webkit-scrollbar-thumb {
+  background: var(--color-bg-fill-neutral-strong);
+  border-radius: var(--radius-pill);
+}
+
+/* _menu/item — opción (interno) */
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 44px;
+  padding-block: var(--space-sm);
+  padding-inline: var(--space-md);
+  background: var(--color-action-tertiary-default);
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: var(--color-action-tertiary-hover);
+}
+
+/* focus — anillo ring + gap inset (el panel clippea, por eso inset) */
+.menu-item:focus-visible {
+  outline: none;
+  box-shadow:
+    inset 0 0 0 calc(var(--stroke-focus-ring-width) * 2) var(--color-focus-ring-gap-default),
+    inset 0 0 0 var(--stroke-focus-ring-width) var(--color-focus-ring-default);
+}
+
+/* active — opción seleccionada/destacada */
+.menu-item--active {
+  background: var(--color-action-tertiary-active);
+}
+
+.menu-item--disabled {
+  background: var(--color-action-primary-disabled);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.menu-item__label {
+  flex: 1;
+  font-size: var(--type-body-lg-regular-size);
+  font-weight: var(--type-body-lg-regular-weight);
+  line-height: var(--type-body-lg-regular-line-height);
+  color: var(--color-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu-item--disabled .menu-item__label {
+  color: var(--color-text-disabled);
+}
+
+.menu-item__icon {
+  flex-shrink: 0;
+  fill: var(--color-icon-system-primary);
+}
+
+.menu-item--disabled .menu-item__icon {
+  fill: var(--color-icon-system-disabled);
+}
+
+/* _divider — separador entre grupos de opciones (interno) */
+
+.menu-divider {
+  height: var(--stroke-xs);
+  margin: 0;
+  border: none;
+  background: var(--color-border-divider-default);
+}

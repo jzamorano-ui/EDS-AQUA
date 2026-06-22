@@ -1,0 +1,78 @@
+/* badge.css — Aqua DS v0.1.0 */
+
+/* badge/indicator — number */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  padding-inline: var(--space-xs);
+  padding-block: var(--space-2xs);
+  border-radius: var(--radius-pill);
+  font-size: var(--type-caption-sm-medium-size);
+  font-weight: var(--type-caption-sm-medium-weight);
+  line-height: var(--type-caption-sm-medium-line-height);
+}
+
+.badge--indicator {
+  background: var(--color-bg-fill-brand-strong);
+  color: var(--color-text-inverse);
+}
+
+/* badge — dot variant */
+.badge--dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  min-width: unset;
+  padding: 0;
+  border-radius: var(--radius-pill);
+}
+
+/* badge/state — semantic variants */
+/* State badges have wider padding and a visible border */
+.badge--neutral,
+.badge--info,
+.badge--success,
+.badge--warning,
+.badge--danger {
+  padding-inline: var(--space-sm);
+  border: var(--stroke-xs) solid transparent;
+}
+
+.badge--neutral {
+  background: var(--color-bg-status-neutral);
+  border-color: var(--color-border-default);
+  color: var(--color-text-primary);
+}
+
+.badge--info {
+  background: var(--color-bg-status-info);
+  border-color: var(--color-border-status-info);
+  color: var(--color-text-status-info);
+}
+
+.badge--success {
+  background: var(--color-bg-status-success);
+  border-color: var(--color-border-status-success);
+  color: var(--color-text-status-success);
+}
+
+.badge--warning {
+  background: var(--color-bg-status-warning);
+  border-color: var(--color-border-status-warning);
+  color: var(--color-text-status-warning);
+}
+
+.badge--danger {
+  background: var(--color-bg-status-danger);
+  border-color: var(--color-border-status-danger);
+  color: var(--color-text-status-danger);
+}
+
+/* dot — semantic colors */
+.badge--dot.badge--neutral  { background: var(--color-icon-system-secondary); }
+.badge--dot.badge--info     { background: var(--color-icon-status-info); }
+.badge--dot.badge--success  { background: var(--color-icon-status-success); }
+.badge--dot.badge--warning  { background: var(--color-icon-status-warning); }
+.badge--dot.badge--danger   { background: var(--color-icon-status-danger); }

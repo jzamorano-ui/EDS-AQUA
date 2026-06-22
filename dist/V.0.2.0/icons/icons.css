@@ -1,0 +1,20 @@
+/* Aqua DS — iconos
+   Requiere dist/tokens.css cargado primero (define los --icon-size-* y --color-icon-*).
+
+   system   → el SVG usa currentColor; el color por defecto lo da .icon (abajo).
+   semantic → el SVG ya trae su color bindeado al token de estado (var(--color-icon-status-*)).
+              No requiere clase: ya sale con su color y es themeable.
+   brand    → multicolor propio; color/currentColor no aplica, solo tamaño. */
+
+.icon { display: inline-flex; flex-shrink: 0; width: var(--icon-size-md); height: var(--icon-size-md); }
+.icon--xs { width: var(--icon-size-xs); height: var(--icon-size-xs); }
+.icon--sm { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+.icon--md { width: var(--icon-size-md); height: var(--icon-size-md); }
+.icon--lg { width: var(--icon-size-lg); height: var(--icon-size-lg); }
+.icon--xl { width: var(--icon-size-xl); height: var(--icon-size-xl); }
+
+/* system: color por defecto (currentColor toma este valor) */
+.icon { color: var(--color-icon-system-primary); }
+.icon--secondary { color: var(--color-icon-system-secondary); }
+.icon--disabled  { color: var(--color-icon-system-disabled); }
+.icon--inverse   { color: var(--color-icon-system-inverse); }

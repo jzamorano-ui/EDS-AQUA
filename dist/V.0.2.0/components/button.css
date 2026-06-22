@@ -1,0 +1,147 @@
+/* button.css — Aqua DS v0.1.0 */
+
+/* Base */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  border: var(--stroke-xs) solid transparent;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-weight: var(--type-body-md-bold-weight);
+  white-space: nowrap;
+  transition: background 100ms ease, color 100ms ease, border-color 100ms ease, box-shadow 100ms ease;
+  text-decoration: none;
+}
+
+.btn:focus-visible {
+  outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
+  outline-offset: 0.125rem;
+  box-shadow: 0 0 0 0.125rem var(--color-focus-ring-gap-default);
+}
+
+.btn--inverse:focus-visible {
+  outline-color: var(--color-focus-ring-inverse);
+  box-shadow: 0 0 0 0.125rem var(--color-focus-ring-gap-inverse);
+}
+
+.btn[disabled],
+.btn--disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.btn svg {
+  flex-shrink: 0;
+}
+
+/* Sizes */
+.btn--lg {
+  padding-inline: var(--space-lg);
+  padding-block: var(--space-sm);
+  font-size: var(--type-body-lg-bold-size);
+  line-height: var(--type-body-lg-bold-line-height);
+  min-height: 3rem;
+}
+
+.btn--md {
+  padding-inline: var(--space-md);
+  padding-block: var(--space-sm);
+  font-size: var(--type-body-md-bold-size);
+  line-height: var(--type-body-md-bold-line-height);
+  min-height: 2.75rem;
+}
+
+.btn--sm {
+  padding-inline: var(--space-sm);
+  padding-block: var(--space-2xs);
+  font-size: var(--type-caption-sm-medium-size);
+  font-weight: var(--type-caption-sm-medium-weight);
+  line-height: var(--type-caption-sm-medium-line-height);
+  min-height: 2rem;
+}
+
+/* Icon sizes */
+.btn--lg svg { width: var(--icon-size-sm); height: var(--icon-size-sm); }
+.btn--md svg { width: var(--icon-size-xs); height: var(--icon-size-xs); }
+.btn--sm svg { width: 0.875rem; height: 0.875rem; }
+
+/* Variant — Primary / Default surface */
+.btn--primary {
+  background: var(--color-action-primary-default);
+  color: var(--color-text-inverse);
+  border-color: transparent;
+}
+.btn--primary:hover  { background: var(--color-action-primary-hover); }
+.btn--primary:active { background: var(--color-action-primary-active); }
+.btn--primary[disabled] {
+  background: var(--color-action-primary-disabled);
+  color: var(--color-text-disabled);
+}
+
+/* Variant — Secondary / Default surface */
+.btn--secondary {
+  background: var(--color-action-secondary-default);
+  color: var(--color-text-primary);
+  border-color: transparent;
+}
+.btn--secondary:hover  { background: var(--color-action-secondary-hover); }
+.btn--secondary:active { background: var(--color-action-secondary-active); }
+.btn--secondary[disabled] {
+  color: var(--color-text-disabled);
+  border-color: transparent;
+}
+
+/* Variant — Tertiary / Default surface */
+.btn--tertiary {
+  background: var(--color-action-tertiary-default);
+  color: var(--color-text-primary);
+  border-color: transparent;
+}
+.btn--tertiary:hover  { background: var(--color-action-tertiary-hover); }
+.btn--tertiary:active { background: var(--color-action-tertiary-active); }
+.btn--tertiary[disabled] { color: var(--color-text-disabled); }
+
+/* Surface — Inverse */
+.btn--inverse.btn--primary {
+  background: var(--color-action-primary-inverse-default);
+  color: var(--color-text-primary);
+  border-color: transparent;
+}
+.btn--inverse.btn--primary:hover  { background: var(--color-action-primary-inverse-hover); }
+.btn--inverse.btn--primary:active { background: var(--color-action-primary-inverse-active); }
+
+.btn--inverse.btn--secondary {
+  background: var(--color-action-secondary-inverse-default);
+  color: var(--color-text-inverse);
+  border-color: var(--color-border-inverse);
+}
+.btn--inverse.btn--secondary:hover  { background: var(--color-action-secondary-inverse-hover); }
+.btn--inverse.btn--secondary:active { background: var(--color-action-secondary-inverse-active); }
+
+.btn--inverse.btn--tertiary {
+  background: var(--color-action-tertiary-inverse-default);
+  color: var(--color-text-inverse);
+  border-color: transparent;
+}
+.btn--inverse.btn--tertiary:hover  { background: var(--color-action-tertiary-inverse-hover); }
+.btn--inverse.btn--tertiary:active { background: var(--color-action-tertiary-inverse-active); }
+
+/* Tone — Brand (hero/landing only) */
+.btn--brand {
+  background: var(--color-action-brand-primary-default);
+  color: var(--color-text-inverse);
+  border-color: transparent;
+  font-size: var(--type-title-md-bold-size);
+  font-weight: var(--type-title-md-bold-weight);
+  line-height: var(--type-title-md-bold-line-height);
+}
+.btn--brand:hover  { background: var(--color-action-brand-primary-hover); }
+.btn--brand:active { background: var(--color-action-brand-primary-active); }
+
+/* Icon-only button */
+.btn--icon-only { padding: 0; }
+.btn--icon-only.btn--lg { width: 3rem;    height: 3rem; }
+.btn--icon-only.btn--md { width: 2.5rem;  height: 2.5rem; }
+.btn--icon-only.btn--sm { width: 2rem;    height: 2rem; }

@@ -1,0 +1,94 @@
+/* radio-button.css — Aqua DS v0.1.0 */
+
+.radio {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  cursor: pointer;
+  min-height: 2.75rem;
+  padding-block: 0.625rem;
+}
+
+.radio__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+}
+
+.radio__control {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-pill);
+  border: var(--stroke-xs) solid var(--color-border-default);
+  background: var(--color-bg-surface-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 100ms ease, border-color 100ms ease;
+  position: relative;
+}
+
+.radio__dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: var(--radius-pill);
+  background: var(--color-icon-system-inverse);
+  display: none;
+}
+
+.radio__label {
+  font-size: var(--type-body-md-regular-size);
+  font-weight: var(--type-body-md-regular-weight);
+  line-height: var(--type-body-md-regular-line-height);
+  color: var(--color-text-primary);
+  padding-top: 0.125rem;
+}
+
+/* Hover */
+.radio:hover .radio__control {
+  border-color: var(--color-border-focus);
+}
+
+/* Checked */
+.radio--checked .radio__control,
+input[type="radio"]:checked + .radio__control {
+  background: var(--color-action-primary-default);
+  border-color: var(--color-action-primary-default);
+}
+
+.radio--checked .radio__dot,
+input[type="radio"]:checked + .radio__control .radio__dot {
+  display: block;
+}
+
+/* Focus */
+.radio:focus-within .radio__control {
+  outline: var(--stroke-focus-ring-width) solid var(--color-focus-ring-default);
+  outline-offset: 0.125rem;
+}
+
+/* Disabled */
+.radio--disabled {
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.radio--disabled .radio__control {
+  background: var(--color-bg-fill-neutral-medium);
+  border-color: var(--color-border-disabled);
+}
+
+.radio--disabled .radio__label {
+  color: var(--color-text-disabled);
+}
+
+/* Radio group */
+.radio-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}

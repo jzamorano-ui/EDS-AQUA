@@ -1,0 +1,41 @@
+/* tooltip.css — Aqua DS v0.1.0 */
+
+[role="tooltip"] {
+  position: absolute;
+  z-index: 1000;
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--space-xs);
+  padding-block: var(--space-2xs);
+  background: var(--color-bg-fill-inverse-strong);
+  border-radius: var(--radius-xs);
+  font-size: var(--type-body-md-regular-size);
+  font-weight: var(--type-body-md-regular-weight);
+  line-height: var(--type-body-md-regular-line-height);
+  color: var(--color-text-inverse);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+[role="tooltip"][hidden] {
+  display: none;
+}
+
+/* Arrow — 12×6px SVG triangle, same fill as body */
+.tooltip__arrow {
+  position: absolute;
+  width: 0.75rem;
+  height: 6px;
+  fill: var(--color-bg-fill-inverse-strong);
+}
+
+/* Positioning by type — arrow location defines tooltip placement */
+.tooltip--down  { bottom: calc(100% + var(--space-xs)); left: 50%; transform: translateX(-50%); }
+.tooltip--up    { top: calc(100% + var(--space-xs));    left: 50%; transform: translateX(-50%); }
+.tooltip--left  { top: 50%; right: calc(100% + var(--space-xs)); transform: translateY(-50%); }
+.tooltip--right { top: 50%; left: calc(100% + var(--space-xs));  transform: translateY(-50%); }
+
+.tooltip--down  .tooltip__arrow { top: 100%; left: 50%; transform: translateX(-50%) rotate(180deg); }
+.tooltip--up    .tooltip__arrow { bottom: 100%; left: 50%; transform: translateX(-50%); }
+.tooltip--left  .tooltip__arrow { top: 50%; right: -12px; transform: translateY(-50%) rotate(-90deg); }
+.tooltip--right .tooltip__arrow { top: 50%; left: -12px;  transform: translateY(-50%) rotate(90deg); }
