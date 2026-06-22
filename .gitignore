@@ -26,6 +26,5 @@ exploration/
 # Iconos generados por scripts/build-icons.mjs (fuente: Figma)
 src/icons/svg/
 src/icons/icons.svg
-src/icons/index.json
 src/icons/_demo.html
 src/icons/icons.css

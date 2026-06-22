@@ -20,9 +20,10 @@
  *   _demo.html                   galería de validación (sprite inline), agrupada por familia
  */
 
-import { writeFile, mkdir, rm } from 'node:fs/promises';
+import { writeFile, readFile, mkdir, rm } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { createHash } from 'node:crypto';
 
 const ICONS_FILE_KEY = 'zIbuWAvLhwTlwnVwbDgY5n'; // OPS-Library-Aqua Icons
 const FAMILIES = ['system', 'semantic', 'brand'];
@@ -122,10 +123,25 @@ const main = async () => {
     `<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs>\n${symbols}\n</defs></svg>\n`
   );
 
+  // hash de contenido por ícono → permite detectar cambios (geometría o color)
+  for (const b of built) b.hash = createHash('sha1').update(`${b.viewBox}|${b.inner}`).digest('hex').slice(0, 8);
+
+  // diff contra la corrida anterior (index.json es la memoria, versionada en git)
+  let prev = {};
+  try { prev = JSON.parse(await readFile(resolve(OUT, 'index.json'), 'utf8')); } catch { /* primera corrida */ }
+  const prevFlat = {};
+  for (const f of Object.keys(prev)) for (const n of Object.keys(prev[f] || {})) prevFlat[`${f}/${n}`] = prev[f][n];
+  const nowFlat = {};
+  for (const b of built) nowFlat[`${b.family}/${b.name}`] = b;
+  const added = Object.keys(nowFlat).filter((k) => !prevFlat[k]).sort();
+  const removed = Object.keys(prevFlat).filter((k) => !nowFlat[k]).sort();
+  const changed = Object.keys(nowFlat)
+    .filter((k) => prevFlat[k] && prevFlat[k].hash && prevFlat[k].hash !== nowFlat[k].hash).sort();
+
   const manifest = {};
   for (const f of FAMILIES) {
     manifest[f] = {};
-    for (const b of built.filter((x) => x.family === f)) manifest[f][b.name] = { viewBox: b.viewBox, color: b.color };
+    for (const b of built.filter((x) => x.family === f)) manifest[f][b.name] = { viewBox: b.viewBox, color: b.color, hash: b.hash };
   }
   await writeFile(resolve(OUT, 'index.json'), JSON.stringify(manifest, null, 2) + '\n');
 
@@ -180,6 +196,14 @@ ${section('brand', 'Brand', 'multicolor — color propio')}\n`
 
   console.log(`✅ ${built.length} íconos → ${OUT}`);
   console.log(`   svg/{${FAMILIES.join(',')}}/ · icons.svg · icons.css · index.json · _demo.html`);
+
+  // reporte de novedades
+  const fmt = (a) => (a.length ? a.join(', ') : '—');
+  console.log('\n· Cambios desde la corrida anterior:');
+  console.log(`  + Nuevos (${added.length}): ${fmt(added)}`);
+  console.log(`  ~ Modificados (${changed.length}): ${fmt(changed)}`);
+  console.log(`  - Eliminados (${removed.length}): ${fmt(removed)}`);
+  if (!added.length && !changed.length && !removed.length) console.log('  (sin cambios — set idéntico al anterior)');
 };
 
 main().catch((e) => { console.error('❌', e.message); process.exit(1); });

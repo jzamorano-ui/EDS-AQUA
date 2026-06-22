@@ -52,6 +52,29 @@ Los íconos **system** pintan con **`currentColor`**: el `fill` del SVG **hereda
 FIGMA_TOKEN=figd_xxx node scripts/build-icons.mjs
 ```
 
+## Inventario y novedades — saber qué cambió
+
+El build es un **rebuild completo** (siempre en sync con Figma — captura íconos nuevos **y**
+los que se modificaron). No exporta "solo los nuevos" a propósito: así no se escapa un ícono
+redibujado. Para identificar qué cambió hay dos vías:
+
+1. **Reporte del build** — al terminar imprime el diff contra la corrida anterior:
+   ```
+   · Cambios desde la corrida anterior:
+     + Nuevos (2): system/qr, brand/vacuna
+     ~ Modificados (1): system/buscar
+     - Eliminados (0): —
+   ```
+2. **`index.json` versionado en git** — es el inventario (con un `hash` de contenido por ícono).
+   Está **trackeado** (a diferencia de los SVG/sprite, que son output regenerable e ignorado).
+   Tras un rebuild, `git diff src/icons/index.json` muestra:
+   - íconos **nuevos** → líneas agregadas
+   - **eliminados** → líneas quitadas
+   - **modificados** → cambia el `hash`
+
+Flujo al sumar íconos en Figma: re-correr el script → leer el reporte → `git diff` confirma →
+commitear `index.json`. Los SVG nuevos quedan en `src/icons/svg/<familia>/` listos para el dist.
+
 ## Contenido
 
 | Archivo | Qué es |
