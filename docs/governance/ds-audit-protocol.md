@@ -223,6 +223,8 @@ Si alguna conexión falla → detener auditoría y reportar el problema de conex
 **Gate:** D2, D3, D4, D5, D6, D9 deben ser PASS para release.
 
 > **Lección 2026-06-22:** se hardcodearon colores de brand y el knockout de semantic pese a que D3 ya exigía bindear a Tokens. La Full audit no chequeaba el deliverable SVG (solo el lado Figma). D9 + el guard del build cierran ese punto ciego: el hardcode ahora rompe el build, no depende de revisión manual.
+>
+> **Método (íconos multicolor):** semantic/brand son un **VECTOR con fills mixtos** (`node.fills === figma.mixed`). El binding por-región **NO** está en `node.boundVariables.fills` (solo trackea 1) — hay que leer **`node.vectorNetwork.regions[].fills[].boundVariables.color`** por cada región. Verificación 2026-06-22: 108/108 regiones (5 semantic + 31 brand) bindeadas a su token (`icon/status/*`, `icon/system/inverse`, `icon/brand/{primary,secondary,contrast}`), 0 raw. Auditar por el path equivocado da un falso 0/unbound.
 
 ---
 
