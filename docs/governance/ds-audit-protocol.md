@@ -217,9 +217,12 @@ Si alguna conexión falla → detener auditoría y reportar el problema de conex
 | **D6 — Referencias Tokens** | **Crítico** | 5 aliases de `context-color` apuntan a Tokens actual |
 | D7 — Cobertura de variantes | Bajo | Sin duplicados; tamaños tokenizados |
 | D8 — Escalabilidad | Bajo | Agregar ícono/modo no requiere refactoring |
+| **D9 — Deliverable sin literales** | **Crítico** | Set SVG generado (`src/icons/`): **0 colores literales** — todo `currentColor`, `none`, o token vía `style="fill:var(--token, #fallback)"`. Mapeo: system→currentColor; semantic→`icon-status-*` + knockout `icon-system-inverse`; brand→`icon-brand-{primary,secondary,contrast}`. **Enforced** por el guard de `scripts/build-icons.mjs` (falla el build ante cualquier `fill="#hex"`/`fill="white"` bare). |
 
-**Score L2:** X/8 dominios en PASS  
-**Gate:** D2, D3, D4, D5, D6 deben ser PASS para release.
+**Score L2:** X/9 dominios en PASS  
+**Gate:** D2, D3, D4, D5, D6, D9 deben ser PASS para release.
+
+> **Lección 2026-06-22:** se hardcodearon colores de brand y el knockout de semantic pese a que D3 ya exigía bindear a Tokens. La Full audit no chequeaba el deliverable SVG (solo el lado Figma). D9 + el guard del build cierran ese punto ciego: el hardcode ahora rompe el build, no depende de revisión manual.
 
 ---
 

@@ -138,6 +138,21 @@ const main = async () => {
     `<svg xmlns="http://www.w3.org/2000/svg" style="display:none"><defs>\n${symbols}\n</defs></svg>\n`
   );
 
+  // GUARD — ningún color literal. Todo fill/stroke debe ser currentColor, none, o un token
+  // vía style="fill:var(--token, #fallback)". Un `fill="#hex"`/`fill="white"` bare = hardcode → falla.
+  // (Regla DS: si el color tiene token, se bindea. Esto evita que un ícono nuevo cuele un color literal.)
+  const literals = [];
+  for (const b of built) {
+    const hits = b.inner.match(/(?:fill|stroke)="(?!currentColor"|none")[^"]+"/gi) || [];
+    for (const h of hits) literals.push(`${b.family}/${b.name}  ${h}`);
+  }
+  if (literals.length) {
+    console.error(`\n❌ ${literals.length} color(es) literal(es) sin tokenizar — hardcode prohibido:`);
+    literals.slice(0, 25).forEach((l) => console.error('   ' + l));
+    console.error('   → mapeá cada color a su token en SEM_TOKEN / BRAND_TOKEN (o currentColor para system) y re-corré.');
+    process.exit(1);
+  }
+
   // hash de contenido por ícono → permite detectar cambios (geometría o color)
   for (const b of built) b.hash = createHash('sha1').update(`${b.viewBox}|${b.inner}`).digest('hex').slice(0, 8);
 
