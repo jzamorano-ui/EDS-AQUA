@@ -43,13 +43,19 @@ const api = (path) =>
       return r.json();
     });
 
-/** Aplica el color según familia. Sin hex horneado salvo brand (multicolor propio). */
+/** Aplica el color según familia.
+ *  system   → currentColor (keyword válido como atributo de presentación).
+ *  semantic → style="fill:var(--token, #fallback)". Ojo: var() NO funciona en el
+ *             atributo `fill="..."` — debe ir en un `style` (contexto CSS). El token
+ *             manda (themeable); el hex queda solo como fallback si no hay tokens.
+ *  brand    → multicolor propio, se mantiene. */
 function colorize(inner, family, name) {
   if (family === 'system')
     return inner.replace(/(fill|stroke)="#[0-9a-fA-F]{3,8}"/g, '$1="currentColor"');
   if (family === 'semantic') {
     const tok = SEM_TOKEN[name] || 'danger';
-    return inner.replace(/(fill|stroke)="#[0-9a-fA-F]{3,8}"/g, `$1="var(--color-icon-status-${tok})"`);
+    return inner.replace(/fill="(#[0-9a-fA-F]{3,8})"/g,
+      (_, hex) => `style="fill:var(--color-icon-status-${tok}, ${hex})"`);
   }
   return inner; // brand: multicolor, se mantiene tal cual
 }

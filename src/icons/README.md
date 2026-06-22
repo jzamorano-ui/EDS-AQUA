@@ -11,8 +11,13 @@ así un mismo SVG funciona en cualquier estado y respeta dark mode. Hay 3 compor
 | Familia | En el SVG | Cómo se colorea | Dev hace… |
 |---|---|---|---|
 | **system** (121) | `fill="currentColor"` | hereda el `color` CSS del contenedor | nada (default) o cambia `color` |
-| **semantic** (5) | `fill="var(--color-icon-status-*)"` | **ya viene bindeado** a su token de estado | **nada** — ya sale con su color |
+| **semantic** (5) | `style="fill:var(--color-icon-status-*, #fallback)"` | **ya viene bindeado** a su token de estado | **nada** — ya sale con su color |
 | **brand** (31) | colores propios | multicolor intrínseco | nada — no recolorear |
+
+> **Gotcha (por qué semantic usa `style=` y no `fill=`):** `var()` **no se evalúa** en el atributo de
+> presentación `fill="..."` (solo `currentColor`, que es keyword, funciona ahí). Por eso el color del token
+> va en un `style="fill:var(...)"` (contexto CSS, sí evalúa `var()`). El hex queda como **fallback** para
+> que el ícono se vea aunque no haya tokens cargados; cuando `tokens.css` está presente, **manda el token** (themeable).
 
 ### `currentColor` (system) — esto es lo clave
 
@@ -77,8 +82,8 @@ Sale en `icon-system-primary`. Cambiás el color con `color` o un modifier (`.ic
 ```html
 <svg class="icon icon--md"><use href="/icons/icons.svg#semantic-danger"/></svg>
 ```
-El fill está bindeado a `--color-icon-status-danger` — **sale rojo solo**, sin clase. Themeable.
-(El glifo interno es un knockout blanco; pensados para mostrarse en su color de estado.)
+El fill va en `style="fill:var(--color-icon-status-danger, #9B1020)"` — **sale rojo solo**, sin clase, y
+themeable (el token manda; el hex es fallback). El glifo interno es un knockout blanco.
 
 ### brand (multicolor)
 ```html
