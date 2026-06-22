@@ -2,7 +2,7 @@
 
 ## Qué es este repo
 
-Repo de **distribución** del Aqua DS (OPS platform). Contiene los outputs compilados (`dist/`) y la documentación (`docs/`). El pipeline de build (tokens fuente, Style Dictionary) vive en un repo separado.
+Repo de **distribución** del Aqua DS (OPS platform). Contiene los outputs compilados (`dist/`) y la documentación (`docs/`). El pipeline de tokens fuente (Style Dictionary: `sd.config.mjs`, `tokens/`) es **local y gitignored** — no se versiona en este repo. **Sí se versionan** los scripts de `scripts/`: `build-icons.mjs` (genera el set de íconos desde la librería Figma) y `lint-tokens.js` (lint de tokens en CSS).
 
 ---
 

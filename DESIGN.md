@@ -1,7 +1,7 @@
 # Design System — OPS (Aqua DS)
 
-> **Version:** 0.2.1 — 2026-04-30
-> **Stack:** MUI · DTCG Design Tokens Format · CSS custom properties · TypeScript
+> **Version:** dist v0.1.0 (delivered) · working v0.19.0 — see [CHANGELOG.md](CHANGELOG.md) · [dist/CHANGELOG.md](dist/CHANGELOG.md)
+> **Stack:** DTCG design tokens · CSS custom properties · SVG icons — framework-agnostic output (no UI framework)
 > **Source of truth:** Figma Tokens Library (`ml3ScFhJNwgs6xZpKUKuok`)
 > **Not an official public design system — internal use and authorized AI agents only.**
 
