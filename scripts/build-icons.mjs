@@ -27,8 +27,14 @@ import { createHash } from 'node:crypto';
 
 const ICONS_FILE_KEY = 'zIbuWAvLhwTlwnVwbDgY5n'; // OPS-Library-Aqua Icons
 const FAMILIES = ['system', 'semantic', 'brand'];
-// system → currentColor · semantic → token de estado bindeado · brand → color propio
+// system → currentColor · semantic → token de estado · brand → tokens de marca (2 colores)
 const SEM_TOKEN = { danger: 'danger', alert: 'danger', warning: 'warning', success: 'success', info: 'info' };
+// brand usa 3 colores, todos con token icon/brand → se bindean (themeable, no hardcode)
+const BRAND_TOKEN = {
+  '#FF585C': '--color-icon-brand-primary',
+  '#FFC7C3': '--color-icon-brand-secondary',
+  '#FFFFFF': '--color-icon-brand-contrast', // el blanco/knockout de las ilustraciones
+};
 const OUT = resolve(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'icons');
 
 const TOKEN = process.env.FIGMA_TOKEN;
@@ -58,7 +64,13 @@ function colorize(inner, family, name) {
     return inner.replace(/fill="(#[0-9a-fA-F]{3,8})"/g,
       (_, hex) => `style="fill:var(--color-icon-status-${tok}, ${hex})"`);
   }
-  return inner; // brand: multicolor, se mantiene tal cual
+  // brand: colores de marca → tokens icon/brand (themeable). Acepta hex y `white`. Desconocido se mantiene.
+  return inner.replace(/fill="(#[0-9A-Fa-f]{3,8}|white)"/gi, (m, val) => {
+    let key = val.toUpperCase();
+    if (key === '#FFF' || key === 'WHITE') key = '#FFFFFF';
+    const tok = BRAND_TOKEN[key];
+    return tok ? `style="fill:var(${tok}, ${val})"` : m;
+  });
 }
 
 /** Extrae viewBox + inner y aplica el color de la familia. */
@@ -178,7 +190,7 @@ const main = async () => {
   await writeFile(
     resolve(OUT, '_demo.html'),
     `<!doctype html><meta charset="utf-8"><title>Aqua DS — Iconos</title>
-<style>:root{--color-icon-system-primary:#0F202B;--color-icon-status-danger:#9B1020;--color-icon-status-warning:#BF7900;--color-icon-status-success:#006B27;--color-icon-status-info:#0036AF}
+<style>:root{--color-icon-system-primary:#0F202B;--color-icon-status-danger:#9B1020;--color-icon-status-warning:#BF7900;--color-icon-status-success:#006B27;--color-icon-status-info:#0036AF;--color-icon-brand-primary:#FF585C;--color-icon-brand-secondary:#FFC7C3;--color-icon-brand-contrast:#FFFFFF}
 body{font:13px system-ui;padding:32px;color:#0F202B}
 h3{margin-top:32px}small{color:#6B7A85;font-weight:normal}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px}

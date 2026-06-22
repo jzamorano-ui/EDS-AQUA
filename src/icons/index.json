@@ -637,157 +637,157 @@
     "ambulancia": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "e3379508"
+      "hash": "ed71a66b"
     },
     "bienestar": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "597e0a52"
+      "hash": "99702d4f"
     },
     "brillos": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "43d448a7"
+      "hash": "b9202ac9"
     },
     "call-center": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "b8f2739e"
+      "hash": "88482522"
     },
     "capsula": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "da243ecf"
+      "hash": "c44024cc"
     },
     "chequeo": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "d8ebd516"
+      "hash": "ebc67902"
     },
     "contacto": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "be9b52b9"
+      "hash": "2f7bece4"
     },
     "conversacion": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "beb650ae"
+      "hash": "1fcdd2c7"
     },
     "cruz": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "3c609bb8"
+      "hash": "3a0d1477"
     },
     "desktop": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "9fb97fc5"
+      "hash": "e47791fe"
     },
     "diente": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "72f00f02"
+      "hash": "064dfe2e"
     },
     "dinero": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "9337951f"
+      "hash": "d37b7d3e"
     },
     "donar-sangre": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "3d9414fb"
+      "hash": "106df92c"
     },
     "enfermero": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "838fd292"
+      "hash": "e54a1bfd"
     },
     "estetoscopio": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "1c296b27"
+      "hash": "18ade10b"
     },
     "garantia": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "932dbdf5"
+      "hash": "ed1501eb"
     },
     "gorro-enfermero": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "e7e9b66e"
+      "hash": "6db76e93"
     },
     "gota-sangre": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "c7c98f63"
+      "hash": "b81cada2"
     },
     "historial-medico": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "9535a930"
+      "hash": "ed7deca5"
     },
     "hospital": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "418b13d1"
+      "hash": "468418bb"
     },
     "hospitalsymbol": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "ec5a9b27"
+      "hash": "4f7c22c6"
     },
     "maletin-medico": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "04679a07"
+      "hash": "5f9eba55"
     },
     "mascarilla": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "cb76caea"
+      "hash": "95337f0f"
     },
     "oido": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "caac1241"
+      "hash": "17f4e827"
     },
     "ojo": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "30a0cbf9"
+      "hash": "95cf714c"
     },
     "ritmo-cardiaco": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "03e8f3ee"
+      "hash": "e450c897"
     },
     "salud": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "2b8d3fe7"
+      "hash": "80e92519"
     },
     "seguro": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "b110095a"
+      "hash": "25c5f489"
     },
     "silla-ruedas": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "13d2a335"
+      "hash": "9581e0af"
     },
     "tarjeta-credito": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "110a0a41"
+      "hash": "5e9c3579"
     },
     "telemedicina": {
       "viewBox": "0 0 24 24",
       "color": "multicolor",
-      "hash": "e2404464"
+      "hash": "0a213c84"
     }
   }
 }

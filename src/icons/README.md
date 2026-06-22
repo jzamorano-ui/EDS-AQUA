@@ -12,7 +12,7 @@ así un mismo SVG funciona en cualquier estado y respeta dark mode. Hay 3 compor
 |---|---|---|---|
 | **system** (121) | `fill="currentColor"` | hereda el `color` CSS del contenedor | nada (default) o cambia `color` |
 | **semantic** (5) | `style="fill:var(--color-icon-status-*, #fallback)"` | **ya viene bindeado** a su token de estado | **nada** — ya sale con su color |
-| **brand** (31) | colores propios | multicolor intrínseco | nada — no recolorear |
+| **brand** (31) | `style="fill:var(--color-icon-brand-*, #fb)"` | bindeado a 3 tokens icon/brand (primary·secondary·contrast) | nada — themeable |
 
 > **Gotcha (por qué semantic usa `style=` y no `fill=`):** `var()` **no se evalúa** en el atributo de
 > presentación `fill="..."` (solo `currentColor`, que es keyword, funciona ahí). Por eso el color del token
@@ -108,11 +108,13 @@ Sale en `icon-system-primary`. Cambiás el color con `color` o un modifier (`.ic
 El fill va en `style="fill:var(--color-icon-status-danger, #9B1020)"` — **sale rojo solo**, sin clase, y
 themeable (el token manda; el hex es fallback). El glifo interno es un knockout blanco.
 
-### brand (multicolor)
+### brand (multicolor de marca)
 ```html
 <svg class="icon icon--lg"><use href="/icons/icons.svg#brand-hospital"/></svg>
 ```
-Traen su color propio. `currentColor` no aplica: solo se les da tamaño.
+Usan los 3 tokens `--color-icon-brand-{primary, secondary, contrast}`, bindeados en el SVG vía
+`style="fill:var(...)"` (hex como fallback). Salen con su color de marca y son **themeable**.
+`currentColor` no aplica; solo se les da tamaño.
 
 ## Accesibilidad
 
