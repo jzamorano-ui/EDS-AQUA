@@ -47,6 +47,28 @@ Los componentes leen estas llaves por nombre. Si no están, **MUI las deriva** (
 
 ---
 
+## Mecanismos de override (de menor a mayor alcance)
+1. **`sx` prop** — una instancia, cualquier CSS, incluye slots anidados (`'& .MuiX-part'`) y state classes (`.Mui-disabled/.Mui-selected/.Mui-error`).
+2. **`styled(Component)`** — un componente reutilizable con acceso a `theme`/`ownerState`.
+3. **`theme.components.MuiX.styleOverrides`** — global, por **slot**, callback con `ownerState` (props + estado interno) + `theme`. *(Es donde vive nuestra capa de tratamiento.)*
+4. **`theme.components.MuiX.variants`** — crea variantes nuevas que matchean por props (`{props:{variant:'x'}, style}` o callback). + augmentación TS.
+5. **`theme.components.MuiX.defaultProps`** — cambia props por defecto (ej. density: `size:'small'` global).
+6. **`GlobalStyles` / `CssBaseline`** — estilos base de elementos HTML.
+
+## Cómo se consume (CSS variables)
+- **`CssVarsProvider`** (extiende ThemeProvider) inyecta un stylesheet `:root` con las vars `--eds-*`.
+- En `styled`/`sx`: **`theme.vars.palette.primary.main`** (devuelve `var(--eds-palette-primary-main)`).
+- En CSS plano: **`var(--eds-palette-primary-main)`** directo.
+
+## Componentes propios (más allá de MUI)
+Con **`useThemeProps` + `styled('div',{name:'EdsX',slot:'root'})`** podemos crear **componentes nuevos que participan del theme** (sus propios `styleOverrides`/`variants`/`defaultProps`), igual que uno nativo. → Escalable a componentes que MUI no trae.
+
+## Otros ejes disponibles
+- **Breakpoints:** `xs 0 · sm 600 · md 900 · lg 1200 · xl 1536` — customizables (mapear a Aqua layout).
+- **Density:** vía `defaultProps size:'small'` global.
+- **contrastThreshold** (default 3:1) decide `contrastText` — damos explícito para AA.
+- **augmentColor** deriva `light/dark/contrastText` de `main` (lo usamos para los custom).
+
 ## Cómo encaja nuestra arquitectura de 2 capas
 
 | Capa nuestra | Dónde vive en MUI |
