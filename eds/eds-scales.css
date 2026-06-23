@@ -1,0 +1,33 @@
+/* GENERADO por eds/build/build.mjs — escalas no-color como CSS vars (color = MUI palette). */
+:root {
+  --eds-space-none: 0px;
+  --eds-space-2xs: 4px;
+  --eds-space-xs: 8px;
+  --eds-space-sm: 12px;
+  --eds-space-md: 16px;
+  --eds-space-lg: 24px;
+  --eds-space-xl: 32px;
+  --eds-space-2xl: 48px;
+  --eds-space-3xl: 64px;
+  --eds-radius-none: 0px;
+  --eds-radius-xs: 4px;
+  --eds-radius-sm: 8px;
+  --eds-radius-md: 12px;
+  --eds-radius-lg: 16px;
+  --eds-radius-xl: 24px;
+  --eds-radius-2xl: 32px;
+  --eds-radius-pill: 999px;
+  --eds-stroke-none: 0px;
+  --eds-stroke-xs: 1px;
+  --eds-stroke-sm: 2px;
+  --eds-stroke-md: 4px;
+  --eds-stroke-focusRing: 2px;
+  --eds-icon-size-xs: 16px;
+  --eds-icon-size-sm: 20px;
+  --eds-icon-size-md: 24px;
+  --eds-icon-size-lg: 32px;
+  --eds-icon-size-xl: 40px;
+  --eds-icon-size-2xl: 48px;
+  --eds-icon-size-3xl: 56px;
+  --eds-icon-size-4xl: 64px;
+}
