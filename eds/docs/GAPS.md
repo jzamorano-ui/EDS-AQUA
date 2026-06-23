@@ -4,20 +4,18 @@ Lo que el mapeo Aqua→MUI necesita y hoy **no está cerrado**. Cada uno con su 
 
 | # | Gap | Qué falta | Resolución propuesta | Bloquea |
 |---|---|---|---|---|
-| 1 | **grey 50–900** | MUI usa `grey.*` internamente (disabled, tracks, etc.). El POC lo aproximó de neutrals. | Traer el **ramp slate exacto** de los Primitives de Figma (Tokens lib). | Sí — define grises de muchos componentes |
+| 1 | ✅ **grey 50–900** | RESUELTO — ramp **`color/gray/*`** de Figma: `50 #F7F7F7 · 100 #E7E7E7 · 200 #C9C9C9 · 300 #ABABAB · 400 #8F8F8F · 500 #737373 · 600 #5C5C5C · 700 #464646 · 800 #313131 · 900 #1E1E1E`. (primary usa `slate/*`, distinto.) | — | — |
 | 2 | **light/dark tonales** | Para primary/secondary/error… MUI quiere `light`/`dark`. Hoy los asignamos de hover/active + bg/text-status. | Confirmar que esa asignación se ve bien; si no, sacar tonos exactos del ramp. (MUI deriva si no se dan, pero fijamos para paridad.) | No — hay fallback |
 | 3 | **`text.icon`** | MUI lo referencia; no estaba en Aqua. | ✅ Resuelto: `text.icon ← icon/system/primary` (`#0f202b`). | No |
-| 4 | **tier `h4` (~32px)** | La escala type Aqua no tiene un 32px; MUI tiene h4. | Decidir: (a) **agregar** un token `title-xl` 32px, o (b) interpolar h4 de h3/h5. **Recomiendo (a)** — token nuevo que respeta la escala. | No — pero queda hueco visible |
-| 5 | **`fontFamily`** | No se extrajo la familia real de tokens.css. | Confirmar `type/family/base` en Figma/tokens (¿Inter? ¿sistema?) y fijarla. | Sí — afecta toda la tipografía |
+| 4 | ✅ **tier `h4` (32px)** | RESUELTO — **ya existía** `headline-sm-bold` = **32 / 700 / 40**. h4 ← headline-sm-bold. Sin token nuevo. | — | — |
+| 5 | ✅ **`fontFamily`** | RESUELTO — `type/family/base` = **`Noto Sans`**. fontFamily: `'Noto Sans', system-ui, sans-serif`. | — | — |
 | 6 | **`shadows[0..24]`** | MUI exige 25 slots; Aqua tiene 4 elevations. | Distribución propuesta: `0=none · 1–4=sm · 5–12=md · 13–24=lg`. Validar contra dónde MUI usa cada índice (Card=1, Menu=8, Modal=24…). | No — el POC ya funciona con esto |
 | 7 | **`contrastText` por color** | Confirmar contraste de texto sobre cada color. | `#ffffff` salvo verificación WCAG por color (warning/info pueden necesitar oscuro). Chequear AA. | No |
 | 8 | **token source único** | El POC tipeó los hex a mano. Para single-source hay que leerlos de Aqua. | Build que **lee `dist/V.0.2.0/tokens.css`** (o el export de Figma) y arma el theme. No tipear valores dos veces. | Sí — es el corazón de Fase B |
 
-## Orden de resolución
-1. **Gaps 5, 8** (fontFamily + token source) — destraban la Fase B (pipeline).
-2. **Gaps 1, 4** (grey ramp + h4) — requieren Figma; resolver cuando reconecte el bridge.
-3. **Gaps 2, 6, 7** — refinamiento, tienen fallback; se cierran en la validación (Fase D).
+## Estado
+- ✅ **Resueltos con valores exactos de Figma:** #1 (grey), #4 (h4), #5 (fontFamily).
+- 🔜 **Fase B:** #8 (token source único — el build lee los valores de Aqua, no se tipean dos veces).
+- 🔧 **Refinamiento (con fallback, se cierran en validación Fase D):** #2 light/dark tonales · #6 distribución shadows · #7 contrastText WCAG.
 
-## Notas
-- Gaps 1 y 4 necesitan el **bridge de Figma** (hoy desconectado) para los valores exactos.
-- Ninguno bloquea arrancar la **Fase B** con los valores del POC como provisorios; se reemplazan por los exactos al resolver 1/4/5.
+**Ya no queda nada que bloquee la Fase B.** Todos los valores de color/typography están cerrados con datos exactos; solo falta cablear el pipeline single-source (#8).

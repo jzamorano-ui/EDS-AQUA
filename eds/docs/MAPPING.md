@@ -46,9 +46,13 @@
 | `action.disabled` | `#ababab` | text/disabled |
 | `action.disabledBackground` | `#f7f7f7` | action/primary/disabled |
 | `action.focus` | `#f3f7ff` | focus/ring/gap/default |
-| `grey.50…900` | **GAP** | ramp slate (traer de Figma — ver GAPS) |
+| `grey.50…900` | ramp `gray/*` ↓ | color/gray (neutro real) |
 
-> `light/dark` de error/warning/info/success se asignan de nuestro bg/text-status. `contrastText` explícito = `#ffffff` salvo casos claros. MUI puede derivar lo que falte, pero **fijamos explícito** para paridad exacta.
+**`grey` exacto (← `color/gray/*` de Figma):**
+`50 #F7F7F7 · 100 #E7E7E7 · 200 #C9C9C9 · 300 #ABABAB · 400 #8F8F8F · 500 #737373 · 600 #5C5C5C · 700 #464646 · 800 #313131 · 900 #1E1E1E`
+
+> Nota: `primary` usa el ramp **`slate/*`** (navy de marca): slate/800 #1F3644 (main) · slate/700 #304D5F (light) · slate/900 #0F202B (dark). El `grey.*` de MUI usa **`gray/*`** (neutro). Son ramps distintos.
+> `light/dark` de error/warning/info/success se asignan de nuestro bg/text-status. `contrastText` explícito = `#ffffff` salvo casos claros (ver GAPS #7).
 
 ---
 
@@ -93,14 +97,14 @@
 | `h1` | 64 / 700 / 72 | display-xl-bold |
 | `h2` | 48 / 700 / 64 | headline-lg-bold |
 | `h3` | 40 / 700 / 48 | headline-md-bold |
-| `h4` | **GAP (~32)** | falta tier 32px — ver GAPS |
+| `h4` | 32 / 700 / 40 | headline-sm-bold |
 | `h5` | 24 / 500 / 32 | title-lg-medium |
 | `h6` | 20 / 500 / 28 | title-md-medium |
 | `body1` | 16 / 400 / 24 | body-lg-regular |
 | `body2` | 14 / 400 / 20 | body-md-regular |
 | `button` | 14 / 500 / 20 · `textTransform:none` | body-md-medium |
 | `caption` | 12 / 400 / 16 | caption-sm-regular |
-| `fontFamily` | **GAP** (confirmar familia real) | type/family/base |
+| `fontFamily` | `'Noto Sans', system-ui, sans-serif` | type/family/base ✅ |
 
 ---
 
