@@ -44,7 +44,8 @@ const palette = {
   warning: { main:c('icon-status-warning'), light:c('bg-status-warning'), dark:c('text-status-warning'), contrastText:'#ffffff' },
   info:    { main:c('icon-status-info'),    light:c('bg-status-info'),    dark:c('text-status-info'),    contrastText:'#ffffff' },
   success: { main:c('icon-status-success'), light:c('bg-status-success'), dark:c('text-status-success'), contrastText:'#ffffff' },
-  text: { primary:c('text-primary'), secondary:c('text-secondary'), disabled:c('text-disabled'), icon:c('icon-system-primary') },
+  text: { primary:c('text-primary'), secondary:c('text-secondary'), disabled:c('text-disabled'), icon:c('icon-system-primary'),
+          inverse:c('text-inverse'), brand:c('text-brand'), brandStrong:c('text-brand-strong') },
   background: { default:c('bg-surface-subtle'), paper:c('bg-surface-default') },
   divider: c('border-divider-default'),
   common: { black:c('bg-surface-inverse'), white:'#ffffff' },
@@ -53,7 +54,9 @@ const palette = {
   grey: GRAY,
   // ── augmentation (naming nuestro) ──
   brand: { main:c('action-brand-primary-default'), hover:c('action-brand-primary-hover'), active:c('action-brand-primary-active'),
-           subtle:c('bg-fill-brand-subtle'), strong:c('icon-brand-strong'), contrast:c('icon-brand-contrast') },
+           subtle:c('bg-fill-brand-subtle'), strong:c('icon-brand-strong'), contrast:c('icon-brand-contrast'),
+           secondaryDefault:c('action-brand-secondary-default'), secondaryHover:c('action-brand-secondary-hover'), secondaryActive:c('action-brand-secondary-active'),
+           tertiaryHover:c('action-brand-tertiary-hover'), tertiaryActive:c('action-brand-tertiary-active') },
   fill: { neutralSubtle:c('bg-fill-neutral-subtle'), neutralMedium:c('bg-fill-neutral-medium'), neutralStrong:c('bg-fill-neutral-strong'),
           inverseSubtle:c('bg-fill-inverse-subtle'), inverseMedium:c('bg-fill-inverse-medium'), inverseStrong:c('bg-fill-inverse-strong'),
           brandSubtle:c('bg-fill-brand-subtle'), brandMedium:c('bg-fill-brand-medium'), brandStrong:c('bg-fill-brand-strong') },
@@ -67,19 +70,39 @@ const palette = {
   },
   focus: { ring:c('focus-ring-default'), gap:c('focus-ring-gap-default'), inverse:c('focus-ring-inverse'), gapInverse:c('focus-ring-gap-inverse') },
   link: { default:c('text-link-default'), hover:c('text-link-hover'), active:c('text-link-active') },
+  // familia border completa (12 tokens, naming propio)
+  border: { default:c('border-default'), focus:c('border-focus'), dangerFocus:c('border-danger-focus'), disabled:c('border-disabled'),
+            dividerDefault:c('border-divider-default'), dividerBrand:c('border-divider-brand'), dividerInverse:c('border-divider-inverse'), inverse:c('border-inverse'),
+            statusDanger:c('border-status-danger'), statusInfo:c('border-status-info'), statusSuccess:c('border-status-success'), statusWarning:c('border-status-warning') },
+  // icon system (brand/status ya están en brand/status)
+  icon: { systemPrimary:c('icon-system-primary'), systemSecondary:c('icon-system-secondary'), systemDisabled:c('icon-system-disabled'), systemInverse:c('icon-system-inverse'),
+          brandPrimary:c('icon-brand-primary'), brandSecondary:c('icon-brand-secondary'), brandStrong:c('icon-brand-strong'), brandContrast:c('icon-brand-contrast') },
+  // estados de action no-primary (los ghosts neutros + inverse)
+  actionSecondary: { default:c('action-secondary-default'), hover:c('action-secondary-hover'), active:c('action-secondary-active') },
+  actionTertiary:  { default:c('action-tertiary-hover'), hover:c('action-tertiary-hover'), active:c('action-tertiary-active') },
+  actionInverse:   { default:c('action-primary-inverse-default'), hover:c('action-primary-inverse-hover'), active:c('action-primary-inverse-active') },
 };
 
-// ---------- 3) typography (variants ← type scale de Aqua) ----------
+// ---------- 3) typography — LOS 22 variants de la propuesta + aliases estándar MUI ----------
 const FAMILY = `'Noto Sans', system-ui, sans-serif`;
-const T = (v) => ({ fontFamily:FAMILY, fontSize:`${px('type-'+v+'-size')}px`, fontWeight:px('type-'+v+'-weight'), lineHeight:`${px('type-'+v+'-line-height')}px` });
-const typography = {
-  fontFamily: FAMILY,
-  h1:T('display-xl-bold'), h2:T('headline-lg-bold'), h3:T('headline-md-bold'), h4:T('headline-sm-bold'),
-  h5:T('title-lg-medium'), h6:T('title-md-medium'),
-  body1:T('body-lg-regular'), body2:T('body-md-regular'),
-  button:{ ...T('body-md-medium'), textTransform:'none' },
-  caption:T('caption-sm-regular'),
-};
+const V = (v) => ({ fontFamily:FAMILY, fontSize:`${px('type-'+v+'-size')}px`, fontWeight:px('type-'+v+'-weight'), lineHeight:`${px('type-'+v+'-line-height')}px` });
+const camel = (s) => s.split('-').map((w,i)=>i?w[0].toUpperCase()+w.slice(1):w).join('');
+// descubrir TODOS los variants Aqua (body/title/headline/display/caption × pesos)
+const allVariants = [...new Set([...css.matchAll(/--type-([a-z]+-[a-z0-9]+-[a-z]+)-size/g)].map(m=>m[1]))].sort();
+const typography = { fontFamily: FAMILY };
+// (a) los 22 como variants CUSTOM (naming nuestro camelCase) — nada se pierde
+for (const v of allVariants) typography[camel(v)] = V(v);
+// (b) aliases estándar de MUI (para que <Typography variant="h1"> y los componentes anden)
+Object.assign(typography, {
+  h1:V('display-xl-bold'), h2:V('headline-lg-bold'), h3:V('headline-md-bold'), h4:V('headline-sm-bold'),
+  h5:V('title-lg-medium'), h6:V('title-md-medium'),
+  subtitle1:V('title-sm-medium'),      // ← el 18px tiene casa estándar
+  subtitle2:V('body-md-medium'),
+  body1:V('body-lg-regular'), body2:V('body-md-regular'),
+  button:{ ...V('body-md-medium'), textTransform:'none' },
+  caption:V('caption-sm-regular'),
+  overline:{ ...V('caption-sm-medium'), textTransform:'uppercase' },
+});
 
 // ---------- 4) escalas no-color ----------
 const scales = {

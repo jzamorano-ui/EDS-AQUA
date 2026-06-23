@@ -46,7 +46,10 @@ export const palette = {
     "primary": "#0f202b",
     "secondary": "#737373",
     "disabled": "#ababab",
-    "icon": "#0f202b"
+    "icon": "#0f202b",
+    "inverse": "#ffffff",
+    "brand": "#ff585c",
+    "brandStrong": "#9b1020"
   },
   "background": {
     "default": "#f4f7f9",
@@ -83,7 +86,12 @@ export const palette = {
     "active": "#9b1020",
     "subtle": "#ffe5e3",
     "strong": "#9b1020",
-    "contrast": "#ffffff"
+    "contrast": "#ffffff",
+    "secondaryDefault": "#ffe5e3",
+    "secondaryHover": "#ffc7c3",
+    "secondaryActive": "#ffa7a3",
+    "tertiaryHover": "#ffe5e3",
+    "tertiaryActive": "#ffc7c3"
   },
   "fill": {
     "neutralSubtle": "#ffffff",
@@ -142,10 +150,181 @@ export const palette = {
     "default": "#1f3644",
     "hover": "#304d5f",
     "active": "#0f202b"
+  },
+  "border": {
+    "default": "#c9c9c9",
+    "focus": "#0f202b",
+    "dangerFocus": "#9b1020",
+    "disabled": "#e7e7e7",
+    "dividerDefault": "#e7e7e7",
+    "dividerBrand": "#ff585c",
+    "dividerInverse": "#ffffff",
+    "inverse": "#ffffff",
+    "statusDanger": "#ffc7c3",
+    "statusInfo": "#9ebefb",
+    "statusSuccess": "#aed2b2",
+    "statusWarning": "#fed9af"
+  },
+  "icon": {
+    "systemPrimary": "#0f202b",
+    "systemSecondary": "#737373",
+    "systemDisabled": "#ababab",
+    "systemInverse": "#ffffff",
+    "brandPrimary": "#ff585c",
+    "brandSecondary": "#ffc7c3",
+    "brandStrong": "#9b1020",
+    "brandContrast": "#ffffff"
+  },
+  "actionSecondary": {
+    "default": "#e2e9ee",
+    "hover": "#becdd8",
+    "active": "#9bb3c3"
+  },
+  "actionTertiary": {
+    "default": "#f4f7f9",
+    "hover": "#f4f7f9",
+    "active": "#e2e9ee"
+  },
+  "actionInverse": {
+    "default": "#ffffff",
+    "hover": "#f4f7f9",
+    "active": "#e2e9ee"
   }
 };
 export const typography = {
   "fontFamily": "'Noto Sans', system-ui, sans-serif",
+  "bodyLgBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "16px",
+    "fontWeight": 700,
+    "lineHeight": "24px"
+  },
+  "bodyLgMedium": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "16px",
+    "fontWeight": 500,
+    "lineHeight": "24px"
+  },
+  "bodyLgRegular": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "16px",
+    "fontWeight": 400,
+    "lineHeight": "24px"
+  },
+  "bodyMdBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "14px",
+    "fontWeight": 700,
+    "lineHeight": "20px"
+  },
+  "bodyMdMedium": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "14px",
+    "fontWeight": 500,
+    "lineHeight": "20px"
+  },
+  "bodyMdRegular": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "14px",
+    "fontWeight": 400,
+    "lineHeight": "20px"
+  },
+  "bodyXlBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "20px",
+    "fontWeight": 700,
+    "lineHeight": "28px"
+  },
+  "bodyXlMedium": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "20px",
+    "fontWeight": 500,
+    "lineHeight": "28px"
+  },
+  "bodyXlRegular": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "20px",
+    "fontWeight": 400,
+    "lineHeight": "28px"
+  },
+  "captionSmMedium": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "12px",
+    "fontWeight": 500,
+    "lineHeight": "16px"
+  },
+  "captionSmRegular": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "12px",
+    "fontWeight": 400,
+    "lineHeight": "16px"
+  },
+  "displayXlBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "64px",
+    "fontWeight": 700,
+    "lineHeight": "72px"
+  },
+  "headlineLgBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "48px",
+    "fontWeight": 700,
+    "lineHeight": "64px"
+  },
+  "headlineMdBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "40px",
+    "fontWeight": 700,
+    "lineHeight": "48px"
+  },
+  "headlineSmBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "32px",
+    "fontWeight": 700,
+    "lineHeight": "40px"
+  },
+  "titleLgBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "24px",
+    "fontWeight": 700,
+    "lineHeight": "32px"
+  },
+  "titleLgMedium": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "24px",
+    "fontWeight": 500,
+    "lineHeight": "32px"
+  },
+  "titleMdBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "20px",
+    "fontWeight": 700,
+    "lineHeight": "28px"
+  },
+  "titleMdMedium": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "20px",
+    "fontWeight": 500,
+    "lineHeight": "28px"
+  },
+  "titleSmBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "18px",
+    "fontWeight": 700,
+    "lineHeight": "26px"
+  },
+  "titleSmMedium": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "18px",
+    "fontWeight": 500,
+    "lineHeight": "26px"
+  },
+  "titleXsBold": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "14px",
+    "fontWeight": 700,
+    "lineHeight": "20px"
+  },
   "h1": {
     "fontFamily": "'Noto Sans', system-ui, sans-serif",
     "fontSize": "64px",
@@ -182,6 +361,18 @@ export const typography = {
     "fontWeight": 500,
     "lineHeight": "28px"
   },
+  "subtitle1": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "18px",
+    "fontWeight": 500,
+    "lineHeight": "26px"
+  },
+  "subtitle2": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "14px",
+    "fontWeight": 500,
+    "lineHeight": "20px"
+  },
   "body1": {
     "fontFamily": "'Noto Sans', system-ui, sans-serif",
     "fontSize": "16px",
@@ -206,6 +397,13 @@ export const typography = {
     "fontSize": "12px",
     "fontWeight": 400,
     "lineHeight": "16px"
+  },
+  "overline": {
+    "fontFamily": "'Noto Sans', system-ui, sans-serif",
+    "fontSize": "12px",
+    "fontWeight": 500,
+    "lineHeight": "16px",
+    "textTransform": "uppercase"
   }
 };
 export const scales = {

@@ -22,12 +22,11 @@ for(const k of Object.keys(palette.grey)) md += row(`${P}-grey-${k}`, palette.gr
 md += `\n## Augmentation 🆓 (naming nuestro)\n\n`;
 md += `### estados por color\n\n| token | valor |\n|---|---|\n`;
 for(const s of ['primary','secondary']) for(const k of ['hover','active','disabled']) if(palette[s][k]) md += row(`${P}-${s}-${k}`, palette[s][k])+'\n';
-md += `\n### brand · fill · deco · focus · link\n\n| token | valor |\n|---|---|\n`;
-for(const k of Object.keys(palette.brand)) md += row(`${P}-brand-${k}`, palette.brand[k])+'\n';
-for(const k of Object.keys(palette.fill)) md += row(`${P}-fill-${k}`, palette.fill[k])+'\n';
-for(const k of Object.keys(palette.deco)) md += row(`${P}-deco-${k}`, palette.deco[k])+'\n';
-for(const k of Object.keys(palette.focus)) md += row(`${P}-focus-${k}`, palette.focus[k])+'\n';
-for(const k of Object.keys(palette.link)) md += row(`${P}-link-${k}`, palette.link[k])+'\n';
+const AUG = ['brand','fill','deco','focus','link','border','icon','actionSecondary','actionTertiary','actionInverse'];
+for (const grp of AUG) {
+  md += `\n### ${grp}\n\n| token | valor |\n|---|---|\n`;
+  for (const k of Object.keys(palette[grp])) md += row(`${P}-${grp}-${k}`, palette[grp][k])+'\n';
+}
 md += `\n### status multi-canal\n\n| | bg | text | icon | border |\n|---|---|---|---|---|\n`;
 for(const s of ['danger','info','success','warning']){ const o=palette.status[s]; md += `| ${s} | \`${o.bg}\` | \`${o.text||'—'}\` | \`${o.icon||'—'}\` | \`${o.border||'—'}\` |\n`; }
 
@@ -35,10 +34,14 @@ for(const s of ['danger','info','success','warning']){ const o=palette.status[s]
 md += `\n## Escalas no-color 🆓 (CSS vars + theme.eds.*)\n\n`;
 for(const [grp,obj] of Object.entries(scales)){ md += `**${grp}:** `+Object.entries(obj).map(([k,v])=>`\`--${NS}-${grp==='iconSize'?'icon-size':grp}-${k}\`=${v}`).join(' · ')+'\n\n'; }
 
-// --- typography 🔒 ---
-md += `## Typography 🔒\n\n| variant | size / weight / line-height |\n|---|---|\n`;
-md += `| fontFamily | ${typography.fontFamily} |\n`;
-for(const v of ['h1','h2','h3','h4','h5','h6','body1','body2','button','caption']){ const t=typography[v]; md += `| ${v} | ${t.fontSize} / ${t.fontWeight} / ${t.lineHeight}${t.textTransform?' · '+t.textTransform:''} |\n`; }
+// --- typography ---
+const STD = ['h1','h2','h3','h4','h5','h6','subtitle1','subtitle2','body1','body2','button','caption','overline'];
+const fmt = (t)=>`${t.fontSize} / ${t.fontWeight} / ${t.lineHeight}${t.textTransform?' · '+t.textTransform:''}`;
+md += `## Typography — Noto Sans\n\n**fontFamily:** \`${typography.fontFamily}\`\n\n`;
+md += `### 22 variants de la propuesta 🆓\n\n| variant | size / weight / lh |\n|---|---|\n`;
+for(const k of Object.keys(typography)) if(k!=='fontFamily' && !STD.includes(k)) md += `| \`${k}\` | ${fmt(typography[k])} |\n`;
+md += `\n### aliases estándar MUI 🔒\n\n| variant | size / weight / lh |\n|---|---|\n`;
+for(const k of STD) if(typography[k]) md += `| \`${k}\` | ${fmt(typography[k])} |\n`;
 
 writeFileSync(resolve(EDS,'docs/TOKENS.md'), md);
 console.log(md);
