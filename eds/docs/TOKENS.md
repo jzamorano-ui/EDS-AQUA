@@ -2,52 +2,37 @@
 
 > Generado de `src/tokens.generated.mjs`. Valores: single-source desde Aqua.
 
-## Palette — slots MUI 🔒
+## 1. Rol / intención  (prop `color=`)
+
+Cada intención: tonos MUI (`main/light/dark/contrastText`) + **estados** (`hover/active/disabled`) + `subtle`.
+
+| intención | main | light | dark | contrastText | hover | active | subtle |
+|---|---|---|---|---|---|---|---|
+| **primary** | `#1f3644` | `#304d5f` | `#0f202b` | `#ffffff` | `#304d5f` | `#0f202b` | `#f4f7f9` |
+| **secondary** | `#e2e9ee` | `#f4f7f9` | `#9bb3c3` | `#0f202b` | `#becdd8` | `#9bb3c3` | `#f4f7f9` |
+| **brand** | `#ff585c` | `#ffc7c3` | `#9b1020` | `#ffffff` | `#d2353f` | `#9b1020` | `#ffe5e3` |
+| **error** | `#9b1020` | `#fff4f3` | `#9b1020` | `#ffffff` | `—` | `—` | `#fff4f3` |
+| **warning** | `#bf7900` | `#fcf6ef` | `#8b5700` | `#ffffff` | `—` | `—` | `#fcf6ef` |
+| **info** | `#0036af` | `#f3f7ff` | `#002a90` | `#ffffff` | `—` | `—` | `#f3f7ff` |
+| **success** | `#006b27` | `#f3f9f3` | `#00531d` | `#ffffff` | `—` | `—` | `#f3f9f3` |
+
+> CSS var: `--eds-palette-primary-main`, `--eds-palette-brand-hover`, etc. `brand` es color custom (`color="brand"`).
+
+## 2. Superficies & neutrales
 
 | token | valor |
 |---|---|
-| `--eds-palette-primary-main` | `#1f3644` |
-| `--eds-palette-primary-light` | `#304d5f` |
-| `--eds-palette-primary-dark` | `#0f202b` |
-| `--eds-palette-primary-contrastText` | `#ffffff` |
-| `--eds-palette-secondary-main` | `#ff585c` |
-| `--eds-palette-secondary-light` | `#ffc7c3` |
-| `--eds-palette-secondary-dark` | `#9b1020` |
-| `--eds-palette-secondary-contrastText` | `#ffffff` |
-| `--eds-palette-error-main` | `#9b1020` |
-| `--eds-palette-error-light` | `#fff4f3` |
-| `--eds-palette-error-dark` | `#9b1020` |
-| `--eds-palette-error-contrastText` | `#ffffff` |
-| `--eds-palette-warning-main` | `#bf7900` |
-| `--eds-palette-warning-light` | `#fcf6ef` |
-| `--eds-palette-warning-dark` | `#8b5700` |
-| `--eds-palette-warning-contrastText` | `#ffffff` |
-| `--eds-palette-info-main` | `#0036af` |
-| `--eds-palette-info-light` | `#f3f7ff` |
-| `--eds-palette-info-dark` | `#002a90` |
-| `--eds-palette-info-contrastText` | `#ffffff` |
-| `--eds-palette-success-main` | `#006b27` |
-| `--eds-palette-success-light` | `#f3f9f3` |
-| `--eds-palette-success-dark` | `#00531d` |
-| `--eds-palette-success-contrastText` | `#ffffff` |
 | `--eds-palette-text-primary` | `#0f202b` |
 | `--eds-palette-text-secondary` | `#737373` |
 | `--eds-palette-text-disabled` | `#ababab` |
+| `--eds-palette-text-inverse` | `#ffffff` |
+| `--eds-palette-text-brand` | `#ff585c` |
+| `--eds-palette-text-brandStrong` | `#9b1020` |
 | `--eds-palette-text-icon` | `#0f202b` |
 | `--eds-palette-background-default` | `#f4f7f9` |
 | `--eds-palette-background-paper` | `#ffffff` |
+| `--eds-palette-background-inverse` | `#0f202b` |
 | `--eds-palette-divider` | `#e7e7e7` |
-| `--eds-palette-action-active` | `#0f202b` |
-| `--eds-palette-action-hover` | `#f4f7f9` |
-| `--eds-palette-action-selected` | `#e2e9ee` |
-| `--eds-palette-action-disabled` | `#ababab` |
-| `--eds-palette-action-disabledBackground` | `#f7f7f7` |
-| `--eds-palette-action-focus` | `#f3f7ff` |
-
-### grey 🔒
-
-| token | valor |
-|---|---|
 | `--eds-palette-grey-50` | `#f7f7f7` |
 | `--eds-palette-grey-100` | `#e7e7e7` |
 | `--eds-palette-grey-200` | `#c9c9c9` |
@@ -59,33 +44,9 @@
 | `--eds-palette-grey-800` | `#313131` |
 | `--eds-palette-grey-900` | `#1e1e1e` |
 
-## Augmentation 🆓 (naming nuestro)
+_`action` = overlays de interacción de MUI (listas/menús/ripple): `active` · `hover` · `selected` · `disabled` · `disabledBackground` · `focus`_
 
-### estados por color
-
-| token | valor |
-|---|---|
-| `--eds-palette-primary-hover` | `#304d5f` |
-| `--eds-palette-primary-active` | `#0f202b` |
-| `--eds-palette-primary-disabled` | `#f7f7f7` |
-| `--eds-palette-secondary-hover` | `#d2353f` |
-| `--eds-palette-secondary-active` | `#9b1020` |
-
-### brand
-
-| token | valor |
-|---|---|
-| `--eds-palette-brand-main` | `#ff585c` |
-| `--eds-palette-brand-hover` | `#d2353f` |
-| `--eds-palette-brand-active` | `#9b1020` |
-| `--eds-palette-brand-subtle` | `#ffe5e3` |
-| `--eds-palette-brand-strong` | `#9b1020` |
-| `--eds-palette-brand-contrast` | `#ffffff` |
-| `--eds-palette-brand-secondaryDefault` | `#ffe5e3` |
-| `--eds-palette-brand-secondaryHover` | `#ffc7c3` |
-| `--eds-palette-brand-secondaryActive` | `#ffa7a3` |
-| `--eds-palette-brand-tertiaryHover` | `#ffe5e3` |
-| `--eds-palette-brand-tertiaryActive` | `#ffc7c3` |
+## 3. Augmentation por rol 🆓
 
 ### fill
 
@@ -158,31 +119,15 @@
 | `--eds-palette-icon-brandStrong` | `#9b1020` |
 | `--eds-palette-icon-brandContrast` | `#ffffff` |
 
-### actionSecondary
+### onInverse
 
 | token | valor |
 |---|---|
-| `--eds-palette-actionSecondary-default` | `#e2e9ee` |
-| `--eds-palette-actionSecondary-hover` | `#becdd8` |
-| `--eds-palette-actionSecondary-active` | `#9bb3c3` |
+| `--eds-palette-onInverse-primary` | `#ffffff` |
+| `--eds-palette-onInverse-primaryHover` | `#f4f7f9` |
+| `--eds-palette-onInverse-primaryActive` | `#e2e9ee` |
 
-### actionTertiary
-
-| token | valor |
-|---|---|
-| `--eds-palette-actionTertiary-default` | `#f4f7f9` |
-| `--eds-palette-actionTertiary-hover` | `#f4f7f9` |
-| `--eds-palette-actionTertiary-active` | `#e2e9ee` |
-
-### actionInverse
-
-| token | valor |
-|---|---|
-| `--eds-palette-actionInverse-default` | `#ffffff` |
-| `--eds-palette-actionInverse-hover` | `#f4f7f9` |
-| `--eds-palette-actionInverse-active` | `#e2e9ee` |
-
-### status multi-canal
+### status — multi-canal (feedback: alert/badge)
 
 | | bg | text | icon | border |
 |---|---|---|---|---|

@@ -8,65 +8,77 @@ export const palette = {
     "contrastText": "#ffffff",
     "hover": "#304d5f",
     "active": "#0f202b",
-    "disabled": "#f7f7f7"
+    "disabled": "#f7f7f7",
+    "subtle": "#f4f7f9"
   },
   "secondary": {
+    "main": "#e2e9ee",
+    "light": "#f4f7f9",
+    "dark": "#9bb3c3",
+    "contrastText": "#0f202b",
+    "hover": "#becdd8",
+    "active": "#9bb3c3",
+    "disabled": "#f7f7f7",
+    "subtle": "#f4f7f9"
+  },
+  "brand": {
     "main": "#ff585c",
     "light": "#ffc7c3",
     "dark": "#9b1020",
     "contrastText": "#ffffff",
     "hover": "#d2353f",
-    "active": "#9b1020"
+    "active": "#9b1020",
+    "disabled": "#f7f7f7",
+    "subtle": "#ffe5e3",
+    "subtleHover": "#ffc7c3",
+    "subtleActive": "#ffa7a3"
   },
   "error": {
     "main": "#9b1020",
     "light": "#fff4f3",
     "dark": "#9b1020",
-    "contrastText": "#ffffff"
+    "contrastText": "#ffffff",
+    "subtle": "#fff4f3"
   },
   "warning": {
     "main": "#bf7900",
     "light": "#fcf6ef",
     "dark": "#8b5700",
-    "contrastText": "#ffffff"
+    "contrastText": "#ffffff",
+    "subtle": "#fcf6ef"
   },
   "info": {
     "main": "#0036af",
     "light": "#f3f7ff",
     "dark": "#002a90",
-    "contrastText": "#ffffff"
+    "contrastText": "#ffffff",
+    "subtle": "#f3f7ff"
   },
   "success": {
     "main": "#006b27",
     "light": "#f3f9f3",
     "dark": "#00531d",
-    "contrastText": "#ffffff"
+    "contrastText": "#ffffff",
+    "subtle": "#f3f9f3"
   },
   "text": {
     "primary": "#0f202b",
     "secondary": "#737373",
     "disabled": "#ababab",
-    "icon": "#0f202b",
     "inverse": "#ffffff",
     "brand": "#ff585c",
-    "brandStrong": "#9b1020"
+    "brandStrong": "#9b1020",
+    "icon": "#0f202b"
   },
   "background": {
     "default": "#f4f7f9",
-    "paper": "#ffffff"
+    "paper": "#ffffff",
+    "inverse": "#0f202b"
   },
   "divider": "#e7e7e7",
   "common": {
     "black": "#0f202b",
     "white": "#ffffff"
-  },
-  "action": {
-    "active": "#0f202b",
-    "hover": "#f4f7f9",
-    "selected": "#e2e9ee",
-    "disabled": "#ababab",
-    "disabledBackground": "#f7f7f7",
-    "focus": "#f3f7ff"
   },
   "grey": {
     "50": "#f7f7f7",
@@ -80,18 +92,13 @@ export const palette = {
     "800": "#313131",
     "900": "#1e1e1e"
   },
-  "brand": {
-    "main": "#ff585c",
-    "hover": "#d2353f",
-    "active": "#9b1020",
-    "subtle": "#ffe5e3",
-    "strong": "#9b1020",
-    "contrast": "#ffffff",
-    "secondaryDefault": "#ffe5e3",
-    "secondaryHover": "#ffc7c3",
-    "secondaryActive": "#ffa7a3",
-    "tertiaryHover": "#ffe5e3",
-    "tertiaryActive": "#ffc7c3"
+  "action": {
+    "active": "#0f202b",
+    "hover": "#f4f7f9",
+    "selected": "#e2e9ee",
+    "disabled": "#ababab",
+    "disabledBackground": "#f7f7f7",
+    "focus": "#f3f7ff"
   },
   "fill": {
     "neutralSubtle": "#ffffff",
@@ -175,20 +182,10 @@ export const palette = {
     "brandStrong": "#9b1020",
     "brandContrast": "#ffffff"
   },
-  "actionSecondary": {
-    "default": "#e2e9ee",
-    "hover": "#becdd8",
-    "active": "#9bb3c3"
-  },
-  "actionTertiary": {
-    "default": "#f4f7f9",
-    "hover": "#f4f7f9",
-    "active": "#e2e9ee"
-  },
-  "actionInverse": {
-    "default": "#ffffff",
-    "hover": "#f4f7f9",
-    "active": "#e2e9ee"
+  "onInverse": {
+    "primary": "#ffffff",
+    "primaryHover": "#f4f7f9",
+    "primaryActive": "#e2e9ee"
   }
 };
 export const typography = {

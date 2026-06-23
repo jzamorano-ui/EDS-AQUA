@@ -7,27 +7,28 @@ const P = `--${NS}-palette`;
 const row = (k,v)=>`| \`${k}\` | \`${v}\` |`;
 let md = `# TOKENS — sistema EDS (vista \`--${NS}-*\` que consume dev)\n\n> Generado de \`src/tokens.generated.mjs\`. Valores: single-source desde Aqua.\n\n`;
 
-// --- palette: slots MUI 🔒 ---
-const muiSlots = ['primary','secondary','error','warning','info','success'];
-md += `## Palette — slots MUI 🔒\n\n| token | valor |\n|---|---|\n`;
-for(const s of muiSlots) for(const k of ['main','light','dark','contrastText']) md += row(`${P}-${s}-${k}`, palette[s][k])+'\n';
-for(const k of ['primary','secondary','disabled','icon']) md += row(`${P}-text-${k}`, palette.text[k])+'\n';
-for(const k of ['default','paper']) md += row(`${P}-background-${k}`, palette.background[k])+'\n';
-md += row(`${P}-divider`, palette.divider)+'\n';
-for(const k of ['active','hover','selected','disabled','disabledBackground','focus']) md += row(`${P}-action-${k}`, palette.action[k])+'\n';
-md += `\n### grey 🔒\n\n| token | valor |\n|---|---|\n`;
-for(const k of Object.keys(palette.grey)) md += row(`${P}-grey-${k}`, palette.grey[k])+'\n';
+// --- ROL / INTENCIÓN (prop color=) ---
+const INTENT = ['primary','secondary','brand','error','warning','info','success'];
+md += `## 1. Rol / intención  (prop \`color=\`)\n\nCada intención: tonos MUI (\`main/light/dark/contrastText\`) + **estados** (\`hover/active/disabled\`) + \`subtle\`.\n\n| intención | main | light | dark | contrastText | hover | active | subtle |\n|---|---|---|---|---|---|---|---|\n`;
+for(const s of INTENT){ const p=palette[s]; md += `| **${s}** | \`${p.main}\` | \`${p.light}\` | \`${p.dark}\` | \`${p.contrastText}\` | \`${p.hover||'—'}\` | \`${p.active||'—'}\` | \`${p.subtle||'—'}\` |\n`; }
+md += `\n> CSS var: \`${P}-primary-main\`, \`${P}-brand-hover\`, etc. \`brand\` es color custom (\`color="brand"\`).\n`;
 
-// --- augmentation 🆓 ---
-md += `\n## Augmentation 🆓 (naming nuestro)\n\n`;
-md += `### estados por color\n\n| token | valor |\n|---|---|\n`;
-for(const s of ['primary','secondary']) for(const k of ['hover','active','disabled']) if(palette[s][k]) md += row(`${P}-${s}-${k}`, palette[s][k])+'\n';
-const AUG = ['brand','fill','deco','focus','link','border','icon','actionSecondary','actionTertiary','actionInverse'];
+// --- SUPERFICIES & NEUTRALES ---
+md += `\n## 2. Superficies & neutrales\n\n| token | valor |\n|---|---|\n`;
+for(const k of ['primary','secondary','disabled','inverse','brand','brandStrong','icon']) md += row(`${P}-text-${k}`, palette.text[k])+'\n';
+for(const k of ['default','paper','inverse']) md += row(`${P}-background-${k}`, palette.background[k])+'\n';
+md += row(`${P}-divider`, palette.divider)+'\n';
+for(const k of Object.keys(palette.grey)) md += row(`${P}-grey-${k}`, palette.grey[k])+'\n';
+md += `\n_\`action\` = overlays de interacción de MUI (listas/menús/ripple): ${Object.keys(palette.action).map(k=>'`'+k+'`').join(' · ')}_\n`;
+
+// --- AUGMENTATION POR ROL ---
+md += `\n## 3. Augmentation por rol 🆓\n`;
+const AUG = ['fill','deco','focus','link','border','icon','onInverse'];
 for (const grp of AUG) {
   md += `\n### ${grp}\n\n| token | valor |\n|---|---|\n`;
   for (const k of Object.keys(palette[grp])) md += row(`${P}-${grp}-${k}`, palette[grp][k])+'\n';
 }
-md += `\n### status multi-canal\n\n| | bg | text | icon | border |\n|---|---|---|---|---|\n`;
+md += `\n### status — multi-canal (feedback: alert/badge)\n\n| | bg | text | icon | border |\n|---|---|---|---|---|\n`;
 for(const s of ['danger','info','success','warning']){ const o=palette.status[s]; md += `| ${s} | \`${o.bg}\` | \`${o.text||'—'}\` | \`${o.icon||'—'}\` | \`${o.border||'—'}\` |\n`; }
 
 // --- escalas 🆓 ---

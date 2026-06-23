@@ -1,5 +1,10 @@
 # MAPPING — Aqua → EDS (estructura MUI v5.18)
 
+> ⚠️ **Modelo canónico:** [`MODEL.md`](./MODEL.md) (rol · tratamiento · estado) + [`TOKENS.md`](./TOKENS.md) (valores reales, generado).
+> Este archivo es la referencia de mapeo inicial; el palette se reorganizó por **rol**
+> (`secondary`=slate system-2º, `brand`=coral color custom; `action` Aqua se disolvió en rol+tratamiento+estado).
+
+
 > Referencia **canónica** de la que sale el theme. Valores = los ideales de Aqua (single-source).
 > 🔒 = slot que **MUI exige** (sus componentes lo leen) · 🆓 = naming **nuestro** (augmentation/escala).
 > Naming centralizado en `const NS='eds'` → rename futuro = 1 línea.

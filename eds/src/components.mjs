@@ -1,19 +1,20 @@
-// components.mjs — styleOverrides de fricción (lo escrito a mano, no generado).
-// Cubre el ~20% donde MUI no calza 1:1: estados explícitos + status multi-canal.
+// components.mjs — el eje TRATAMIENTO (variant) + status multi-canal.
+// Genérico por intención: cualquier color (primary/secondary/brand) con sus 3 tratamientos.
 
 export const components = {
   MuiButton: {
     styleOverrides: {
-      root: ({ theme }) => ({ borderRadius: theme.shape.borderRadius }),
-      // estado hover/active EXPLÍCITO (nuestro token), no el derivado de MUI
-      containedPrimary: ({ theme }) => ({
-        '&:hover': { backgroundColor: theme.vars.palette.primary.hover },
-        '&:active': { backgroundColor: theme.vars.palette.primary.active },
-      }),
-      containedSecondary: ({ theme }) => ({
-        '&:hover': { backgroundColor: theme.vars.palette.secondary.hover },
-        '&:active': { backgroundColor: theme.vars.palette.secondary.active },
-      }),
+      // un solo override genérico: lee la INTENCIÓN (color) y el TRATAMIENTO (variant)
+      root: ({ theme, ownerState }) => {
+        const c = theme.vars.palette[ownerState.color];
+        const base = { borderRadius: theme.shape.borderRadius };
+        if (!c || !c.hover) return base; // status (error/…) usan el hover derivado de MUI
+        if (ownerState.variant === 'contained')
+          return { ...base, '&:hover': { backgroundColor: c.hover }, '&:active': { backgroundColor: c.active } };
+        if (ownerState.variant === 'outlined' || ownerState.variant === 'text')
+          return { ...base, ...(c.subtle && { '&:hover': { backgroundColor: c.subtle } }) }; // ghost/text: fondo subtle en hover
+        return base;
+      },
     },
   },
   MuiAlert: {

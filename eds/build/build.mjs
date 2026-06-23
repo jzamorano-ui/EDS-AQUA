@@ -34,34 +34,37 @@ const px = (n) => parseInt(A['--' + n], 10);
 // ramps primitivos (no están en tokens.css) — valores exactos de Figma
 const GRAY  = { 50:'#f7f7f7',100:'#e7e7e7',200:'#c9c9c9',300:'#ababab',400:'#8f8f8f',500:'#737373',600:'#5c5c5c',700:'#464646',800:'#313131',900:'#1e1e1e' };
 
-// ---------- 2) palette (MUI 🔒 + augmentation 🆓) ----------
+// ---------- 2) palette — arquitectura por ROL (rol · tratamiento · estado) ----------
 const palette = {
+  // ═══ ROL / INTENCIÓN (prop color=) — cada uno: tonos MUI + estados + subtle ═══
   primary:   { main:c('action-primary-default'), light:c('action-primary-hover'), dark:c('action-primary-active'), contrastText:c('text-inverse'),
-               hover:c('action-primary-hover'), active:c('action-primary-active'), disabled:c('action-primary-disabled') },
-  secondary: { main:c('action-brand-primary-default'), light:c('icon-brand-secondary'), dark:c('action-brand-primary-active'), contrastText:c('text-inverse'),
-               hover:c('action-brand-primary-hover'), active:c('action-brand-primary-active') },
-  error:   { main:c('icon-status-danger'),  light:c('bg-status-danger'),  dark:c('text-status-danger'),  contrastText:'#ffffff' },
-  warning: { main:c('icon-status-warning'), light:c('bg-status-warning'), dark:c('text-status-warning'), contrastText:'#ffffff' },
-  info:    { main:c('icon-status-info'),    light:c('bg-status-info'),    dark:c('text-status-info'),    contrastText:'#ffffff' },
-  success: { main:c('icon-status-success'), light:c('bg-status-success'), dark:c('text-status-success'), contrastText:'#ffffff' },
-  text: { primary:c('text-primary'), secondary:c('text-secondary'), disabled:c('text-disabled'), icon:c('icon-system-primary'),
-          inverse:c('text-inverse'), brand:c('text-brand'), brandStrong:c('text-brand-strong') },
-  background: { default:c('bg-surface-subtle'), paper:c('bg-surface-default') },
+               hover:c('action-primary-hover'), active:c('action-primary-active'), disabled:c('action-primary-disabled'), subtle:c('action-tertiary-hover') },   // system (navy)
+  secondary: { main:c('action-secondary-default'), light:c('action-tertiary-hover'), dark:c('action-secondary-active'), contrastText:c('text-primary'),
+               hover:c('action-secondary-hover'), active:c('action-secondary-active'), disabled:c('action-primary-disabled'), subtle:c('action-tertiary-hover') }, // system secundario (slate)
+  brand:     { main:c('action-brand-primary-default'), light:c('icon-brand-secondary'), dark:c('action-brand-primary-active'), contrastText:c('text-inverse'),
+               hover:c('action-brand-primary-hover'), active:c('action-brand-primary-active'), disabled:c('action-primary-disabled'),
+               subtle:c('bg-fill-brand-subtle'), subtleHover:c('action-brand-secondary-hover'), subtleActive:c('action-brand-secondary-active') },                // marca (coral) — color custom
+  error:   { main:c('icon-status-danger'),  light:c('bg-status-danger'),  dark:c('text-status-danger'),  contrastText:'#ffffff', subtle:c('bg-status-danger') },
+  warning: { main:c('icon-status-warning'), light:c('bg-status-warning'), dark:c('text-status-warning'), contrastText:'#ffffff', subtle:c('bg-status-warning') },
+  info:    { main:c('icon-status-info'),    light:c('bg-status-info'),    dark:c('text-status-info'),    contrastText:'#ffffff', subtle:c('bg-status-info') },
+  success: { main:c('icon-status-success'), light:c('bg-status-success'), dark:c('text-status-success'), contrastText:'#ffffff', subtle:c('bg-status-success') },
+
+  // ═══ SUPERFICIES & NEUTRALES ═══
+  text: { primary:c('text-primary'), secondary:c('text-secondary'), disabled:c('text-disabled'), inverse:c('text-inverse'),
+          brand:c('text-brand'), brandStrong:c('text-brand-strong'), icon:c('icon-system-primary') },
+  background: { default:c('bg-surface-subtle'), paper:c('bg-surface-default'), inverse:c('bg-surface-inverse') },
   divider: c('border-divider-default'),
   common: { black:c('bg-surface-inverse'), white:'#ffffff' },
-  action: { active:c('icon-system-primary'), hover:c('action-tertiary-hover'), selected:c('action-tertiary-active'),
-            disabled:c('text-disabled'), disabledBackground:c('action-primary-disabled'), focus:c('focus-ring-gap-default') },
   grey: GRAY,
-  // ── augmentation (naming nuestro) ──
-  brand: { main:c('action-brand-primary-default'), hover:c('action-brand-primary-hover'), active:c('action-brand-primary-active'),
-           subtle:c('bg-fill-brand-subtle'), strong:c('icon-brand-strong'), contrast:c('icon-brand-contrast'),
-           secondaryDefault:c('action-brand-secondary-default'), secondaryHover:c('action-brand-secondary-hover'), secondaryActive:c('action-brand-secondary-active'),
-           tertiaryHover:c('action-brand-tertiary-hover'), tertiaryActive:c('action-brand-tertiary-active') },
+  action: { active:c('icon-system-primary'), hover:c('action-tertiary-hover'), selected:c('action-tertiary-active'),
+            disabled:c('text-disabled'), disabledBackground:c('action-primary-disabled'), focus:c('focus-ring-gap-default') }, // overlays de interacción de MUI (listas/menús/ripple) — distinto del concepto Aqua "action"
+
+  // ═══ AUGMENTATION POR ROL ═══
   fill: { neutralSubtle:c('bg-fill-neutral-subtle'), neutralMedium:c('bg-fill-neutral-medium'), neutralStrong:c('bg-fill-neutral-strong'),
           inverseSubtle:c('bg-fill-inverse-subtle'), inverseMedium:c('bg-fill-inverse-medium'), inverseStrong:c('bg-fill-inverse-strong'),
           brandSubtle:c('bg-fill-brand-subtle'), brandMedium:c('bg-fill-brand-medium'), brandStrong:c('bg-fill-brand-strong') },
   deco: { 1:c('bg-deco-1'),2:c('bg-deco-2'),3:c('bg-deco-3'),4:c('bg-deco-4'),5:c('bg-deco-5') },
-  status: {
+  status: {  // multi-canal (para feedback: alert, badge…)
     danger:  { bg:c('bg-status-danger'),  text:c('text-status-danger'),  icon:c('icon-status-danger'),  border:c('border-status-danger') },
     info:    { bg:c('bg-status-info'),     text:c('text-status-info'),     icon:c('icon-status-info'),     border:c('border-status-info') },
     success: { bg:c('bg-status-success'),  text:c('text-status-success'),  icon:c('icon-status-success'),  border:c('border-status-success') },
@@ -70,17 +73,12 @@ const palette = {
   },
   focus: { ring:c('focus-ring-default'), gap:c('focus-ring-gap-default'), inverse:c('focus-ring-inverse'), gapInverse:c('focus-ring-gap-inverse') },
   link: { default:c('text-link-default'), hover:c('text-link-hover'), active:c('text-link-active') },
-  // familia border completa (12 tokens, naming propio)
   border: { default:c('border-default'), focus:c('border-focus'), dangerFocus:c('border-danger-focus'), disabled:c('border-disabled'),
             dividerDefault:c('border-divider-default'), dividerBrand:c('border-divider-brand'), dividerInverse:c('border-divider-inverse'), inverse:c('border-inverse'),
             statusDanger:c('border-status-danger'), statusInfo:c('border-status-info'), statusSuccess:c('border-status-success'), statusWarning:c('border-status-warning') },
-  // icon system (brand/status ya están en brand/status)
   icon: { systemPrimary:c('icon-system-primary'), systemSecondary:c('icon-system-secondary'), systemDisabled:c('icon-system-disabled'), systemInverse:c('icon-system-inverse'),
           brandPrimary:c('icon-brand-primary'), brandSecondary:c('icon-brand-secondary'), brandStrong:c('icon-brand-strong'), brandContrast:c('icon-brand-contrast') },
-  // estados de action no-primary (los ghosts neutros + inverse)
-  actionSecondary: { default:c('action-secondary-default'), hover:c('action-secondary-hover'), active:c('action-secondary-active') },
-  actionTertiary:  { default:c('action-tertiary-hover'), hover:c('action-tertiary-hover'), active:c('action-tertiary-active') },
-  actionInverse:   { default:c('action-primary-inverse-default'), hover:c('action-primary-inverse-hover'), active:c('action-primary-inverse-active') },
+  onInverse: { primary:c('action-primary-inverse-default'), primaryHover:c('action-primary-inverse-hover'), primaryActive:c('action-primary-inverse-active') }, // acciones sobre superficie oscura
 };
 
 // ---------- 3) typography — LOS 22 variants de la propuesta + aliases estándar MUI ----------
